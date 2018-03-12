@@ -1,4 +1,4 @@
-C166 COMPILER V7.53.0.0, CAN                                                               12/14/2017 11:31:11 PAGE 1   
+C166 COMPILER V7.53.0.0, CAN                                                               03/12/2018 15:40:22 PAGE 1   
 
 
 C166 COMPILER V7.53.0.0, COMPILATION OF MODULE CAN
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE can.c XLARGE BROWSE MOD167 DEBUG 
    52  2          
    53  2          if(canQuery.Counts == 0)
    54  2            canQuery.QuerySending = 0;
-C166 COMPILER V7.53.0.0, CAN                                                               12/14/2017 11:31:11 PAGE 2   
+C166 COMPILER V7.53.0.0, CAN                                                               03/12/2018 15:40:22 PAGE 2   
 
    55  2          
    56  2        }
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE can.c XLARGE BROWSE MOD167 DEBUG 
   114  1        BDGP_InsertCmd(msgData);
   115  1      }
   116         
-C166 COMPILER V7.53.0.0, CAN                                                               12/14/2017 11:31:11 PAGE 3   
+C166 COMPILER V7.53.0.0, CAN                                                               03/12/2018 15:40:22 PAGE 3   
 
   117         void CAN_Interrupt4() interrupt 0x59    //723
   118         {
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE can.c XLARGE BROWSE MOD167 DEBUG 
   175  3                EXTS #05H #1H
   176  3                MOV 0000H R2
   177  3                POP R2
-C166 COMPILER V7.53.0.0, CAN                                                               12/14/2017 11:31:11 PAGE 4   
+C166 COMPILER V7.53.0.0, CAN                                                               03/12/2018 15:40:22 PAGE 4   
 
   178  3                
   179  3                SRST
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE can.c XLARGE BROWSE MOD167 DEBUG 
   237  1        
   238  1        BDSP_InsertData(2,msgData);
   239  1      }
-C166 COMPILER V7.53.0.0, CAN                                                               12/14/2017 11:31:11 PAGE 5   
+C166 COMPILER V7.53.0.0, CAN                                                               03/12/2018 15:40:22 PAGE 5   
 
   240         
   241         void CAN_Interrupt10() interrupt 0x62  //204
@@ -318,7 +318,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE can.c XLARGE BROWSE MOD167 DEBUG 
   299  1        NBTR0 = 0x2344;   //скорость узла 500kb/sec при тактировании 16Мгц
   300  1        NCR0  = 0x0000;   //Запрет после реконфигурации
   301  1        
-C166 COMPILER V7.53.0.0, CAN                                                               12/14/2017 11:31:11 PAGE 6   
+C166 COMPILER V7.53.0.0, CAN                                                               03/12/2018 15:40:22 PAGE 6   
 
   302  1        /*
   303  1          Список областей сообщений
@@ -382,7 +382,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE can.c XLARGE BROWSE MOD167 DEBUG 
   359  1        CAN_Message_16[6].MOCTRL = 0x0000;
   360  1        CAN_Message_16[6].MOIPRL = 0x0006;  //выбор линии прерываний для приему - 1
   361  1        CAN_Message_16[6].MOFCRH = 0x0801; // DLC = 8, разрешить прерывание на прием 
-C166 COMPILER V7.53.0.0, CAN                                                               12/14/2017 11:31:11 PAGE 7   
+C166 COMPILER V7.53.0.0, CAN                                                               03/12/2018 15:40:22 PAGE 7   
 
   362  1        
   363  1        CAN_Message_16[7].MOCTRH = 0x0080;
@@ -446,7 +446,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE can.c XLARGE BROWSE MOD167 DEBUG 
   420  1          //БДГП-С
   421  1        CAN_Message_16[6].MOARH = 0x8000;  // идентификатор 000 - 004
   422  1        CAN_Message_16[6].MOAMRH = 0x3FE3; // маска идентификатора 
-C166 COMPILER V7.53.0.0, CAN                                                               12/14/2017 11:31:11 PAGE 8   
+C166 COMPILER V7.53.0.0, CAN                                                               03/12/2018 15:40:22 PAGE 8   
 
   423  1        
   424  1        CAN_Message_16[7].MOARH = 0x8804;  // идентификатор 200 - 204
@@ -510,7 +510,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE can.c XLARGE BROWSE MOD167 DEBUG 
   481  1        PANCTR = 0x0002;             
   482  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); 
   483  1         
-C166 COMPILER V7.53.0.0, CAN                                                               12/14/2017 11:31:11 PAGE 9   
+C166 COMPILER V7.53.0.0, CAN                                                               03/12/2018 15:40:22 PAGE 9   
 
   484  1        PANCTR_H = 0x0108;         // message object 2 -> List 1
   485  1        PANCTR = 0x0002;             
@@ -574,7 +574,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE can.c XLARGE BROWSE MOD167 DEBUG 
   543  1        CAN_Message_16[3].MOCTRH = 0x0020; 
   544  1        CAN_Message_16[3].MOCTRL = 0x0000;
   545  1        
-C166 COMPILER V7.53.0.0, CAN                                                               12/14/2017 11:31:11 PAGE 10  
+C166 COMPILER V7.53.0.0, CAN                                                               03/12/2018 15:40:22 PAGE 10  
 
   546  1        CAN_Message_16[4].MOCTRH = 0x0020; 
   547  1        CAN_Message_16[4].MOCTRL = 0x0000;  
@@ -638,7 +638,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE can.c XLARGE BROWSE MOD167 DEBUG 
   605  1        
   606  1        for(index = 0;index<Len;index++)
   607  1        {
-C166 COMPILER V7.53.0.0, CAN                                                               12/14/2017 11:31:11 PAGE 11  
+C166 COMPILER V7.53.0.0, CAN                                                               03/12/2018 15:40:22 PAGE 11  
 
   608  2          *(moData + (index)) = *(pData + index);
   609  2        }

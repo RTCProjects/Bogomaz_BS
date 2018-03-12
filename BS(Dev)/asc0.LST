@@ -1,4 +1,4 @@
-C166 COMPILER V7.53.0.0, ASC0                                                              12/14/2017 11:31:11 PAGE 1   
+C166 COMPILER V7.53.0.0, ASC0                                                              03/12/2018 15:40:23 PAGE 1   
 
 
 C166 COMPILER V7.53.0.0, COMPILATION OF MODULE ASC0
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE asc0.c XLARGE BROWSE MOD167 DEBUG
    53  1        DP3 |= 0x0400;                                       // Set TXD for output 
    54  1        DP3 &= 0xF7FF;                                      // Set RXD for input 
    55  1        ALTSEL0P3 |= 0x0400;                                 // Configure port pins for serial interface 0    
-C166 COMPILER V7.53.0.0, ASC0                                                              12/14/2017 11:31:11 PAGE 2   
+C166 COMPILER V7.53.0.0, ASC0                                                              03/12/2018 15:40:23 PAGE 2   
 
    56  1        P3 |= 0x0400;                                       // Set TXD high 
    57  1        S0CON = 0x8011;

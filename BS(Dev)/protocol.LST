@@ -1,4 +1,4 @@
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 1   
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 1   
 
 
 C166 COMPILER V7.53.0.0, COMPILATION OF MODULE PROTOCOL
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
    50  1        rIndex = 0;
    51  1        cmdCnt = 0;
    52  1        memset((uint8*)&ProtocolRequests,0,sizeof(sProtocolRequests));
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 2   
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 2   
 
    53  1        memset((uint8*)&MetrologyData,0,sizeof(tMetrologyData));
    54  1      
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   111  2          memcpy(&pDataBuf[0],&pDataBuf[ii],index-ii);
   112  2          index=index-ii;
   113  2        }
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 3   
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 3   
 
   114  1        //проверяем переполнение
   115  1        if(index >= sDataBuf)
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   173  1        interruptBuffer[(writeBufInd++)%INT_BUF_SIZE] = inputByte;
   174  1        /*if(writeBufInd == BUFFER_SIZE)writeBufInd = 0;
   175  1        interruptBuffer[writeBufInd] = inputByte;
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 4   
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 4   
 
   176  1          writeBufInd++;
   177  1        */
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
              -;
   233  1          
   234  1          //нашли пакет
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 5   
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 5   
 
   235  1          if(pPackage){
   236  1            cmdCnt++;
@@ -318,7 +318,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   291  6                      IMDB_SendError();
   292  6                      return;
   293  6                    }
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 6   
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 6   
 
   294  5                    else if(Process_GetBDPSStatus() == DEVICE_WAITING){
   295  6                      IMDB_SendError();
@@ -382,7 +382,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   352  5                  Process_SetStatus(pData[0]);
   353  5                }break;
   354  4                
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 7   
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 7   
 
   355  4                case IMDB_CALIBRATION_I:
   356  4                { 
@@ -446,7 +446,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   410  4                  
   411  4                  case 0x02: //запрос признака МД снаружи
   412  4                  {
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 8   
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 8   
 
   413  5                    if(!ProtocolRequests.rOutsideFeature)
   414  5                      ProtocolRequests.rOutsideFeature++;
@@ -510,7 +510,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   472  5                    while(spectrIndex < SPECTR_SIZE / 64);
   473  5                    
   474  5                  }break;
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 9   
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 9   
 
   475  4                  default: /*IMDB_SendPacket(IMDB_ERROR,0,0);*/ break;
   476  4              }
@@ -574,7 +574,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   533  2          
   534  2          case METROLOGY_DEFAULT_SETTINGS_REQUEST:
   535  2          {
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 10  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 10  
 
   536  3            IMDB_Metrology_DefaultSettings();
   537  3          }break;
@@ -638,7 +638,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   594  1        uint8 stateByte = Process_GetInfo();
   595  1          //IMDB_SendPacket(IMDB_SEND_READY,&stateByte,1);
   596  1      }
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 11  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 11  
 
   597         
   598         void IMDB_SendInsideDose()
@@ -702,7 +702,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   655  1        uint8 currentFeature = BDMG_GetInsideFeature();
   656  1        
   657  1          IMDB_SendPacket(IMDB_INSIDE_FEATURE,&currentFeature,sizeof(uint8));
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 12  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 12  
 
   658  1      }
   659         void  IMDB_SendOutsideDoseFeature()
@@ -766,7 +766,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   717  2            sendbyte(pPackage[i]);
   718  2          
   719  2          free(pPackage);
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 13  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 13  
 
   720  2        }
   721  1      }
@@ -830,7 +830,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   776         
   777         void  IMDB_Process()
   778         {
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 14  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 14  
 
   779  1      
   780  1        uint8 i = 0;
@@ -894,7 +894,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   838  2        }
   839  1        
   840  1        //пришёл запрос на чтение параметров из блоков
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 15  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 15  
 
   841  1        if(ProtocolRequests.rMetrologyReadBDParametrs){
   842  2          IMDB_Metrology_AllBDParametrRequest();
@@ -958,7 +958,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   898  1        
   899  1        for(i = 0;i<CHANNELS;i++)
   900  1        {
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 16  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 16  
 
   901  2          if(ProtocolRequests.rSpectrAccumChanSuccess[i]){
   902  3            IMDB_SendAccumSpectrSuccess(i);
@@ -1022,7 +1022,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
   959  1      }
   960         void IMDB_NuclideEndDetectionSignalCallback()
   961         {
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 17  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 17  
 
   962  1        ProtocolRequests.rNuclideEndDetectionCallback = 1;
   963  1      }
@@ -1086,7 +1086,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
  1018  2        }
  1019  1        //спектрометр либо готов либо в режиме ожидания
  1020  1        if(Process_GetBDPSStatus() != DEVICE_NOTREADY){
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 18  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 18  
 
  1021  2          //тут запрос параметров спектрометра
  1022  2          BDSP_StartWritingParametrs();
@@ -1150,7 +1150,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
  1080  1        IMDB_SendPacket(METROLOGY_READ_SETTINGS_RESPONSE,(uint8*)&MainSettings,sizeof(tSettings));
  1081  1      }
  1082         void IMDB_Metrology_WriteBSParametrs(uint8  *pData)
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 19  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 19  
 
  1083         {
  1084  1        uint8 i = 0;
@@ -1214,7 +1214,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
              -йки
  1140  2          {
  1141  3            switch(bdIndex)
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 20  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 20  
 
  1142  3            {
  1143  4              case 1:BDSP_Start();break;
@@ -1278,7 +1278,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
  1201  3                  
  1202  3              ProtocolRequests.rMetrologySendCurrentSpectr = 0;
  1203  3            
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 21  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 21  
 
  1204  3            IMDB_SendPacket(METROLOGY_SPECTR_ACCUMMODE_RESPONSE,(uint8*)pData,3);
  1205  3          }break; //отмена операции
@@ -1342,7 +1342,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
  1261  3                        
  1262  3                        _srvwdt_();
  1263  3                      }
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 22  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 22  
 
  1264  2                      while(spectrIndex < 8);
  1265  2                      
@@ -1406,7 +1406,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 D
  1321  1          uint8 pSendData[6];
  1322  1          
  1323  1            pSendData[0] = Index;
-C166 COMPILER V7.53.0.0, PROTOCOL                                                          12/14/2017 11:31:10 PAGE 23  
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          03/12/2018 15:40:22 PAGE 23  
 
  1324  1            pSendData[1] = DataType;
  1325  1            

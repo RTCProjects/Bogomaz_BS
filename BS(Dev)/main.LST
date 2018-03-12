@@ -1,4 +1,4 @@
-C166 COMPILER V7.53.0.0, MAIN                                                              12/14/2017 11:31:10 PAGE 1   
+C166 COMPILER V7.53.0.0, MAIN                                                              03/12/2018 15:40:20 PAGE 1   
 
 
 C166 COMPILER V7.53.0.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE main.c XLARGE BROWSE MOD167 DEBUG
    53  1        
    54  1      
    55  1        T01CON = 0x0106;
-C166 COMPILER V7.53.0.0, MAIN                                                              12/14/2017 11:31:10 PAGE 2   
+C166 COMPILER V7.53.0.0, MAIN                                                              03/12/2018 15:40:20 PAGE 2   
 
    56  1        T0REL = 0x6769;   
    57  1        //T1REL = 0x1000;
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE main.c XLARGE BROWSE MOD167 DEBUG
   115  2          //  _srvwdt_();
   116  2            BDSP_Process();
   117  2            BDGP_Process();
-C166 COMPILER V7.53.0.0, MAIN                                                              12/14/2017 11:31:10 PAGE 3   
+C166 COMPILER V7.53.0.0, MAIN                                                              03/12/2018 15:40:20 PAGE 3   
 
   118  2            IMDB_Process();
   119  2            CAN_Process();

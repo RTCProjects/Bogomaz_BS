@@ -1,4 +1,4 @@
-C166 COMPILER V7.53.0.0, BSL                                                               10/31/2017 16:03:24 PAGE 1   
+C166 COMPILER V7.53.0.0, BSL                                                               03/12/2018 15:40:24 PAGE 1   
 
 
 C166 COMPILER V7.53.0.0, COMPILATION OF MODULE BSL
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bsl.c XLARGE BROWSE MOD167 DEBUG 
    52  1      
    53  1        CAN_Message_16[14].MOCTRH = 0x0020; 
    54  1        CAN_Message_16[14].MOCTRL = 0x0000;
-C166 COMPILER V7.53.0.0, BSL                                                               10/31/2017 16:03:24 PAGE 2   
+C166 COMPILER V7.53.0.0, BSL                                                               03/12/2018 15:40:24 PAGE 2   
 
    55  1      
    56  1        CAN_Message_16[15].MOCTRH = 0x0020; 

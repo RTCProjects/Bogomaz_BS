@@ -1,4 +1,4 @@
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 1   
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 1   
 
 
 C166 COMPILER V7.53.0.0, COMPILATION OF MODULE BDSP
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
    52  1        
    53  1        //считаем интеграл для каждого канала
    54  1        for(k = 0;k<CHANNELS;k++)
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 2   
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 2   
 
    55  1        {
    56  2          BDSPData[k].Integral = 0;
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   114         
   115         
   116         void BDSP_Reset()
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 3   
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 3   
 
   117         {
   118  1        uint8 i = 0;
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   176  1      
   177  1      }
   178         
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 4   
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 4   
 
   179         void BDSP_Stop()
   180         {
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   237  1        float incorrDoseRate = 0;
   238  1        
   239  1        float sum = 0,i = 0;
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 5   
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 5   
 
   240  1        uint16 time = 0;
   241  1        uint16 length = 0;
@@ -318,7 +318,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   297  4                          BDSP_SetSpectrSize(SIZE_1024);                      
   298  4                        }
   299  3                  }
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 6   
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 6   
 
   300  2                }
   301  1                if(Process_GetOperationMode() != IMDB_FULLTIME_WORK)
@@ -382,7 +382,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   357  5                          IMDB_BDPSGetParametrsSignalCallback();
   358  5                        }
   359  4                      }
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 7   
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 7   
 
   360  3                      else{
   361  4                        if(Channel < CHANNELS - 1){
@@ -446,7 +446,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   414  2                  
   415  2                  /*
   416  2                  08 08 2017 - зануляем первые каналы в обоих буферах
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 8   
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 8   
 
   417  2                  */
   418  2                  #ifdef DEBUG_BDSP_40ZERO
@@ -510,7 +510,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   473  3            //включаем передачу МД от канала БД
   474  3            
   475  3            CAN_SendMessage(CAN_BDSP_DATA_TX + Channel,mSpectrDoseRateOn,8);
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 9   
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 9   
 
   476  3            
   477  3            if(BDSPData[0].Ready == 2 && BDSPData[1].Ready == 2 && BDSPData[2].Ready == 2 && BDSPData[3].Ready == 2
@@ -574,7 +574,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   533  1        CAN_SendMessage(CAN_BDSP_DATA_TX + Channel + 1,msgData,8);
   534  1      }
   535         eChanChkStatus    BDSP_ChannelInitCheck()
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 10  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 10  
 
   536         {
   537  1        eChanChkStatus Status = CHK_OK;
@@ -638,7 +638,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
              -� спектра 128 каналов
   587  2          
   588  2          //проверяем, накопили ли мы фон у всех каналов
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 11  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 11  
 
   589  2          if((BDSPData[0].Background == 1) && (BDSPData[1].Background == 1) && (BDSPData[2].Background == 1) && (B
              -DSPData[3].Background == 1))
@@ -702,7 +702,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   638  2          IMDB_DEBUG_SendDataMsg((uint8*)&temp,101,4);
   639  2          
   640  2        }
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 12  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 12  
 
   641  1      }
   642         void BDSP_ResetBackgroundData()
@@ -766,7 +766,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   698  2          BDSPData[maxIntegralIndex].ppMax = 0;
   699  2          BDSPData[maxIntegralIndex].ppBackgroundMax = 0;
   700  2          
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 13  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 13  
 
   701  2          start = 116 - 0.91 * j;
   702  2          end = 129 - j;
@@ -830,7 +830,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   756  3          }
   757  2        }
   758  1        /*
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 14  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 14  
 
   759  1        Идентификация
   760  1          проводится только если есть обнаружение
@@ -894,7 +894,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   815  2                  if(!NuclideIdentification)
   816  2                    NuclideIdentification = 1;
   817  2                  break;
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 15  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 15  
 
   818  2                }
   819  2              }
@@ -958,7 +958,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   876  3              BDSPData[i].Integral += BDSPData[i].AccumSpectrData[j];
   877  3            }
   878  2            if(BDSPData[i].Integral > maxIntegralValue){
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 16  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 16  
 
   879  3              maxIntegralValue = BDSPData[i].Integral;
   880  3              maxIntegralIndex = (uint8)i;
@@ -1022,7 +1022,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   937  3            4 - [-9 -7]
   938  3            5 - [+7 +9]
   939  3            6 - [-7 -5]
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 17  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 17  
 
   940  3            7 - [+5 +7]
   941  3            */
@@ -1086,7 +1086,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
   999  5              }
  1000  4              else{
  1001  5                //IMDB_NuclideIdentificationSignalCallback(0xFF);
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 18  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 18  
 
  1002  5                IMDB_NuclideEndDetectionSignalCallback();
  1003  5                IMDB_NuclideIdentificationEndSignalCallback();          
@@ -1150,7 +1150,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
  1060         {
  1061  1        uint16 i = 0;
  1062  1        uint16  photoPeak = 0;
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 19  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 19  
 
  1063  1        float   spdCounter = 0.0f;
  1064  1        float   fCurrentDoseRate = 0;
@@ -1214,7 +1214,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
  1117  5                        MeasureInPntData.fMaxAngle    = BDSP_GetMaximumAngle();
  1118  5                        MeasureInPntData.fDoseRate    = fCurrentDoseRate;
  1119  5                        MeasureInPntData.ePhotoPeak   = photoPeak;
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 20  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 20  
 
  1120  5                        MeasureInPntData.iSpdCounter  = spdCounter;
  1121  5                        
@@ -1278,7 +1278,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
  1179  1        return BDSP_GetChannelSpectr(channel);
  1180  1      }
  1181         uint8 *BDSP_DEBUG_GetQuerySumSpectr(uint8 channel)
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 21  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 21  
 
  1182         {
  1183  1        uint8 i = 0,j = 0;
@@ -1342,7 +1342,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
  1239  1          pAngleDiagramm  = BDGP_DirectionDiagramm(sensorArray, CHANNELS, cntMin,cntMax,&radiationMaximum,SPEC_MODE
              -);  
  1240  1        
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 22  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 22  
 
  1241  1        memcpy((uint8*)&fpBDSPAngleDiagramm,(uint8*)pAngleDiagramm,sizeof(float) * 48);
  1242  1        //return pAngleDiagramm;
@@ -1406,7 +1406,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
  1299  1        for(i = 0;i<CHANNELS;i++){
  1300  2          if(BDSPData[i].DoseRate > fDoseRate)
  1301  2            fDoseRate = BDSPData[i].DoseRate;
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 23  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 23  
 
  1302  2        }
  1303  1        return fDoseRate;
@@ -1470,7 +1470,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG
  1359  5                      TODO Добавить проверку на режим накопления фона 
  1360  5                    
  1361  5                    else
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 24  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 24  
 
  1362  5                      BDSP_BackgroundAccumulation(i,BDSPData[i].WorkData);
  1363  5                    */
@@ -1534,7 +1534,7 @@ MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
   NEAR-CONST SIZE  =    --------     --------
   FAR-CONST SIZE   =    --------     --------
   HUGE-CONST SIZE  =    --------     --------
-C166 COMPILER V7.53.0.0, BDSP                                                              12/14/2017 11:31:12 PAGE 25  
+C166 COMPILER V7.53.0.0, BDSP                                                              03/12/2018 15:40:25 PAGE 25  
 
   XHUGE-CONST SIZE =          80     --------
   NEAR-DATA SIZE   =         122     --------

@@ -1,4 +1,4 @@
-C166 COMPILER V7.53.0.0, PROCESS                                                           12/14/2017 11:31:10 PAGE 1   
+C166 COMPILER V7.53.0.0, PROCESS                                                           03/12/2018 15:40:20 PAGE 1   
 
 
 C166 COMPILER V7.53.0.0, COMPILATION OF MODULE PROCESS
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE process.c XLARGE BROWSE MOD167 DE
    51         void  Process_BDGPStatus(Device_Status Status)  //ставим статус БДГП
    52         {
    53  1        if(Status)
-C166 COMPILER V7.53.0.0, PROCESS                                                           12/14/2017 11:31:10 PAGE 2   
+C166 COMPILER V7.53.0.0, PROCESS                                                           03/12/2018 15:40:20 PAGE 2   
 
    54  1          SET_BIT(processByte,4);
    55  1        else
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE process.c XLARGE BROWSE MOD167 DE
   113  1        
   114  1        float fBackgroundQuantile = 0;
   115  1        uint8 identificationValue = 0;
-C166 COMPILER V7.53.0.0, PROCESS                                                           12/14/2017 11:31:10 PAGE 3   
+C166 COMPILER V7.53.0.0, PROCESS                                                           03/12/2018 15:40:20 PAGE 3   
 
   116  1        
   117  1        //IMDB_SendPacket(IMDB_PING,0,0);
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE process.c XLARGE BROWSE MOD167 DE
   174  7                    }
   175  6                    else if(Process_GetBDMGState() ){//если его нет, то меряем БДМГом
   176  7                      BDMG_Start();
-C166 COMPILER V7.53.0.0, PROCESS                                                           12/14/2017 11:31:10 PAGE 4   
+C166 COMPILER V7.53.0.0, PROCESS                                                           03/12/2018 15:40:20 PAGE 4   
 
   177  7                      
   178  7                    }
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE process.c XLARGE BROWSE MOD167 DE
   232  3              //в противном случае сразу переходим в режим штатной раб
              -оты без спектрометра
   233  3              else
-C166 COMPILER V7.53.0.0, PROCESS                                                           12/14/2017 11:31:10 PAGE 5   
+C166 COMPILER V7.53.0.0, PROCESS                                                           03/12/2018 15:40:20 PAGE 5   
 
   234  3              {
   235  4                //если есть БДГП-Б, то копим фон
@@ -318,7 +318,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE process.c XLARGE BROWSE MOD167 DE
   291  3                  insideDoseRate = BDGP_GetAverageDoseRate() / MainSettings.shieldingFactor;
   292  3                
   293  3                  insideDose = BDMG_GetDose();
-C166 COMPILER V7.53.0.0, PROCESS                                                           12/14/2017 11:31:10 PAGE 6   
+C166 COMPILER V7.53.0.0, PROCESS                                                           03/12/2018 15:40:20 PAGE 6   
 
   294  3                  
   295  3                    //события порогов по МД
@@ -382,7 +382,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE process.c XLARGE BROWSE MOD167 DE
   353  3                    //порог 5
   354  3                    if(outsideDoseRate > MainSettings.limitDetect[5]){
   355  3                      if(!ProcessDoseRateExceeded.rRangeFlag[4]){
-C166 COMPILER V7.53.0.0, PROCESS                                                           12/14/2017 11:31:10 PAGE 7   
+C166 COMPILER V7.53.0.0, PROCESS                                                           03/12/2018 15:40:20 PAGE 7   
 
   356  3                        IMDB_SendDoseRateExceeded(6);
   357  3                        ProcessDoseRateExceeded.rRangeFlag[4] = 1;
@@ -446,7 +446,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE process.c XLARGE BROWSE MOD167 DE
   415  1        
   416  1      }
   417         
-C166 COMPILER V7.53.0.0, PROCESS                                                           12/14/2017 11:31:10 PAGE 8   
+C166 COMPILER V7.53.0.0, PROCESS                                                           03/12/2018 15:40:20 PAGE 8   
 
   418         void  Process_IMDBStart()
   419         {

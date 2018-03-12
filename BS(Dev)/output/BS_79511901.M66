@@ -1,4 +1,4 @@
-L166 LINKER/LOCATER V5.25                                                               12/14/2017  11:31:13  PAGE 1
+L166 LINKER/LOCATER V5.25                                                               03/12/2018  15:40:25  PAGE 1
 
 
 L166 LINKER/LOCATER V5.25, INVOKED BY:
@@ -59,7 +59,7 @@ INPUT MODULES INCLUDED:
          COMMENT TYPE 128: A166 V5.33
   C:\KEIL\C166\LIB\C167FPXL.LIB (?C_CASTF)
          COMMENT TYPE 128: A166 V5.33
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 2
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 2
 
 
   C:\KEIL\C166\LIB\C167FPXL.LIB (?C_FCAST)
@@ -119,7 +119,7 @@ INTERRUPT PROCEDURES OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
 
 INTERRUPT PROCEDURE                 INT  INTERRUPT NAME
 =======================================================
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 3
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 3
 
 
 ?C_RESET                              0  RESET
@@ -179,7 +179,7 @@ START     STOP      LENGTH    TYPE  RTYP  ALIGN  TGR  GRP  COMB  CLASS   SECTION
 028256H   029A5BH   001806H   CODE  REL   WORD   ---  ---  PUBL  FCODE   ?PR?PROTOCOL
 029A5CH   02A8CFH   000E74H   CODE  REL   WORD   ---  ---  PUBL  FCODE   ?PR?CAN
 02A8D0H   02B1D9H   00090AH   CODE  REL   WORD   ---  ---  PUBL  FCODE   ?PR?BDMG
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 4
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 4
 
 
 02B1DAH   02B93DH   000764H   CODE  REL   WORD   ---  ---  PUBL  FCODE   ?C_LIB_CODE
@@ -239,7 +239,7 @@ NDATA                                DATA  ---    1  NDATA       ?C_USERSTACK
 NCONST                               DATA  ---    2  NCONST      ?NC?MAIN
                                                      NCONST      ?NC?VERS79511901
                                                      NCONST      ?NC?BDMG
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 5
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 5
 
 
                                                      NCONST      ?NC?BDGP
@@ -299,7 +299,7 @@ PUBLIC SYMBOLS OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       0279BAH     BDGP_BackgroundIdentification    LABEL ---  FCODE   ?PR?BDGP
       0278D6H     BDGP_DataArrayCorrection         LABEL ---  FCODE   ?PR?BDGP
       02665CH     BDGP_DirectionDiagramm           LABEL ---  FCODE   ?PR?BDGP
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 6
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 6
 
 
       025D58H     BDGP_ForcedStart                 LABEL ---  FCODE   ?PR?BDGP
@@ -359,7 +359,7 @@ PUBLIC SYMBOLS OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02570EH     BDSP_GetDose                     LABEL ---  FCODE   ?PR?BDSP
       025766H     BDSP_GetDoseRate                 LABEL ---  FCODE   ?PR?BDSP
       025708H     BDSP_GetMaximumAngle             LABEL ---  FCODE   ?PR?BDSP
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 7
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 7
 
 
       025A7EH     BDSP_GetMeasureInPointData       LABEL ---  FCODE   ?PR?BDSP
@@ -419,7 +419,7 @@ PUBLIC SYMBOLS OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       029330H     IMDB_BDGPGetParametrsSignalCa... LABEL ---  FCODE   ?PR?PROTOCOL
       029354H     IMDB_BDGPWriteParametrsSignal... LABEL ---  FCODE   ?PR?PROTOCOL
       029324H     IMDB_BDMGGetParametrsSignalCa... LABEL ---  FCODE   ?PR?PROTOCOL
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 8
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 8
 
 
       029360H     IMDB_BDMGWriteParametrsSignal... LABEL ---  FCODE   ?PR?PROTOCOL
@@ -479,7 +479,7 @@ PUBLIC SYMBOLS OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02BA12H     Process_GetBDPSStatus            LABEL ---  FCODE   ?PR?PROCESS
       02BA32H     Process_GetInfo                  LABEL ---  FCODE   ?PR?PROCESS
       02BA38H     Process_GetOperationMode         LABEL ---  FCODE   ?PR?PROCESS
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 9
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 9
 
 
       02B97AH     Process_GetWaitCounter           LABEL ---  FCODE   ?PR?PROCESS
@@ -539,7 +539,7 @@ PUBLIC SYMBOLS OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02C9C2H     memset                           LABEL ---  FCODE   ?PR?MEMSET
       02C6F0H     pow                              LABEL ---  FCODE   ?PR?POW
       050521H     processByte                      VAR   ---  NDATA0  ?ND0?PROCESS
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 10
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 10
 
 
       050400H     rIndex                           VAR   ---  NDATA0  ?ND0?PROTOCOL
@@ -599,7 +599,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       000000H     SYMBOL    CONST     ---     ---   _BDRSTEN
       00FA00H     SYMBOL    CONST     ---     ---   _BOS
       000002H     SYMBOL    CONST     ---     ---   _BTYP2
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 11
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 11
 
 
       000001H     SYMBOL    CONST     ---     ---   _BUSACT2
@@ -659,7 +659,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       0001E6H     LINE      ---       ---     ---   #695
       0001E8H     LINE      ---       ---     ---   #696
       0001ECH     LINE      ---       ---     ---   #697
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 12
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 12
 
 
       0001EEH     LINE      ---       ---     ---   #698
@@ -719,7 +719,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       00FF7CH     SYMBOL    SFR       ---     ---   CC2IC
       00FE7CH     SYMBOL    SFR       ---     ---   CC30
       00F18CH     SYMBOL    ESFR      ---     ---   CC30IC
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 13
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 13
 
 
       00FE7EH     SYMBOL    SFR       ---     ---   CC31
@@ -779,7 +779,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       00F1D0H     SYMBOL    ESFR      ---     ---   SYSCON2
       00F1D4H     SYMBOL    ESFR      ---     ---   SYSCON3
       00FF50H     SYMBOL    SFR       ---     ---   T01CON
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 14
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 14
 
 
       00FF9CH     SYMBOL    SFR       ---     ---   T0IC
@@ -839,7 +839,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       04F050H     LINE      ---       ---     ---   #70
       04F054H     LINE      ---       ---     ---   #71
       04F058H     LINE      ---       ---     ---   #72
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 15
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 15
 
 
       04F05CH     LINE      ---       ---     ---   #73
@@ -899,7 +899,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       04E02EH     LINE      ---       ---     ---   #142
       04E032H     LINE      ---       ---     ---   #143
       04E036H     LINE      ---       ---     ---   #144
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 16
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 16
 
 
       04E03AH     LINE      ---       ---     ---   #145
@@ -959,7 +959,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       04E0E4H     LINE      ---       ---     ---   #205
       04E0E6H     LINE      ---       ---     ---   #206
       04E0E8H     LINE      ---       ---     ---   #207
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 17
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 17
 
 
       04E0EAH     LINE      ---       ---     ---   #208
@@ -1019,7 +1019,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       ---         BLOCKEND  LVL=0     ---     ---   
 
       04E17AH     BLOCK     LVL=0     004CH   ---   START
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 18
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 18
 
 
       04E17AH     LINE      ---       ---     ---   #275
@@ -1079,7 +1079,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       04E212H     LINE      ---       ---     ---   #358
       04E214H     LINE      ---       ---     ---   #359
       04E216H     LINE      ---       ---     ---   #360
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 19
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 19
 
 
       04E218H     LINE      ---       ---     ---   #361
@@ -1139,7 +1139,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       04E28EH     LINE      ---       ---     ---   #433
       04E290H     LINE      ---       ---     ---   #434
       04E292H     LINE      ---       ---     ---   #436
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 20
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 20
 
 
       04E294H     LINE      ---       ---     ---   #437
@@ -1199,7 +1199,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       04E2FCH     LINE      ---       ---     ---   #498
       04E2FEH     LINE      ---       ---     ---   #499
       04E300H     LINE      ---       ---     ---   #500
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 21
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 21
 
 
       04E302H     LINE      ---       ---     ---   #501
@@ -1259,7 +1259,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       ---         BLOCKEND  LVL=1     ---     ---   
       02C5FEH     LINE      ---       ---     ---   #22
       02C5FEH     LINE      ---       ---     ---   #23
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 22
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 22
 
 
       02C5FEH     LINE      ---       ---     ---   #26
@@ -1319,7 +1319,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02B9ACH     PUBLIC    LABEL     ---     ---   Process_BDMGStatus
       02B97AH     PUBLIC    LABEL     ---     ---   Process_GetWaitCounter
       02BA44H     PUBLIC    LABEL     ---     ---   Process_MainProc
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 23
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 23
 
 
       02B974H     PUBLIC    LABEL     ---     ---   Process_ResetWaitCounter
@@ -1379,7 +1379,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
 
       02B9ACH     BLOCK     LVL=0     0018H   ---   Process_BDMGStatus
       000008H     SYMBOL    REG       ---     ---   Status
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 24
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 24
 
 
       02B9ACH     LINE      ---       ---     ---   #60
@@ -1439,7 +1439,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02BA72H     BLOCK     LVL=1     036EH   ---   
       00000EH     SYMBOL    REG       ---     ---   outsideDoseRate
       000000H     SYMBOL    AUTO      ---     ---   insideDose
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 25
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 25
 
 
       ---         BLOCKEND  LVL=1     ---     ---   
@@ -1499,7 +1499,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02BB8CH     LINE      ---       ---     ---   #228
       02BB90H     LINE      ---       ---     ---   #229
       02BB90H     LINE      ---       ---     ---   #231
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 26
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 26
 
 
       02BB94H     LINE      ---       ---     ---   #236
@@ -1559,7 +1559,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02BD02H     LINE      ---       ---     ---   #343
       02BD08H     LINE      ---       ---     ---   #344
       02BD0AH     LINE      ---       ---     ---   #347
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 27
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 27
 
 
       02BD12H     LINE      ---       ---     ---   #348
@@ -1619,7 +1619,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       029A1EH     PUBLIC    LABEL     ---     ---   IMDB_DEBUG_SendDataMsg
       0293CCH     PUBLIC    LABEL     ---     ---   IMDB_Metrology_AllBDParametrRequest
       0286C0H     PUBLIC    LABEL     ---     ---   IMDB_PackageAnalysis
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 28
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 28
 
 
       028BAEH     PUBLIC    LABEL     ---     ---   IMDB_SendInsideDose
@@ -1679,7 +1679,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       05040EH     SYMBOL    VAR       ---     ---   readBufInd
       623E30H     PUBLIC    VAR       ---     ---   receiveBuffer
       624030H     SYMBOL    VAR       ---     ---   MetrologyData
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 29
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 29
 
 
       624039H     SYMBOL    VAR       ---     ---   visualSpecBuf
@@ -1739,7 +1739,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       000000H     SYMBOL    AUTO      ---     ---   index
       000009H     SYMBOL    REG       ---     ---   i
       000002H     SYMBOL    AUTO      ---     ---   ii
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 30
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 30
 
 
       000004H     SYMBOL    AUTO      ---     ---   ks
@@ -1799,7 +1799,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       028616H     BLOCK     LVL=0     001CH   ---   IMDB_ReceiveByteCallback
       000048H     SYMBOL    REG       ---     ---   inputByte
       028616H     LINE      ---       ---     ---   #170
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 31
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 31
 
 
       028616H     LINE      ---       ---     ---   #173
@@ -1859,7 +1859,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       0287D2H     LINE      ---       ---     ---   #295
       0287D6H     LINE      ---       ---     ---   #296
       0287DAH     LINE      ---       ---     ---   #297
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 32
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 32
 
 
       0287DAH     LINE      ---       ---     ---   #299
@@ -1919,7 +1919,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02890CH     LINE      ---       ---     ---   #407
       028918H     LINE      ---       ---     ---   #409
       02891CH     LINE      ---       ---     ---   #411
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 33
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 33
 
 
       02891CH     LINE      ---       ---     ---   #413
@@ -1979,7 +1979,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       028AC8H     LINE      ---       ---     ---   #514
       028AD2H     LINE      ---       ---     ---   #515
       028AD4H     LINE      ---       ---     ---   #517
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 34
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 34
 
 
       028AD4H     LINE      ---       ---     ---   #519
@@ -2039,7 +2039,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       028BA8H     BLOCK     LVL=0     0006H   ---   IMDB_SendReady
       028BA8H     LINE      ---       ---     ---   #592
       028BA8H     LINE      ---       ---     ---   #593
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 35
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 35
 
 
       028BA8H     LINE      ---       ---     ---   #594
@@ -2099,7 +2099,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       ---         BLOCKEND  LVL=0     ---     ---   
 
       028D6AH     BLOCK     LVL=0     0022H   ---   IMDB_SendInsideDoseFeature
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 36
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 36
 
 
       028D6CH     BLOCK     LVL=1     001CH   ---   
@@ -2159,7 +2159,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       000000H     SYMBOL    AUTO      ---     ---   State
       028E5AH     LINE      ---       ---     ---   #689
       028E5CH     LINE      ---       ---     ---   #691
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 37
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 37
 
 
       028E72H     LINE      ---       ---     ---   #692
@@ -2219,7 +2219,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       028F50H     LINE      ---       ---     ---   #730
       028F58H     LINE      ---       ---     ---   #733
       028F60H     LINE      ---       ---     ---   #736
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 38
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 38
 
 
       028F68H     LINE      ---       ---     ---   #738
@@ -2279,7 +2279,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       029080H     LINE      ---       ---     ---   #793
       029080H     LINE      ---       ---     ---   #795
       02908AH     LINE      ---       ---     ---   #796
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 39
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 39
 
 
       02908EH     LINE      ---       ---     ---   #797
@@ -2339,7 +2339,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02924AH     LINE      ---       ---     ---   #880
       029250H     LINE      ---       ---     ---   #881
       029258H     LINE      ---       ---     ---   #882
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 40
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 40
 
 
       029258H     LINE      ---       ---     ---   #884
@@ -2399,7 +2399,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       ---         BLOCKEND  LVL=0     ---     ---   
 
       029354H     BLOCK     LVL=0     000CH   ---   IMDB_BDGPWriteParametrsSignalCallback
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 41
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 41
 
 
       029354H     LINE      ---       ---     ---   #946
@@ -2459,7 +2459,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       0293DEH     LINE      ---       ---     ---   #997
       0293DEH     LINE      ---       ---     ---   #998
       0293E6H     LINE      ---       ---     ---   #999
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 42
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 42
 
 
       0293F2H     LINE      ---       ---     ---   #1000
@@ -2519,7 +2519,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       0294F4H     LINE      ---       ---     ---   #1056
       0294FAH     LINE      ---       ---     ---   #1057
       0294FEH     LINE      ---       ---     ---   #1058
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 43
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 43
 
 
       029506H     LINE      ---       ---     ---   #1060
@@ -2579,7 +2579,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02963EH     LINE      ---       ---     ---   #1114
       029640H     LINE      ---       ---     ---   #1116
       029644H     LINE      ---       ---     ---   #1117
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 44
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 44
 
 
       ---         BLOCKEND  LVL=0     ---     ---   
@@ -2639,7 +2639,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       0297B0H     LINE      ---       ---     ---   #1197
       0297B0H     LINE      ---       ---     ---   #1200
       0297B6H     LINE      ---       ---     ---   #1202
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 45
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 45
 
 
       0297BEH     LINE      ---       ---     ---   #1204
@@ -2699,7 +2699,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       ---         BLOCKEND  LVL=1     ---     ---   
       02990CH     LINE      ---       ---     ---   #1271
       02991AH     LINE      ---       ---     ---   #1272
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 46
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 46
 
 
       02991AH     LINE      ---       ---     ---   #1273
@@ -2759,7 +2759,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02C7CCH     LINE      ---       ---     ---   #31
       02C7D4H     LINE      ---       ---     ---   #33
       02C806H     LINE      ---       ---     ---   #35
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 47
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 47
 
 
       02C810H     LINE      ---       ---     ---   #36
@@ -2819,7 +2819,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       000000H     SYMBOL    AUTO      ---     ---   msgData
       ---         BLOCKEND  LVL=1     ---     ---   
       029B28H     LINE      ---       ---     ---   #59
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 48
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 48
 
 
       029B52H     LINE      ---       ---     ---   #60
@@ -2879,7 +2879,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       029D5EH     BLOCK     LVL=1     003AH   ---   
       000000H     SYMBOL    AUTO      ---     ---   msgData
       000005H     SYMBOL    REG       ---     ---   regID
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 49
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 49
 
 
       ---         BLOCKEND  LVL=1     ---     ---   
@@ -2939,7 +2939,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       029F8CH     LINE      ---       ---     ---   #210
       029F94H     LINE      ---       ---     ---   #211
       029F9CH     LINE      ---       ---     ---   #214
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 50
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 50
 
 
       029FAEH     LINE      ---       ---     ---   #215
@@ -2999,7 +2999,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02A196H     LINE      ---       ---     ---   #259
       02A19EH     LINE      ---       ---     ---   #260
       02A1A6H     LINE      ---       ---     ---   #261
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 51
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 51
 
 
       02A1AEH     LINE      ---       ---     ---   #263
@@ -3059,7 +3059,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02A31AH     LINE      ---       ---     ---   #360
       02A320H     LINE      ---       ---     ---   #361
       02A328H     LINE      ---       ---     ---   #363
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 52
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 52
 
 
       02A330H     LINE      ---       ---     ---   #364
@@ -3119,7 +3119,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02A4DAH     LINE      ---       ---     ---   #464
       02A4E2H     LINE      ---       ---     ---   #465
       02A4EEH     LINE      ---       ---     ---   #466
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 53
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 53
 
 
       02A4FAH     LINE      ---       ---     ---   #468
@@ -3179,7 +3179,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02A6B0H     LINE      ---       ---     ---   #555
       02A6BAH     LINE      ---       ---     ---   #556
       02A6C4H     LINE      ---       ---     ---   #557
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 54
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 54
 
 
       02A6C8H     LINE      ---       ---     ---   #558
@@ -3239,7 +3239,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02A868H     LINE      ---       ---     ---   #598
       02A878H     LINE      ---       ---     ---   #600
       02A884H     LINE      ---       ---     ---   #601
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 55
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 55
 
 
       02A892H     LINE      ---       ---     ---   #604
@@ -3299,7 +3299,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02C16AH     LINE      ---       ---     ---   #51
       02C16AH     LINE      ---       ---     ---   #52
       02C18EH     LINE      ---       ---     ---   #54
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 56
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 56
 
 
       02C198H     LINE      ---       ---     ---   #55
@@ -3359,7 +3359,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02C506H     BLOCK     LVL=0     0004H   ---   serial_TX_BUF_irc
       02C506H     LINE      ---       ---     ---   #14
       02C506H     LINE      ---       ---     ---   #15
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 57
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 57
 
 
       02C508H     LINE      ---       ---     ---   #16
@@ -3419,7 +3419,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02BE40H     LINE      ---       ---     ---   #5
       02BE4CH     LINE      ---       ---     ---   #6
       02BE54H     LINE      ---       ---     ---   #8
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 58
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 58
 
 
       02BE5CH     LINE      ---       ---     ---   #9
@@ -3479,7 +3479,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       ---         BLOCKEND  LVL=0     ---     ---   
 
       02BFB4H     BLOCK     LVL=0     008AH   ---   FLASH_WriteWord
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 59
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 59
 
 
       000008H     SYMBOL    REG       ---     ---   address
@@ -3539,7 +3539,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       00000EH     SYMBOL    REG       ---     ---   index
       000004H     SYMBOL    AUTO      ---     ---   ramData
       00000DH     SYMBOL    REG       ---     ---   errBytes
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 60
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 60
 
 
       ---         BLOCKEND  LVL=1     ---     ---   
@@ -3599,7 +3599,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
 
       02C374H     BLOCK     LVL=0     0042H   ---   System_LEDState
       000008H     SYMBOL    REG       ---     ---   State
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 61
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 61
 
 
       02C374H     LINE      ---       ---     ---   #93
@@ -3659,7 +3659,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       ---         BLOCKEND  LVL=1     ---     ---   
       02C928H     LINE      ---       ---     ---   #67
       02C92CH     LINE      ---       ---     ---   #68
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 62
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 62
 
 
       02C92CH     LINE      ---       ---     ---   #74
@@ -3719,7 +3719,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02A95AH     LINE      ---       ---     ---   #49
       02A970H     LINE      ---       ---     ---   #50
       02A982H     LINE      ---       ---     ---   #51
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 63
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 63
 
 
       ---         BLOCKEND  LVL=0     ---     ---   
@@ -3779,7 +3779,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02AA92H     LINE      ---       ---     ---   #95
       02AADAH     LINE      ---       ---     ---   #97
       02AAF2H     LINE      ---       ---     ---   #99
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 64
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 64
 
 
       02AB04H     LINE      ---       ---     ---   #101
@@ -3839,7 +3839,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02AD84H     LINE      ---       ---     ---   #164
       02AD9AH     LINE      ---       ---     ---   #165
       02ADA4H     LINE      ---       ---     ---   #166
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 65
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 65
 
 
       02ADA4H     LINE      ---       ---     ---   #169
@@ -3899,7 +3899,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02B13AH     LINE      ---       ---     ---   #233
       02B13EH     LINE      ---       ---     ---   #234
       02B13EH     LINE      ---       ---     ---   #235
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 66
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 66
 
 
       02B13EH     LINE      ---       ---     ---   #236
@@ -3959,7 +3959,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       025D44H     PUBLIC    LABEL     ---     ---   BDGP_Start
       026618H     PUBLIC    LABEL     ---     ---   BDGP_InsertCmd
       025ABEH     PUBLIC    LABEL     ---     ---   BDGP_MaxCounter
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 67
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 67
 
 
       0263E6H     PUBLIC    LABEL     ---     ---   BDGP_ResetBackgroundData
@@ -4019,7 +4019,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       025AF0H     BLOCK     LVL=0     006CH   ---   BDGP_MinSumSensData
       025AF4H     BLOCK     LVL=1     0062H   ---   
       00004CH     SYMBOL    REG       ---     ---   i
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 68
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 68
 
 
       00000EH     SYMBOL    REG       ---     ---   result
@@ -4079,7 +4079,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       025C2EH     LINE      ---       ---     ---   #470
       025C36H     LINE      ---       ---     ---   #474
       025C4AH     LINE      ---       ---     ---   #476
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 69
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 69
 
 
       025C4EH     LINE      ---       ---     ---   #477
@@ -4139,7 +4139,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       ---         BLOCKEND  LVL=0     ---     ---   
 
       025D80H     BLOCK     LVL=0     0014H   ---   BDGP_Stop
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 70
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 70
 
 
       025D80H     LINE      ---       ---     ---   #529
@@ -4199,7 +4199,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02605CH     LINE      ---       ---     ---   #601
       026060H     LINE      ---       ---     ---   #603
       02609AH     LINE      ---       ---     ---   #604
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 71
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 71
 
 
       02609EH     LINE      ---       ---     ---   #606
@@ -4259,7 +4259,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
 
       0263E6H     BLOCK     LVL=0     0032H   ---   BDGP_ResetBackgroundData
       0263E6H     LINE      ---       ---     ---   #683
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 72
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 72
 
 
       0263E6H     LINE      ---       ---     ---   #685
@@ -4319,7 +4319,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       026644H     BLOCK     LVL=0     000EH   ---   BDGP_GetCurrentDoseRate
       026644H     LINE      ---       ---     ---   #753
       026644H     LINE      ---       ---     ---   #755
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 73
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 73
 
 
       026650H     LINE      ---       ---     ---   #756
@@ -4379,7 +4379,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       0266E4H     LINE      ---       ---     ---   #791
       0266ECH     LINE      ---       ---     ---   #792
       0266F4H     LINE      ---       ---     ---   #797
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 74
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 74
 
 
       0266FCH     LINE      ---       ---     ---   #798
@@ -4439,7 +4439,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       026E86H     LINE      ---       ---     ---   #885
       026EE4H     LINE      ---       ---     ---   #888
       026EE4H     LINE      ---       ---     ---   #891
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 75
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 75
 
 
       026EEEH     LINE      ---       ---     ---   #893
@@ -4499,7 +4499,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       0276A0H     LINE      ---       ---     ---   #992
       0276B0H     LINE      ---       ---     ---   #994
       0276E4H     LINE      ---       ---     ---   #995
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 76
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 76
 
 
       0276E4H     LINE      ---       ---     ---   #996
@@ -4559,7 +4559,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       027AB4H     LINE      ---       ---     ---   #1079
       027ACEH     LINE      ---       ---     ---   #1082
       027AD8H     LINE      ---       ---     ---   #1083
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 77
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 77
 
 
       027AE2H     LINE      ---       ---     ---   #1085
@@ -4619,7 +4619,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       027EDEH     LINE      ---       ---     ---   #1184
       027EE4H     LINE      ---       ---     ---   #1185
       027F68H     LINE      ---       ---     ---   #1186
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 78
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 78
 
 
       027F76H     LINE      ---       ---     ---   #1189
@@ -4679,7 +4679,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       0225B8H     PUBLIC    LABEL     ---     ---   BDSP_CalculateQuerySum
       024FF0H     PUBLIC    LABEL     ---     ---   BDSP_SpectrAccumulation
       02580CH     PUBLIC    LABEL     ---     ---   BDSP_Process
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 79
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 79
 
 
       025A24H     PUBLIC    LABEL     ---     ---   BDSP_GetParametrs
@@ -4739,7 +4739,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       050508H     SYMBOL    VAR       ---     ---   NuclideIdentification
       050509H     SYMBOL    VAR       ---     ---   NuclideDetection
       05050AH     SYMBOL    VAR       ---     ---   channelStartCnt
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 80
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 80
 
 
       05050BH     SYMBOL    VAR       ---     ---   rWritingParametrRequest
@@ -4799,7 +4799,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       022640H     LINE      ---       ---     ---   #86
       022642H     LINE      ---       ---     ---   #87
       02264AH     LINE      ---       ---     ---   #89
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 81
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 81
 
 
       02264AH     LINE      ---       ---     ---   #91
@@ -4859,7 +4859,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02290EH     LINE      ---       ---     ---   #149
       022930H     LINE      ---       ---     ---   #150
       022952H     LINE      ---       ---     ---   #151
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 82
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 82
 
 
       022974H     LINE      ---       ---     ---   #152
@@ -4919,7 +4919,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       022AE2H     LINE      ---       ---     ---   #213
       022AE4H     LINE      ---       ---     ---   #214
       022AE4H     LINE      ---       ---     ---   #215
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 83
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 83
 
 
       022AE6H     LINE      ---       ---     ---   #217
@@ -4979,7 +4979,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       022C5EH     LINE      ---       ---     ---   #273
       022C66H     LINE      ---       ---     ---   #274
       022C6AH     LINE      ---       ---     ---   #275
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 84
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 84
 
 
       022C70H     LINE      ---       ---     ---   #276
@@ -5039,7 +5039,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       022E9CH     LINE      ---       ---     ---   #361
       022EA2H     LINE      ---       ---     ---   #362
       022EB6H     LINE      ---       ---     ---   #363
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 85
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 85
 
 
       022EB8H     LINE      ---       ---     ---   #365
@@ -5099,7 +5099,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02346AH     LINE      ---       ---     ---   #456
       023470H     LINE      ---       ---     ---   #457
       02347CH     LINE      ---       ---     ---   #461
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 86
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 86
 
 
       02348AH     LINE      ---       ---     ---   #464
@@ -5159,7 +5159,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       00004DH     SYMBOL    REG       ---     ---   paramIndex
       023602H     BLOCK     LVL=1     0040H   ---   
       000000H     SYMBOL    AUTO      ---     ---   msgData
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 87
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 87
 
 
       ---         BLOCKEND  LVL=1     ---     ---   
@@ -5219,7 +5219,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       023960H     LINE      ---       ---     ---   #598
       023964H     LINE      ---       ---     ---   #600
       023976H     LINE      ---       ---     ---   #601
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 88
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 88
 
 
       02397CH     LINE      ---       ---     ---   #605
@@ -5279,7 +5279,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       023EE0H     LINE      ---       ---     ---   #670
       023F1CH     LINE      ---       ---     ---   #671
       023F44H     LINE      ---       ---     ---   #672
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 89
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 89
 
 
       023F46H     LINE      ---       ---     ---   #675
@@ -5339,7 +5339,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       0243CEH     LINE      ---       ---     ---   #744
       024410H     LINE      ---       ---     ---   #745
       024412H     LINE      ---       ---     ---   #749
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 90
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 90
 
 
       02441CH     LINE      ---       ---     ---   #750
@@ -5399,7 +5399,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       0504BAH     SYMBOL    VAR       ---     ---   fMaxData
       ---         BLOCKEND  LVL=1     ---     ---   
       024680H     LINE      ---       ---     ---   #850
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 91
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 91
 
 
       024692H     LINE      ---       ---     ---   #851
@@ -5459,7 +5459,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       024DF8H     LINE      ---       ---     ---   #977
       024DFAH     LINE      ---       ---     ---   #978
       024E10H     LINE      ---       ---     ---   #980
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 92
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 92
 
 
       024E18H     LINE      ---       ---     ---   #982
@@ -5519,7 +5519,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       000002H     SYMBOL    AUTO      ---     ---   photoPeak
       000004H     SYMBOL    AUTO      ---     ---   spdCounter
       000008H     SYMBOL    AUTO      ---     ---   fCurrentDoseRate
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 93
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 93
 
 
       ---         BLOCKEND  LVL=1     ---     ---   
@@ -5579,7 +5579,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       0252F4H     LINE      ---       ---     ---   #1152
       02531CH     LINE      ---       ---     ---   #1153
       025344H     LINE      ---       ---     ---   #1155
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 94
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 94
 
 
       02536CH     LINE      ---       ---     ---   #1156
@@ -5639,7 +5639,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02553AH     LINE      ---       ---     ---   #1197
       ---         BLOCKEND  LVL=0     ---     ---   
 
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 95
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 95
 
 
       02553CH     BLOCK     LVL=0     0024H   ---   BDSP_GetAccumulationSpectr
@@ -5699,7 +5699,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       025710H     BLOCK     LVL=1     0052H   ---   
       00000CH     SYMBOL    REG       ---     ---   fDose
       00004BH     SYMBOL    REG       ---     ---   i
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 96
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 96
 
 
       ---         BLOCKEND  LVL=1     ---     ---   
@@ -5759,7 +5759,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       025916H     LINE      ---       ---     ---   #1336
       025926H     LINE      ---       ---     ---   #1338
       025926H     LINE      ---       ---     ---   #1340
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 97
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 97
 
 
       025956H     LINE      ---       ---     ---   #1341
@@ -5819,7 +5819,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       025A6AH     LINE      ---       ---     ---   #1411
       025A7CH     LINE      ---       ---     ---   #1412
       ---         BLOCKEND  LVL=0     ---     ---   
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 98
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 98
 
 
 
@@ -5879,7 +5879,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
       02B6DEH     BLOCK     LVL=0     0026H   ---   ?C_FPGETOPN
       ---         BLOCKEND  LVL=0     ---     ---   
 
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 99
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 99
 
 
       02B704H     BLOCK     LVL=0     0008H   ---   ?C_FPNANRSL
@@ -5939,7 +5939,7 @@ SYMBOL TABLE OF MODULE:  .\output\BS_79511901 (?C_STARTUP)
 
       02B90EH     BLOCK     LVL=0     001EH   ---   ?C_HSTORELU
       ---         BLOCKEND  LVL=0     ---     ---   
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 100
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 100
 
 
       02B92CH     PUBLIC    LABEL     ---     ---   ?C_BCPYNX
@@ -5999,7 +5999,7 @@ NAME . . . . . . . . . . . . . . . REP    TGR  MODULE NAMES
 ?C_FPUNFRS . . . . . . . . . . . . LABEL ---  ?C_FPGETOPN  ?C_FPDIV  EXP  
 ?C_FPXSUB. . . . . . . . . . . . . LABEL ---  ?C_FPADD  ?C_FPCMP  
 ?C_FPZERRSL. . . . . . . . . . . . LABEL ---  ?C_FPGETOPN  ?C_FPADD  ?C_FPDIV  ?C_FPMUL  
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 101
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 101
 
 
 ?C_HCASTS. . . . . . . . . . . . . LABEL ---  ?C_HCASTS  BDSP  
@@ -6059,7 +6059,7 @@ BDMG_InsertData. . . . . . . . . . LABEL ---  BDMG  CAN  DEVICES
 BDMG_ParametrRequest . . . . . . . LABEL ---  BDMG  PROTOCOL  
 BDMG_Reset . . . . . . . . . . . . LABEL ---  BDMG  DEVICES  
 BDMG_Start . . . . . . . . . . . . LABEL ---  BDMG  PROCESS  
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 102
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 102
 
 
 BDMG_StartWritingParametrs . . . . LABEL ---  BDMG  PROTOCOL  
@@ -6119,7 +6119,7 @@ CAN_Interrupt10. . . . . . . . . . LABEL ---  CAN
 CAN_Interrupt11. . . . . . . . . . LABEL ---  CAN  
 CAN_Interrupt2 . . . . . . . . . . LABEL ---  CAN  
 CAN_Interrupt3 . . . . . . . . . . LABEL ---  CAN  
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 103
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 103
 
 
 CAN_Interrupt4 . . . . . . . . . . LABEL ---  CAN  
@@ -6179,7 +6179,7 @@ IMDB_SendDoseRateExceeded. . . . . LABEL ---  PROTOCOL  PROCESS
 IMDB_SendError . . . . . . . . . . LABEL ---  PROTOCOL  
 IMDB_SendIdentification. . . . . . LABEL ---  PROTOCOL  
 IMDB_SendInsideDose. . . . . . . . LABEL ---  PROTOCOL  
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 104
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 104
 
 
 IMDB_SendInsideDoseFeature . . . . LABEL ---  PROTOCOL  
@@ -6239,7 +6239,7 @@ init_asc0. . . . . . . . . . . . . LABEL ---  ASC0  MAIN
 init_mempool . . . . . . . . . . . LABEL ---  INIT_MEM  MAIN  
 interruptBuffer. . . . . . . . . . VAR   ---  PROTOCOL  
 log. . . . . . . . . . . . . . . . LABEL ---  LOG  BDGP  POW  
-L166 LINKER/LOCATER V5.25                                                             12/14/2017  11:31:13  PAGE 105
+L166 LINKER/LOCATER V5.25                                                             03/12/2018  15:40:25  PAGE 105
 
 
 log10. . . . . . . . . . . . . . . LABEL ---  LOG  

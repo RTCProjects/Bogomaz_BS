@@ -1,4 +1,4 @@
-C166 COMPILER V7.53.0.0, SETTINGS                                                          10/31/2017 15:46:30 PAGE 1   
+C166 COMPILER V7.53.0.0, SETTINGS                                                          03/12/2018 15:40:22 PAGE 1   
 
 
 C166 COMPILER V7.53.0.0, COMPILATION OF MODULE SETTINGS
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE settings.c XLARGE BROWSE MOD167 D
    52  1            chkSum += *(pSettings + i);
    53  1        
    54  1        FLASH_EraseSector(0x22000);
-C166 COMPILER V7.53.0.0, SETTINGS                                                          10/31/2017 15:46:30 PAGE 2   
+C166 COMPILER V7.53.0.0, SETTINGS                                                          03/12/2018 15:40:22 PAGE 2   
 
    55  1        FLASH_FSRControl();
    56  1        

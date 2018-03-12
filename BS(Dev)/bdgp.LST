@@ -1,4 +1,4 @@
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 1   
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 1   
 
 
 C166 COMPILER V7.53.0.0, COMPILATION OF MODULE BDGP
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
    53         0.996156f,
    54         0.995903f,
    55         0.995643f,
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 2   
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 2   
 
    56         0.995375f,
    57         0.9951f,
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   115         0.971057f,
   116         0.970583f,
   117         0.970111f,
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 3   
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 3   
 
   118         0.96964f,
   119         0.969169f,
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   177         0.068624f,
   178         0.065283f,
   179         0.062256f,
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 4   
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 4   
 
   180         0.059509f,
   181         0.057013f,
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   239         0.96791,
   240         0.96649,
   241         0.965,
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 5   
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 5   
 
   242         0.96343,
   243         0.96177,
@@ -318,7 +318,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   301         0.60647,
   302         0.59454,
   303         0.58239,
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 6   
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 6   
 
   304         0.57002,
   305         0.55742,
@@ -382,7 +382,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   363         0.18997,
   364         0.1898,
   365         0.18968,
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 7   
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 7   
 
   366         0.18962,
   367         0.1896,
@@ -446,7 +446,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   425  1        uint8 i = 0;
   426  1        float result = FLT_MAX;
   427  1          for(i = 0;i<SENSORS;i++){
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 8   
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 8   
 
   428  2            if(BDGPData.fCorrectionSumSensData[i] < result)
   429  2              result = BDGPData.fCorrectionSumSensData[i];
@@ -510,7 +510,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   487           paramSubIndex - субиндекс параметра
   488           *pParam - указатель на данные с параметром
   489           dataSize - рамер параметра
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 9   
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 9   
 
   490         */
   491         void BDGP_WriteParametr(uint8 range,uint8 paramIndex,uint8 paramSubIndex, uint8 *pParam,int dataSize)
@@ -574,7 +574,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   548  3            case 0x93:
   549  3            {
   550  4              memcpy((uint8*)&BDGPParametrs[rangeIndex].fCorrectionFactors[pData[3]],(pData + 4),4);
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 10  
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 10  
 
   551  4              
   552  4                if(pData[3]<12){
@@ -638,7 +638,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   608  4              BDGP_WriteParametr(rangeIndex + 1,0x95,0,(uint8*)&BDGPParametrs[rangeIndex].fEffectCounters,sizeof(flo
              -at));
   609  4            }break;
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 11  
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 11  
 
   610  3            
   611  3            case 0x95:
@@ -702,7 +702,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   665  1        if(BDGPData.BackgroundIndex < BACKGROUND_TIME){
   666  2          for(i = 0;i<SENSORS;i++){
   667  3            fCurrentData = ((pData[i] * BDGPParametrs[currentRangeIndex].fCorrectionFactors[i]) / (1.0f - pData[i] 
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 12  
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 12  
 
              -* BDGPParametrs[currentRangeIndex].fDeadTime));
   668  3            
@@ -766,7 +766,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   723  2          if(msgCounterBDGP == 3){
   724  2            memcpy((uint8*)BDGPData.sensorsCnt,(uint8*)BDGPData.sensorsCntCopy,sizeof(uint16) * SENSORS);
   725  2            
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 13  
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 13  
 
   726  2            BDGPData.CanPackageEvent = 1;
   727  2          }*/
@@ -830,7 +830,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   783  1        float fNLMax = -100000;//FLT_MIN; //максимум сжатой функции
   784  1        float fNormizeKoef = 0.0f;  //коэффициент нормировки
   785  1        float fCountersSum = 0.0f;  //сумма счетов счётчиков БД за время движка
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 14  
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 14  
 
   786  1        float fLLSum = 0;
   787  1        
@@ -894,7 +894,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   845  6                  lIndex[i] = abs(-f + (90 * i));
   846  6                }
   847  5                else if((360 - f + 90 * i) < 181 )
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 15  
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 15  
 
   848  5                {
   849  6                  lIndex[i] = (360 - f + 90 * i);
@@ -958,7 +958,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   905  3              if(fLikelihoods[f] < fLHMin)
   906  3                fLHMin = fLikelihoods[f];
   907  3            //пересчитываем минимум
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 16  
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 16  
 
   908  3            fLHMin = pow(fLHMin, 1 + 8 * pow(fLHMin,8) );
   909  3              
@@ -1022,7 +1022,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
   965  4                  b = b + 8;  //8
   966  4                
   967  4                g++;
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 17  
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 17  
 
   968  4              }
   969  3              while(g<47);
@@ -1086,7 +1086,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
  1026  1        float cntMax = BDGP_MaxSumSensData();
  1027  1        
  1028  1        float *pAngleDiagramm;  
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 18  
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 18  
 
  1029  1      
  1030  1          pAngleDiagramm  = (float*)BDGP_DirectionDiagramm(BDGPData.fCorrectionSumSensData, SENSORS, cntMin,cntMax,
@@ -1150,7 +1150,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
  1082  2            if(!BDGPData.NuclideDetection){
  1083  3              BDGPData.NuclideDetection = 1;
  1084  3            
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 19  
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 19  
 
  1085  3              IMDB_NuclideDetectionSignalCallback();
  1086  3              
@@ -1214,7 +1214,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
  1140  3              sliderCounter++;
  1141  3            }
  1142  2            else
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 20  
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 20  
 
  1143  2            {
  1144  3              if(!BDGPData.QuerySuccess)  //накопили очереди МД и счетов
@@ -1278,7 +1278,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG
  1195  2              {
  1196  3                //если нет, то выводим усреднение по счётчику накоплени�
              -�
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 21  
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 21  
 
  1197  3                for(i = 0;i<sliderCounter;i++){
  1198  4                  BDGPData.averageDose += doseArray[i];
@@ -1342,7 +1342,7 @@ MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
   XHUGE-CONST SIZE =        1448     --------
   NEAR-DATA SIZE   =           5     --------
   FAR-DATA SIZE    =    --------     --------
-C166 COMPILER V7.53.0.0, BDGP                                                              12/14/2017 11:31:12 PAGE 22  
+C166 COMPILER V7.53.0.0, BDGP                                                              03/12/2018 15:40:24 PAGE 22  
 
   XHUGE-DATA SIZE  =        3668     --------
   IDATA-DATA SIZE  =    --------     --------

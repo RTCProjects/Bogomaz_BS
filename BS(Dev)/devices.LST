@@ -1,4 +1,4 @@
-C166 COMPILER V7.53.0.0, DEVICES                                                           12/14/2017 11:31:10 PAGE 1   
+C166 COMPILER V7.53.0.0, DEVICES                                                           03/12/2018 15:40:22 PAGE 1   
 
 
 C166 COMPILER V7.53.0.0, COMPILATION OF MODULE DEVICES
@@ -62,7 +62,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE devices.c XLARGE BROWSE MOD167 DE
    48  2        //  case CAN_BDSP_EMER_ALL_RX:  BDSP_InsertEmer(msg);   break;
    49  2          //спектрометр стабилизация
    50  2          case CAN_BDSP_EMER_CH1_RX:  BDSP_InsertCmd(0,msg);  break;
-C166 COMPILER V7.53.0.0, DEVICES                                                           12/14/2017 11:31:10 PAGE 2   
+C166 COMPILER V7.53.0.0, DEVICES                                                           03/12/2018 15:40:22 PAGE 2   
 
    51  2          case CAN_BDSP_EMER_CH2_RX:  BDSP_InsertCmd(1,msg);  break;
    52  2          case CAN_BDSP_EMER_CH3_RX:  BDSP_InsertCmd(2,msg);  break;
@@ -126,7 +126,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE devices.c XLARGE BROWSE MOD167 DE
   109         
   110                     specChannelIndex[channel]+=4;
   111                   }
-C166 COMPILER V7.53.0.0, DEVICES                                                           12/14/2017 11:31:10 PAGE 3   
+C166 COMPILER V7.53.0.0, DEVICES                                                           03/12/2018 15:40:22 PAGE 3   
 
   112         
   113                   if(specChannelIndex[channel] == 1024)
@@ -190,7 +190,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE devices.c XLARGE BROWSE MOD167 DE
   169             }
   170             
   171             BackgroundSpectr[channel].Index++;
-C166 COMPILER V7.53.0.0, DEVICES                                                           12/14/2017 11:31:10 PAGE 4   
+C166 COMPILER V7.53.0.0, DEVICES                                                           03/12/2018 15:40:22 PAGE 4   
 
   172             //IMDB_SendPacket(IMDB_OUTSIDE_DOSE_RATE,(uint8*)((uint32*)(&sum)),4);
   173           }
@@ -254,7 +254,7 @@ COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE devices.c XLARGE BROWSE MOD167 DE
   230           
   231           
   232           return pSumSpectr;
-C166 COMPILER V7.53.0.0, DEVICES                                                           12/14/2017 11:31:10 PAGE 5   
+C166 COMPILER V7.53.0.0, DEVICES                                                           03/12/2018 15:40:22 PAGE 5   
 
   233         }
   234         
