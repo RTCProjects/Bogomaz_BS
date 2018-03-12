@@ -1,0 +1,668 @@
+C166 COMPILER V7.53.0.0, CAN                                                               04/17/2017 11:10:30 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE CAN
+OBJECT MODULE PLACED IN can.OBJ
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE can.c XLARGE BROWSE MOD167 DEBUG TABS(2) 
+
+ stmt lvl     source
+
+    1         #include "can.h"
+    2         #include "settings.h"
+    3         #include "protocol.h"
+    4         #include "devices.h"
+    5         #include "system.h"
+    6         #include "bsl.h"
+    7         
+    8         #include "bdmg.h"
+    9         #include "bdgp.h"
+   10         #include "bdsp.h"
+   11         
+   12         #include "main.h"
+   13         
+   14         sbit CAN0IR = CAN_IC0^7;
+   15         
+   16         static uint8  txEnable = 0;
+   17         
+   18         
+   19         static tCanQueryMessages  canQuery;
+   20         /*
+   21         MO1 - 521
+   22         MO2 - 721
+   23         
+   24         MO3 - 280
+   25         MO4 - 722
+   26         MO5 - 723
+   27         
+   28         MO6 - 0x000 - 0x004
+   29         MO7 - 0x201
+   30         MO8 - 0x202
+   31         MO9 - 0x203
+   32         MO10 - 0x204
+   33         
+   34         */
+   35         
+   36         void CAN_Interrupt0() interrupt 0x54  
+   37         {
+   38  1        uint16 curIndex = canQuery.Counts - 1;
+   39  1        
+   40  1        txEnable = 1;
+   41  1        
+   42  1        if(canQuery.Counts > 0){
+   43  2          CAN_SendMessageIT(canQuery.Messages[0].CanID,canQuery.Messages[0].Data,canQuery.Messages[0].Length);
+   44  2      
+   45  2          memcpy((uint8*)&canQuery.Messages[0],(uint8*)&canQuery.Messages[1],sizeof(tCanSendMsg) * (CAN_TX_QUERY_S
+             -IZE - 1));
+   46  2          
+   47  2          canQuery.Counts--;
+   48  2          
+   49  2          if(canQuery.Counts == 0)
+   50  2            canQuery.QuerySending = 0;
+   51  2          
+   52  2        }
+   53  1      }
+   54         
+C166 COMPILER V7.53.0.0, CAN                                                               04/17/2017 11:10:30 PAGE 2   
+
+   55         void CAN_Interrupt1() interrupt 0x55    //индекс 521
+   56         {
+   57  1        /*uint16 regID = ((CAN_Message_16[1].MOARH >> 2) & 0x07FF);
+   58  1        uint8 msgData[8];
+   59  1      
+   60  1          *((uint16*)&msgData[0]) = CAN_Message_16[1].MODATALL;
+   61  1          *((uint16*)&msgData[2]) = CAN_Message_16[1].MODATALH;
+   62  1          *((uint16*)&msgData[4]) = CAN_Message_16[1].MODATAHL;
+   63  1          *((uint16*)&msgData[6]) = CAN_Message_16[1].MODATAHH;
+   64  1      
+   65  1        Devices_ReceiveMsgCallback(regID,msgData);
+   66  1        
+   67  1        
+   68  1        if(regID == 0x555)
+   69  1        {
+   70  1          if(msgData[0] == 0x09)
+   71  1          {
+   72  1            __asm
+   73  1            {
+   74  1              CALLS 04H 0E000H
+   75  1            }
+   76  1          }
+   77  1        }*/
+   78  1          uint8 msgData[8];
+   79  1      
+   80  1          *((uint16*)&msgData[0]) = CAN_Message_16[1].MODATALL;
+   81  1          *((uint16*)&msgData[2]) = CAN_Message_16[1].MODATALH;
+   82  1          *((uint16*)&msgData[4]) = CAN_Message_16[1].MODATAHL;
+   83  1          *((uint16*)&msgData[6]) = CAN_Message_16[1].MODATAHH;
+   84  1          
+   85  1          BDMG_InsertCmd(msgData);
+   86  1      }
+   87         
+   88         
+   89         void CAN_Interrupt2() interrupt 0x56      //721
+   90         {
+   91  1        uint8 msgData[8];
+   92  1      
+   93  1          *((uint16*)&msgData[0]) = CAN_Message_16[2].MODATALL;
+   94  1          *((uint16*)&msgData[2]) = CAN_Message_16[2].MODATALH;
+   95  1          *((uint16*)&msgData[4]) = CAN_Message_16[2].MODATAHL;
+   96  1          *((uint16*)&msgData[6]) = CAN_Message_16[2].MODATAHH;
+   97  1        
+   98  1        BDMG_InsertData(msgData);
+   99  1      }
+  100         
+  101         void CAN_Interrupt3() interrupt 0x57    //280
+  102         {
+  103  1        uint8 msgData[8];
+  104  1      
+  105  1          *((uint16*)&msgData[0]) = CAN_Message_16[3].MODATALL;
+  106  1          *((uint16*)&msgData[2]) = CAN_Message_16[3].MODATALH;
+  107  1          *((uint16*)&msgData[4]) = CAN_Message_16[3].MODATAHL;
+  108  1          *((uint16*)&msgData[6]) = CAN_Message_16[3].MODATAHH;
+  109  1        
+  110  1        BDGP_InsertCmd(msgData);
+  111  1      }
+  112         
+  113         void CAN_Interrupt4() interrupt 0x59    //723
+  114         {
+  115  1        uint8 msgData[8];
+  116  1        uint16 regID = ((CAN_Message_16[4].MOARH >> 2) & 0x07FF);
+C166 COMPILER V7.53.0.0, CAN                                                               04/17/2017 11:10:30 PAGE 3   
+
+  117  1        
+  118  1          *((uint16*)&msgData[0]) = CAN_Message_16[4].MODATALL;
+  119  1          *((uint16*)&msgData[2]) = CAN_Message_16[4].MODATALH;
+  120  1          *((uint16*)&msgData[4]) = CAN_Message_16[4].MODATAHL;
+  121  1          *((uint16*)&msgData[6]) = CAN_Message_16[4].MODATAHH;
+  122  1        
+  123  1        BDGP_InsertDataNew(regID,msgData);
+  124  1      }
+  125         
+  126         void CAN_Interrupt5() interrupt 0x5A    //724
+  127         {
+  128  1        uint8 msgData[8];
+  129  1        uint16 regID = ((CAN_Message_16[5].MOARH >> 2) & 0x07FF);
+  130  1        
+  131  1          *((uint16*)&msgData[0]) = CAN_Message_16[5].MODATALL;
+  132  1          *((uint16*)&msgData[2]) = CAN_Message_16[5].MODATALH;
+  133  1          *((uint16*)&msgData[4]) = CAN_Message_16[5].MODATAHL;
+  134  1          *((uint16*)&msgData[6]) = CAN_Message_16[5].MODATAHH;
+  135  1        
+  136  1        BDGP_InsertDataNew(regID,msgData);
+  137  1      }
+  138         
+  139         void CAN_Interrupt6() interrupt 0x5B    //000 - 004 
+  140         {
+  141  1        /*
+  142  1        
+  143  1        */
+  144  1        unsigned int far *pReprogWord = (unsigned int far *) 0x50000;
+  145  1        uint32 serialNumber = 0;
+  146  1        
+  147  1        
+  148  1        uint16 regID = ((CAN_Message_16[6].MOARH >> 2) & 0x07FF);
+  149  1        uint8 msgData[8];
+  150  1      
+  151  1          *((uint16*)&msgData[0]) = CAN_Message_16[6].MODATALL;
+  152  1          *((uint16*)&msgData[2]) = CAN_Message_16[6].MODATALH;
+  153  1          *((uint16*)&msgData[4]) = CAN_Message_16[6].MODATAHL;
+  154  1          *((uint16*)&msgData[6]) = CAN_Message_16[6].MODATAHH;
+  155  1        
+  156  1        //тестовый код для запуска загрузчика
+  157  1        if(regID == 0x000){
+  158  2          if(msgData[0] == 0xD2 && msgData[1] == 0x2D && msgData[2] == 0x00 && msgData[3] == 0x00 &&
+  159  2             msgData[4] == 0xFF && msgData[5] == 0xFF && msgData[6] == 0xFF && msgData[7] == 0xFF)
+  160  2            {
+  161  3              //на запрос серийного номера, отправим серийный номер те
+             -кущего устройства
+  162  3              memcpy(msgData + 4,(uint32*)&SerialNumberBD,4);
+  163  3              //аппаратный номер блока
+  164  3              msgData[3] = DEVICE_NUMBER;
+  165  3              
+  166  3              CAN_SendMessage(0x000,msgData,8);
+  167  3              /*__asm
+  168  3              {
+  169  3                PUSH R2
+  170  3                MOV R2 #1234H
+  171  3                EXTS #05H #1H
+  172  3                MOV 0000H R2
+  173  3                POP R2
+  174  3                
+  175  3                SRST
+  176  3              }*/
+  177  3            }
+C166 COMPILER V7.53.0.0, CAN                                                               04/17/2017 11:10:30 PAGE 4   
+
+  178  2          if(msgData[0] == 0xD3 && msgData[1] == 0x3D && msgData[2] == 0x00){
+  179  3            memcpy((uint32*)&serialNumber,(uint8*)msgData + 4,4);
+  180  3            
+  181  3            //проверяем соответствие серийного номера и аппаратного
+  182  3            if(serialNumber == SerialNumberBD && msgData[3] == DEVICE_NUMBER)
+  183  3            {
+  184  4              *pReprogWord = 0x1234;
+  185  4              
+  186  4              __asm {SRST};
+  187  4            }
+  188  3            /*
+  189  3            msgData[3] - SubIndex
+  190  3            msgData[4 - 7] - SerialNumber
+  191  3            */
+  192  3          }
+  193  2        }
+  194  1        
+  195  1        BDSP_InsertCmd(regID,msgData);
+  196  1      }
+  197         
+  198         void CAN_Interrupt7() interrupt 0x5C    //201
+  199         {
+  200  1        uint16 regID = ((CAN_Message_16[7].MOARH >> 2) & 0x07FF) - 1;
+  201  1        
+  202  1          uint8 msgData[8];
+  203  1      
+  204  1          *((uint16*)&msgData[0]) = CAN_Message_16[7].MODATALL;
+  205  1          *((uint16*)&msgData[2]) = CAN_Message_16[7].MODATALH;
+  206  1          *((uint16*)&msgData[4]) = CAN_Message_16[7].MODATAHL;
+  207  1          *((uint16*)&msgData[6]) = CAN_Message_16[7].MODATAHH;
+  208  1        
+  209  1        //BDSP_InsertData(regID & 0xF,msgData);
+  210  1        BDSP_InsertData(0,msgData);
+  211  1      }
+  212         
+  213         void CAN_Interrupt8() interrupt 0x60    //202
+  214         {
+  215  1          uint8 msgData[8];
+  216  1      
+  217  1          *((uint16*)&msgData[0]) = CAN_Message_16[8].MODATALL;
+  218  1          *((uint16*)&msgData[2]) = CAN_Message_16[8].MODATALH;
+  219  1          *((uint16*)&msgData[4]) = CAN_Message_16[8].MODATAHL;
+  220  1          *((uint16*)&msgData[6]) = CAN_Message_16[8].MODATAHH;
+  221  1        
+  222  1        BDSP_InsertData(1,msgData);
+  223  1      }
+  224         
+  225         void CAN_Interrupt9() interrupt 0x61    //203 
+  226         {
+  227  1          uint8 msgData[8];
+  228  1      
+  229  1          *((uint16*)&msgData[0]) = CAN_Message_16[9].MODATALL;
+  230  1          *((uint16*)&msgData[2]) = CAN_Message_16[9].MODATALH;
+  231  1          *((uint16*)&msgData[4]) = CAN_Message_16[9].MODATAHL;
+  232  1          *((uint16*)&msgData[6]) = CAN_Message_16[9].MODATAHH;
+  233  1        
+  234  1        BDSP_InsertData(2,msgData);
+  235  1      }
+  236         
+  237         void CAN_Interrupt10() interrupt 0x62  //204
+  238         {
+  239  1        uint8 msgData[8];
+C166 COMPILER V7.53.0.0, CAN                                                               04/17/2017 11:10:30 PAGE 5   
+
+  240  1      
+  241  1          *((uint16*)&msgData[0]) = CAN_Message_16[10].MODATALL;
+  242  1          *((uint16*)&msgData[2]) = CAN_Message_16[10].MODATALH;
+  243  1          *((uint16*)&msgData[4]) = CAN_Message_16[10].MODATAHL;
+  244  1          *((uint16*)&msgData[6]) = CAN_Message_16[10].MODATAHH;
+  245  1        
+  246  1        BDSP_InsertData(3,msgData);
+  247  1      }
+  248         
+  249         void CAN_Interrupt11() interrupt 0x63 //0x422 - 0x424
+  250         {
+  251  1        uint8 msgData[8];
+  252  1        uint16 regID = ((CAN_Message_16[11].MOARH >> 2) & 0x07FF);
+  253  1        
+  254  1          *((uint16*)&msgData[0]) = CAN_Message_16[11].MODATALL;
+  255  1          *((uint16*)&msgData[2]) = CAN_Message_16[11].MODATALH;
+  256  1          *((uint16*)&msgData[4]) = CAN_Message_16[11].MODATAHL;
+  257  1          *((uint16*)&msgData[6]) = CAN_Message_16[11].MODATAHH;
+  258  1        
+  259  1        BDGP_InsertParametrs(regID,msgData);
+  260  1      }
+  261         
+  262         
+  263         
+  264          
+  265         void CAN_Init()
+  266         {
+  267  1        memset((uint8*)&canQuery,0,sizeof(tCanQueryMessages));
+  268  1        
+  269  1        txEnable = 1;
+  270  1      
+  271  1        DP9 = 0x0008;
+  272  1        ALTSEL0P9 = 0x0008;
+  273  1        ALTSEL1P9 = 0x0008;
+  274  1        
+  275  1        
+  276  1        CAN_IC0 = 0x0074; //72Xh  - TX
+  277  1        
+  278  1        CAN_IC1 = 0x005C; //00Xh
+  279  1        CAN_IC2 = 0x0060; //20Xh
+  280  1        
+  281  1        CAN_IC3 = 0x0061; //20Xh
+  282  1        CAN_IC4 = 0x005D; //20Xh
+  283  1        CAN_IC5 = 0x0059; //20Xh
+  284  1        
+  285  1        CAN_IC6 = 0x0062; //20Xh
+  286  1        CAN_IC7 = 0x0070; //20Xh
+  287  1        CAN_IC8 = 0x0071; //20Xh
+  288  1        CAN_IC9 = 0x0072; //20Xh
+  289  1        CAN_IC10 = 0x0073;  //20Xh
+  290  1        CAN_IC11 = 0x006F;  
+  291  1      
+  292  1        NCR0  = 0x0041;   //разрешаем вносить изменения в конфигурацию
+  293  1        NPCR0 = 0x0003;   //Выбрали P9.2 для приема в CAN узел 0
+  294  1        NBTR0 = 0x2344;   //скорость узла 500kb/sec при тактировании 16Мгц
+  295  1        NCR0  = 0x0000;   //Запрет после реконфигурации
+  296  1        
+  297  1        /*
+  298  1          Список областей сообщений
+  299  1        
+  300  1          На приём
+  301  1            3. 00Хh - аварийное сообщение для CAN
+C166 COMPILER V7.53.0.0, CAN                                                               04/17/2017 11:10:30 PAGE 6   
+
+  302  1            2. 20Хh - сообщение с данными от БДГП-С
+  303  1          На передачу
+  304  1            1. 000 - CAN сообщение с настраиваемым ID
+  305  1            2. 722 - данные (прерывание)
+  306  1            3. 280 - передача старт/стоп
+  307  1        */
+  308  1        //передача
+  309  1        //000 - универсальный вар.
+  310  1        CAN_Message_16[0].MOCTRH = 0x0E08;
+  311  1        CAN_Message_16[0].MOCTRL = 0x0000;
+  312  1        CAN_Message_16[0].MOIPRL = 0x0000;  /*выбор линии прерываний для передачи -
+             - 0*/
+  313  1        CAN_Message_16[0].MOFCRH = 0x0802; // DLC = 8, запретить прерывание на переда
+             -чу 
+  314  1         
+  315  1        
+  316  1        //000 - универсальный приём
+  317  1        /*CAN_Message_16[1].MOCTRH = 0x0080;
+  318  1        CAN_Message_16[1].MOCTRL = 0x0000;
+  319  1        CAN_Message_16[1].MOIPRL = 0x0001;  // выбор линии прерываний по приему - 1
+  320  1        CAN_Message_16[1].MOFCRH = 0x0801;  // разрешить прерывание на прием*/
+  321  1        
+  322  1        //CAN_Message_16[1].MOFCRL = 0x0001;  //выбор FIFO приёма
+  323  1        //CAN_Message_16[1].MOFGPRH = 0x0001;
+  324  1        //CAN_Message_16[1].MOFGPRL = 0x0802;
+  325  1        
+  326  1        
+  327  1      
+  328  1        CAN_Message_16[1].MOCTRH = 0x0080;
+  329  1        CAN_Message_16[1].MOCTRL = 0x0000;
+  330  1        CAN_Message_16[1].MOIPRL = 0x0001;  //выбор линии прерываний для приему - 1
+  331  1        CAN_Message_16[1].MOFCRH = 0x0801; // DLC = 8, разрешить прерывание на прием 
+  332  1        
+  333  1        CAN_Message_16[2].MOCTRH = 0x0080;
+  334  1        CAN_Message_16[2].MOCTRL = 0x0000;
+  335  1        CAN_Message_16[2].MOIPRL = 0x0002;  //выбор линии прерываний для приему - 2
+  336  1        CAN_Message_16[2].MOFCRH = 0x0801; // DLC = 8, разрешить прерывание на прием 
+  337  1        
+  338  1        CAN_Message_16[3].MOCTRH = 0x0080;
+  339  1        CAN_Message_16[3].MOCTRL = 0x0000;
+  340  1        CAN_Message_16[3].MOIPRL = 0x0003;  //выбор линии прерываний для приему - 3
+  341  1        CAN_Message_16[3].MOFCRH = 0x0801; // DLC = 8, разрешить прерывание на прием 
+  342  1        
+  343  1        CAN_Message_16[4].MOCTRH = 0x0080;
+  344  1        CAN_Message_16[4].MOCTRL = 0x0000;
+  345  1        CAN_Message_16[4].MOIPRL = 0x0004;  //выбор линии прерываний для приему - 1
+  346  1        CAN_Message_16[4].MOFCRH = 0x0801; // DLC = 8, разрешить прерывание на прием 
+  347  1        
+  348  1        CAN_Message_16[5].MOCTRH = 0x0080;
+  349  1        CAN_Message_16[5].MOCTRL = 0x0000;
+  350  1        CAN_Message_16[5].MOIPRL = 0x0005;  //выбор линии прерываний для приему - 1
+  351  1        CAN_Message_16[5].MOFCRH = 0x0801; // DLC = 8, разрешить прерывание на прием 
+  352  1        
+  353  1        CAN_Message_16[6].MOCTRH = 0x0080;
+  354  1        CAN_Message_16[6].MOCTRL = 0x0000;
+  355  1        CAN_Message_16[6].MOIPRL = 0x0006;  //выбор линии прерываний для приему - 1
+  356  1        CAN_Message_16[6].MOFCRH = 0x0801; // DLC = 8, разрешить прерывание на прием 
+  357  1        
+  358  1        CAN_Message_16[7].MOCTRH = 0x0080;
+  359  1        CAN_Message_16[7].MOCTRL = 0x0000;
+  360  1        CAN_Message_16[7].MOIPRL = 0x0007;  //выбор линии прерываний для приему - 1
+  361  1        CAN_Message_16[7].MOFCRH = 0x0801; // DLC = 8, разрешить прерывание на прием 
+C166 COMPILER V7.53.0.0, CAN                                                               04/17/2017 11:10:30 PAGE 7   
+
+  362  1        
+  363  1        CAN_Message_16[8].MOCTRH = 0x0080;
+  364  1        CAN_Message_16[8].MOCTRL = 0x0000;
+  365  1        CAN_Message_16[8].MOIPRL = 0x0008;  //выбор линии прерываний для приему - 1
+  366  1        CAN_Message_16[8].MOFCRH = 0x0801; // DLC = 8, разрешить прерывание на прием 
+  367  1        
+  368  1        CAN_Message_16[9].MOCTRH = 0x0080;
+  369  1        CAN_Message_16[9].MOCTRL = 0x0000;
+  370  1        CAN_Message_16[9].MOIPRL = 0x0009;  //выбор линии прерываний для приему - 1
+  371  1        CAN_Message_16[9].MOFCRH = 0x0801; // DLC = 8, разрешить прерывание на прием 
+  372  1        
+  373  1        CAN_Message_16[10].MOCTRH = 0x0080;
+  374  1        CAN_Message_16[10].MOCTRL = 0x0000;
+  375  1        CAN_Message_16[10].MOIPRL = 0x000A; //выбор линии прерываний для приему - 1
+  376  1        CAN_Message_16[10].MOFCRH = 0x0801; // DLC = 8, разрешить прерывание на прием 
+  377  1        
+  378  1        //параметры БДГП-Б
+  379  1        CAN_Message_16[11].MOCTRH = 0x0080;
+  380  1        CAN_Message_16[11].MOCTRL = 0x0000;
+  381  1        CAN_Message_16[11].MOIPRL = 0x000B; //выбор линии прерываний для приему - 1
+  382  1        CAN_Message_16[11].MOFCRH = 0x0801; // DLC = 8, разрешить прерывание на прием 
+  383  1      /*
+  384  1        //00X
+  385  1        CAN_Message_16[3].MOCTRH = 0x0080;
+  386  1        CAN_Message_16[3].MOCTRL = 0x0000;
+  387  1        CAN_Message_16[3].MOIPRL = 0x0001;  //выбор линии прерываний по приему - 1
+  388  1        CAN_Message_16[3].MOFCRH = 0x0800;  //запретить прерываение на прием
+  389  1        
+  390  1        //20X
+  391  1        CAN_Message_16[4].MOCTRH = 0x0080;
+  392  1        CAN_Message_16[4].MOCTRL = 0x0000;
+  393  1        CAN_Message_16[4].MOIPRL = 0x0002;  // выбор линии прерываний по приему - 2
+  394  1        CAN_Message_16[4].MOFCRH = 0x0800;  //запретить прерываение на прием
+  395  1         */ 
+  396  1        System_Delay(10);
+  397  1        
+  398  1        CAN_Message_16[0].MOARH = 0x8000;  // идентификатор 000(XXX)h - динамически ИД
+  399  1        CAN_Message_16[0].MOAMRH = 0x3FFF; // маска идентификатора 
+  400  1          //БДМГ
+  401  1        CAN_Message_16[1].MOARH = 0x9484;  // 0x8000 идентификатор 521(XXX)h - динамическ�
+             -� ИД
+  402  1        CAN_Message_16[1].MOAMRH = 0x3FFF;// 0x2000; // маска идентификатора   
+  403  1        
+  404  1        CAN_Message_16[2].MOARH = 0x9C84;  // идентификатор 721
+  405  1        CAN_Message_16[2].MOAMRH = 0x3FFF; // маска идентификатора 
+  406  1          //БДГП
+  407  1        CAN_Message_16[3].MOARH = 0x8A00;  // идентификатор 280
+  408  1        CAN_Message_16[3].MOAMRH = 0x3FFF; // маска идентификатора 
+  409  1      
+  410  1        CAN_Message_16[4].MOARH = 0x9C8C;  // идентификатор 723
+  411  1        CAN_Message_16[4].MOAMRH = 0x3FFF; // маска идентификатора 
+  412  1        
+  413  1        CAN_Message_16[5].MOARH = 0x9C90;  // идентификатор 724
+  414  1        CAN_Message_16[5].MOAMRH = 0x3FFF; // маска идентификатора 
+  415  1          //БДГП-С
+  416  1        CAN_Message_16[6].MOARH = 0x8000;  // идентификатор 000 - 004
+  417  1        CAN_Message_16[6].MOAMRH = 0x3FE3; // маска идентификатора 
+  418  1        
+  419  1        CAN_Message_16[7].MOARH = 0x8804;  // идентификатор 200 - 204
+  420  1        CAN_Message_16[7].MOAMRH = 0x3FFF; // маска идентификатора 
+  421  1        
+  422  1        CAN_Message_16[8].MOARH = 0x8808;  // идентификатор 202
+C166 COMPILER V7.53.0.0, CAN                                                               04/17/2017 11:10:30 PAGE 8   
+
+  423  1        CAN_Message_16[8].MOAMRH = 0x3FFF; // маска идентификатора 
+  424  1        
+  425  1        CAN_Message_16[9].MOARH = 0x880C;  // идентификатор 203
+  426  1        CAN_Message_16[9].MOAMRH = 0x3FFF; // маска идентификатора 
+  427  1        
+  428  1        CAN_Message_16[10].MOARH = 0x8810;   // идентификатор 204
+  429  1        CAN_Message_16[10].MOAMRH = 0x3FFF; //  маска идентификатора 
+  430  1        
+  431  1        CAN_Message_16[11].MOARH = 0x9080;   // идентификатор 420 - 424
+  432  1        CAN_Message_16[11].MOAMRH = 0x3FE3; //  маска идентификатора 
+  433  1        
+  434  1        
+  435  1        
+  436  1      /*  
+  437  1        CAN_Message_16[3].MOARH = 0x9480;  // идентификатор 300h
+  438  1        CAN_Message_16[3].MOAMRH = 0x3FE3; // маска идентификатора (00X, где X - 0,1,2,3,4
+             -)
+  439  1        
+  440  1        CAN_Message_16[4].MOARH = 0x8800;  // идентификатор 20Xh (00X, где X - 0,1,2,3,4)
+  441  1        CAN_Message_16[4].MOAMRH = 0x3FE3; // маска идентификатора 
+  442  1      */
+  443  1        System_Delay(10);
+  444  1        
+  445  1        PANCTR_H = 0x0100;         // message object 0 -> List 1
+  446  1        PANCTR = 0x0002;           
+  447  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_();
+  448  1         
+  449  1         
+  450  1        PANCTR_H = 0x0101;         // message object 1 -> List 1
+  451  1        PANCTR = 0x0002;             
+  452  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); 
+  453  1         
+  454  1         
+  455  1        PANCTR_H = 0x0102;         // message object 2 -> List 1
+  456  1        PANCTR = 0x0002;             
+  457  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); 
+  458  1      
+  459  1        PANCTR_H = 0x0103;         // message object 2 -> List 1
+  460  1        PANCTR = 0x0002;             
+  461  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); 
+  462  1         
+  463  1        PANCTR_H = 0x0104;         // message object 2 -> List 1
+  464  1        PANCTR = 0x0002;             
+  465  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); 
+  466  1         
+  467  1        PANCTR_H = 0x0105;         // message object 2 -> List 1
+  468  1        PANCTR = 0x0002;             
+  469  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); 
+  470  1      
+  471  1        PANCTR_H = 0x0106;         // message object 2 -> List 1
+  472  1        PANCTR = 0x0002;             
+  473  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); 
+  474  1         
+  475  1        PANCTR_H = 0x0107;         // message object 2 -> List 1
+  476  1        PANCTR = 0x0002;             
+  477  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); 
+  478  1         
+  479  1        PANCTR_H = 0x0108;         // message object 2 -> List 1
+  480  1        PANCTR = 0x0002;             
+  481  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); 
+  482  1         
+  483  1        PANCTR_H = 0x0109;         // message object 2 -> List 1
+C166 COMPILER V7.53.0.0, CAN                                                               04/17/2017 11:10:30 PAGE 9   
+
+  484  1        PANCTR = 0x0002;             
+  485  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); 
+  486  1         
+  487  1        PANCTR_H = 0x010A;         // message object 2 -> List 1
+  488  1        PANCTR = 0x0002;             
+  489  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); 
+  490  1         
+  491  1         
+  492  1        PANCTR_H = 0x010B;         // message object 2 -> List 1
+  493  1        PANCTR = 0x0002;             
+  494  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); 
+  495  1         
+  496  1          
+  497  1      
+  498  1        CAN_Message_16[0].MOCTRH = 0x0020; 
+  499  1        CAN_Message_16[0].MOCTRL = 0x0000;
+  500  1        
+  501  1        CAN_Message_16[1].MOCTRH = 0x0020; 
+  502  1        CAN_Message_16[1].MOCTRL = 0x0000;
+  503  1      
+  504  1        CAN_Message_16[2].MOCTRH = 0x0020; 
+  505  1        CAN_Message_16[2].MOCTRL = 0x0000;
+  506  1        
+  507  1        
+  508  1        CAN_Message_16[3].MOCTRH = 0x0020; 
+  509  1        CAN_Message_16[3].MOCTRL = 0x0000;
+  510  1        
+  511  1        CAN_Message_16[4].MOCTRH = 0x0020; 
+  512  1        CAN_Message_16[4].MOCTRL = 0x0000;
+  513  1      
+  514  1        CAN_Message_16[5].MOCTRH = 0x0020; 
+  515  1        CAN_Message_16[5].MOCTRL = 0x0000;
+  516  1        
+  517  1        CAN_Message_16[6].MOCTRH = 0x0020; 
+  518  1        CAN_Message_16[6].MOCTRL = 0x0000;
+  519  1        
+  520  1        CAN_Message_16[7].MOCTRH = 0x0020; 
+  521  1        CAN_Message_16[7].MOCTRL = 0x0000;
+  522  1        
+  523  1        CAN_Message_16[8].MOCTRH = 0x0020; 
+  524  1        CAN_Message_16[8].MOCTRL = 0x0000;
+  525  1        
+  526  1        CAN_Message_16[9].MOCTRH = 0x0020; 
+  527  1        CAN_Message_16[9].MOCTRL = 0x0000;
+  528  1        
+  529  1        CAN_Message_16[10].MOCTRH = 0x0020; 
+  530  1        CAN_Message_16[10].MOCTRL = 0x0000;
+  531  1        
+  532  1        CAN_Message_16[11].MOCTRH = 0x0020; 
+  533  1        CAN_Message_16[11].MOCTRL = 0x0000;
+  534  1        
+  535  1        
+  536  1        
+  537  1      /*  
+  538  1        CAN_Message_16[3].MOCTRH = 0x0020; 
+  539  1        CAN_Message_16[3].MOCTRL = 0x0000;
+  540  1        
+  541  1        CAN_Message_16[4].MOCTRH = 0x0020; 
+  542  1        CAN_Message_16[4].MOCTRL = 0x0000;  
+  543  1      */  
+  544  1      }
+  545         void CAN_Process()
+C166 COMPILER V7.53.0.0, CAN                                                               04/17/2017 11:10:30 PAGE 10  
+
+  546         {
+  547  1        //если в очереди есть элементы
+  548  1        if(canQuery.Counts > 0)
+  549  1        {
+  550  2          if(canQuery.QuerySending == 0){
+  551  3            canQuery.QuerySending = 1;
+  552  3            CAN0IR = 1;
+  553  3          }
+  554  2        }
+  555  1      }
+  556         
+  557         void CAN_SendMessage(uint16 id,uint8 *pData,uint8 Len)
+  558         {
+  559  1        uint16  curIndex = canQuery.Counts;
+  560  1        
+  561  1        canQuery.Messages[curIndex].CanID = id;
+  562  1        canQuery.Messages[curIndex].Length = Len;
+  563  1          memcpy(canQuery.Messages[curIndex].Data,pData,sizeof(uint8) * 8);
+  564  1        
+  565  1        canQuery.Counts++;
+  566  1        
+  567  1        
+  568  1      }
+  569         
+  570         void CAN_SendMessageIT(uint16 id,uint8 *pData,uint8 Len)
+  571         { 
+  572  1        
+  573  1        uint8 *moData = 0;
+  574  1        uint8 index = 0;
+  575  1      
+  576  1        CAN_Message_16[0].MOFCRH &= 0xF0FF;
+  577  1        CAN_Message_16[0].MOFCRH |= (uint16) (Len<<8);
+  578  1        
+  579  1        CAN_Message_16[0].MOARH &= 0x8000;
+  580  1        CAN_Message_16[0].MOARH |= (uint16)(id<<2);
+  581  1        
+  582  1        
+  583  1        moData = (uint8*)&CAN_Message_16[0].MODATALL;
+  584  1        
+  585  1        for(index = 0;index<Len;index++)
+  586  1        {
+  587  2          *(moData + (index)) = *(pData + index);
+  588  2        }
+  589  1        
+  590  1        txEnable = 0;
+  591  1      
+  592  1        CAN_Message_16[0].MOCTRH = 0x0100;  
+  593  1        
+  594  1      }
+  595         /*
+  596         void CAN_SendProtocolData(uint8 moNubmer,uint8  *pData, int packSize)
+  597         {
+  598           int msgCnt = packSize / 8;
+  599           int lastMsgSize = packSize % 8;
+  600           int i,j = 0;
+  601           
+  602           uint8 arrData[8];
+  603           
+  604           for(i = 0;i < msgCnt;i++)
+  605           {
+  606             for(j = 0;j<8;j++)
+  607               arrData[j] = *(pData + j + (i*8));
+C166 COMPILER V7.53.0.0, CAN                                                               04/17/2017 11:10:30 PAGE 11  
+
+  608             
+  609             CAN_SendMessage(moNubmer,arrData,8);
+  610           }
+  611         }
+  612         */
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =        3418     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           1     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =        1204     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =           6     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

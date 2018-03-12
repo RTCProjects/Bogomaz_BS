@@ -1,0 +1,552 @@
+$INCLUDE (REG167.INC) 
+
+ASSUME  DPP1 : NCONST         ; DPP1 addresses the NCONST group
+ASSUME  DPP2 : NDATA          ; DPP2 addresses the NDATA  group
+ASSUME  DPP3 : SYSTEM         ; DPP3 addresses the SYSTEM page
+
+;MO14 - передача
+;	LL - EDD0
+;	LH - EDD2
+;	HL - EDD4
+;	HH - EDD6
+;MO15 - приём
+;	LL - EDF0
+;	LH - EDF2
+;	HL - EDF4
+;	HH - EDF6
+BSLVER	EQU		#0101H
+
+CAN15IC        	EQU		0F14CH
+CAN14IC        	EQU		0F14EH
+
+;----SERIAL NUMBERS----
+
+BSLInterrupt SECTION CODE AT 04F000h
+
+	CANInterrupt PROC  INTERRUPT = 0x67
+		;приём сообщений от программы прошивальщика
+		
+		;PUSH     R4
+		;MOV      R4,#0x0100
+		;MOV      0EDDEH,R4
+		;POP      R4
+ 
+		;CALL Start
+	
+		
+			MOV R4 	0EDF0H
+			CMP RL4 #10H	;приём команды проверки связи с загрузчиком 0x10
+			JMPR cc_NZ Cmd1
+				
+				MOV R4 #0110H
+				MOV R5 0F00CH
+				MOV R6 #BSLVER
+				MOV R7 ZEROS
+				
+				CALL SendMesssage
+				JMP Exit
+			
+			Cmd1:
+			CMP RL4 #11H	;приём команды запуска загрузчика
+			JMPR cc_NZ Cmd2
+				CALL Start
+				
+				JMP Exit
+			Cmd2:
+			CMP RL4 #12H	;команда стирания флеш
+			JMPR cc_NZ Cmd3
+				MOV R4 0EDF0H	;код команды + номер блока
+				MOV R5 0EDF2H	;смещение блока
+				
+				SHR R4 #8
+				
+				MOV R9 R4
+				MOV R8 R5
+					CALL EraseBlock	;вызываем стирание
+					CALL FSRControl	;вызываем ожидание
+				;отправили успех
+				MOV R4 #0x0112
+				MOV R5 ZEROS
+				MOV R6 ZEROS
+				MOV R7 ZEROS
+				CALL SendMesssage
+				JMP Exit
+			Cmd3:
+			CMP RL4 #15H	;команда записи во FLASH
+			JMPR cc_NZ Cmd4
+				MOV R10 0EDF4H	;DATA
+				MOV R9	0EDF0H	;
+				SHR	R9	#8		;HI
+				MOV R8	0EDF2H	;LO
+				;тут запись
+				;тут ожидание
+				CALL WriteWord
+				CALL FSRControl
+				
+				;читаем то, что записали
+				MOV R9 0EDF0H
+				SHR	R9 #8
+				MOV R8 0EDF2H
+				
+				EXTS R9 #1
+				MOV R10 [R8]
+				ADD CC30 R10
+				
+				
+				
+				;отправили успех
+				MOV R4 #0x0115
+				MOV R5 ZEROS
+				MOV R6 ZEROS
+				MOV R7 ZEROS
+				CALL SendMesssage
+				JMP Exit
+			Cmd4:
+			CMP RL4 #16H	;отправим контрольную сумму
+			JMPR cc_NZ Cmd5
+				MOV R4 #0x0116
+				MOV R5 CC30
+				MOV R6 ZEROS
+				MOV R7 ZEROS
+				CALL SendMesssage
+			Cmd5:	
+			CMP RL4 #17H
+			JMPR cc_NZ Exit
+				SRST	; перезагружаемся
+				
+				
+				JMP Exit 
+		Exit:
+
+		RETI
+	CANInterrupt ENDP
+BSLInterrupt ENDS
+
+
+
+BSLSection SECTION CODE AT 04E000h
+	Loader PROC FAR
+		MOV 	 R4 #0x0068
+	    MOV      0F14EH, R4
+		;отключаем прерывания по CAN
+		MOV 	 R4,#0x0000
+		MOV		 0F128H R4
+		MOV		 0F12AH R4
+		MOV		 0F12CH R4
+		MOV		 0F12EH R4
+		MOV		 0F132H R4
+		MOV		 0F134H R4
+		MOV		 0F136H R4
+		MOV		 0F138H R4
+		MOV		 0F140H R4
+		MOV		 0F142H R4
+		MOV		 0F144H R4
+		MOV		 0F146H R4
+		MOV		 0F148H R4
+		MOV		 0F14AH R4
+		MOV		 0F14CH R4
+		;отключаем прерывания таймеров
+		MOV		 0FF9CH R4
+		MOV		 0FF9EH	R4
+		MOV		 0F17AH R4
+		MOV		 0F17CH	R4
+		MOV		 0FF60H R4
+		MOV		 0FF62H R4
+		MOV		 0FF64H R4
+		MOV		 0FF66H R4
+		MOV		 0FF68H R4
+
+
+		MOV      R4,#0x0E08
+		MOV      0EDDEH,R4
+		MOV      R4,#0x00
+		MOV      0EDDCH,R4
+		MOV      R4,#0x0800
+		MOV      0EDC2H,R4
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		MOV      R4,#0x0080
+		MOV      0EDFEH,R4
+		MOV      R4,#0x00
+		MOV      0EDFCH,R4
+		MOV      R4,#0x0F
+		MOV      0EDE8H,R4
+		MOV      R4,#0x0801
+		MOV      0EDE2H,R4
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		MOV      R4,#0x9558
+		MOV      0EDDAH,R4
+		MOV      R4,#0x3FFF
+		MOV      0EDCEH,R4
+		MOV      R4,#0x9554
+		MOV      0EDFAH,R4
+		MOV      R4,#0x3FFF
+		MOV      0EDEEH,R4
+
+		
+		
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		MOV      R4,#0x010E
+		MOV      0E9C6H,R4
+		MOV      R4,#0x02
+		MOV      R5,#0x00
+		MOV      0E9C4H,R4
+		MOV      0E9C6H,R5
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		MOV      R4,#0x010F
+		MOV      0E9C6H,R4
+		MOV      R4,#0x02
+		MOV      R5,#0x00
+		MOV      0E9C4H,R4
+		MOV      0E9C6H,R5
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		MOV      R4,#0x0020
+		MOV      0EDDEH,R4
+		MOV      R4,#0x00
+		MOV      0EDDCH,R4
+		MOV      R4,#0x0020
+		MOV      0EDFEH,R4
+		MOV      R4,#0x00
+		MOV      0EDFCH,R4
+
+		;MOV	 R4 #0x3FFF
+		;MOV     0EC2EH,R4
+		BSET IEN
+				;успешно загрузились
+				MOV R4 #0x0109
+				MOV R5 ZEROS
+				MOV R6 ZEROS
+				MOV R7 ZEROS
+				CALL SendMesssage
+		
+					
+		L1:
+		JMP L1
+		
+		RETS
+	Loader ENDP
+		
+
+		
+	Start PROC FAR
+		;0 обнуляем счётчик СRC
+		MOV CC30 ZEROS
+		MOV CC31 ZEROS
+			
+		;1 стираем первый блок 8КБ
+		MOV R8 #0000H
+		MOV R9 #0H
+		
+		CALL EraseBlock
+		CALL FSRControl
+		
+		;04F000H - адрес прерывания CAN15IC
+		
+		;2 записываем 4 байта новый вектор прерывания на приём CAN сообщений
+		MOV R8 #019CH		;адрес СAN15IC первые 2 байта
+		MOV R9 #0H			;номер сегмента = 0 т.к. таблица прерываний в 0 сегменте
+		MOV R10 #004FAH		;первые два байта данных вектора прерываний
+		
+		CALL WriteWord
+		CALL FSRControl
+		
+		MOV R8 #019EH		;адрес СAN15IC вторые 2 байта
+		MOV R10 #0F000H		;адрес внутри сегмента, на CAN15IC
+		
+		CALL WriteWord
+		CALL FSRControl
+		;3 отсылаем готовность к приёму данных прошивки
+			MOV R4 #0111H
+			MOV R5 ZEROS
+			MOV R6 ZEROS
+			MOV R7 ZEROS
+				
+			CALL SendMesssage
+				
+		RETS
+	Start ENDP
+	
+	;R4
+	;R5
+	;R6
+	;R7
+	SendMesssage PROC FAR
+
+		MOV		0EDD0H R4
+		NOP
+		MOV		0EDD2H R5
+		NOP
+		MOV		0EDD4H R6
+		NOP
+		MOV		0EDD6H R7
+		
+		
+		MOV      R4,#0x0100
+		MOV      0EDDEH,R4
+		
+
+		
+		RETS
+	SendMesssage ENDP
+	
+	;R8 - low 16bit
+	;R9 - hi 8 bit
+	EraseBlock PROC FAR
+	   MOV      R4,#0x0554
+	   MOV      R5,#0x0020
+       MOV      R10,R4
+       MOV      R11,R5
+       
+	   MOV      R4,#0x0AAA
+       MOV      R2,R4
+       MOV      R3,R5
+
+       MOV      R4,R8
+       MOV      R5,R9
+       ADD      R4,R4
+       ADDC     R5,R5
+       ADD      R4,R4
+       ADDC     R5,R5
+       SHR      R4,#0x02
+
+       MOV      R6,#0xAA00
+       EXTP     #0x0020,#1
+       MOV      [R10],R6
+
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+
+        
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+
+       MOV      R6,#0x0055
+       EXTP     R3,#1
+       MOV      [R2],R6
+
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+
+                 
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+
+	   MOV      R6,#0x8000
+       EXTP     R11,#1
+       MOV      [R10],R6
+
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+
+             
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+   
+	   MOV      R6,#0xAA00
+       EXTP     R11,#1
+       MOV      [R10],R6
+     
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+        
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+   
+	   MOV      R6,#0x0055
+       EXTP     R3,#1
+       MOV      [R2],R6
+    
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+         
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+   
+	   MOV      R6,#0x0050
+       EXTP     R5,#1
+       MOV      [R4],R6
+
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+    
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+    
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+    
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+    
+       NOP      
+       NOP      
+       NOP      
+       NOP      
+    
+       RETS    
+	EraseBlock ENDP
+	
+	FSRControl PROC FAR
+		SUB      R0,#2
+		MOV      R4,#0x3000
+		MOV      R5,#0x0023
+		MOV      R6,R4
+		MOV      R7,R5
+		EXTP     R5,#1
+		MOV      R4,[R4]
+		MOV      [R0],R4
+		JMPR     CC_UC,FSRL1
+			FSRL2:
+		EXTP     R7,#1
+		MOV      R4,[R6]
+		MOV      [R0],R4
+			FSRL1:
+		MOV      R4,[R0]
+		JB       R4.0,FSRL2
+		ADD      R0,#2
+		RETS  
+	FSRControl ENDP
+	
+	;R10 - word
+	;R8 - 16 bit low
+	;R9 - 8 bit hi
+	WriteWord PROC FAR
+		PUSH     R13
+		MOV      R4,#0x0554
+		MOV      R5,#0x0020
+		MOV      R2,R4
+		MOV      R3,R5
+		MOV      R4,#0x0AAA
+		MOV      R12,R4
+		MOV      R13,R5
+		MOV      R4,R8
+		MOV      R5,R9
+		ADD      R4,R4
+		ADDC     R5,R5
+		ADD      R4,R4
+		ADDC     R5,R5
+		SHR      R4,#0x02
+		MOV      R8,R4
+		MOV      R9,R5
+		MOV      R6,#0xAA00
+		EXTP     #0x0020,#1
+		MOV      [R2],R6
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		MOV      R6,#0x0055
+		EXTP     R13,#1
+		MOV      [R12],R6
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		MOV      R6,#0xA000
+		EXTP     R3,#1
+		MOV      [R2],R6
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		EXTP     R9,#1
+		MOV      [R8],R10
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		NOP      
+		POP      R13     
+		RETS
+	WriteWord ENDP
+
+
+BSLSection ENDS 
+
+
+END

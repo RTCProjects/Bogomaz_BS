@@ -1,0 +1,12 @@
+C166 COMPILER V7.53.0.0, HELPER                                                            10/18/2016 16:25:12 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE HELPER
+OBJECT MODULE PLACED IN helper.OBJ
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE helper.c XLARGE BROWSE MOD167 DEBUG TABS(2) 
+
+ stmt lvl     source
+
+*** ERROR C318 OF helper.c: can't open file 'helper.c'
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  1 ERROR(S)

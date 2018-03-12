@@ -1,0 +1,303 @@
+C166 COMPILER V7.53.0.0, DEVICES                                                           12/14/2017 11:31:10 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE DEVICES
+OBJECT MODULE PLACED IN .\output\devices.obj
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE devices.c XLARGE BROWSE MOD167 DEBUG TABS(2) OBJECT(.\output\devices.obj)
+                    - 
+
+ stmt lvl     source
+
+    1         #include "devices.h"
+    2         #include "can.h"
+    3         #include "protocol.h"
+    4         #include "process.h"
+    5         #include "protocol.h"
+    6         #include "system.h"
+    7         //устройства
+    8         #include "bdmg.h" //БДМГ-Б
+    9         #include "bdgp.h" //БДГП-Б
+   10         #include "bdsp.h" //БДГП-С
+   11         /*
+   12         Реализация работы с блоками детектирования комплекса ИМД
+             --Б
+   13         */
+   14         /*
+   15         uint16  specChannelsBuf[CHANNELS][SPECTR_SIZE]; //8КБ
+   16         uint16  specChannelIndex[CHANNELS];       //индекс кол-ва принятых пакетов спек�
+             -�ра по CAN
+   17         
+   18         tSpectrChannel      SpectrChannel[CHANNELS];            //каналы спектрометра 
+   19         tBackgroundSpectr   BackgroundSpectr[CHANNELS];         //Фоновый спектр
+   20         */
+   21         void  Devices_SendStateRequest()
+   22         {
+   23  1        //команда сброса для все БД
+   24  1        BDSP_Reset();
+   25  1        BDGP_Reset();
+   26  1        BDMG_Reset(); 
+   27  1      }
+   28         /*
+   29         Фия получения CAN сообщений от всех каналов БДГП-С
+   30         */
+   31         void  Devices_ReceiveMsgCallback(uint16 id,uint8 xhuge *msg)
+   32         {
+   33  1        switch(id)
+   34  1        {
+   35  2          case CAN_BDMG_CMD_RX:     BDMG_InsertCmd(msg);  break;
+   36  2          case CAN_BDMG_DATA_RX:    BDMG_InsertData(msg); break;
+   37  2          case CAN_BDGP_CMD_RX:     BDGP_InsertCmd(msg);  break;
+   38  2      //    case CAN_BDGP_DATA_II_RX: BDGP_InsertData(2,msg); break;  //приём данных с 1 диапазо
+             -на, TODO сделать приём I и II диапазонов
+   39  2      //    case CAN_BDGP_DATA_III_RX:  BDGP_InsertData(3,msg); break;  //приём данных с 1 диапаз�
+             -�на, TODO сделать приём I и II диапазонов
+   40  2      
+   41  2          
+   42  2          //спектрометр данные
+   43  2          case CAN_BDSP_DATA_CH1_RX:  BDSP_InsertData(0,msg); break;
+   44  2          case CAN_BDSP_DATA_CH2_RX:  BDSP_InsertData(1,msg); break;
+   45  2          case CAN_BDSP_DATA_CH3_RX:  BDSP_InsertData(2,msg); break;
+   46  2          case CAN_BDSP_DATA_CH4_RX:  BDSP_InsertData(3,msg); break;
+   47  2          
+   48  2        //  case CAN_BDSP_EMER_ALL_RX:  BDSP_InsertEmer(msg);   break;
+   49  2          //спектрометр стабилизация
+   50  2          case CAN_BDSP_EMER_CH1_RX:  BDSP_InsertCmd(0,msg);  break;
+C166 COMPILER V7.53.0.0, DEVICES                                                           12/14/2017 11:31:10 PAGE 2   
+
+   51  2          case CAN_BDSP_EMER_CH2_RX:  BDSP_InsertCmd(1,msg);  break;
+   52  2          case CAN_BDSP_EMER_CH3_RX:  BDSP_InsertCmd(2,msg);  break;
+   53  2          case CAN_BDSP_EMER_CH4_RX:  BDSP_InsertCmd(3,msg);  break;
+   54  2          
+   55  2        }
+   56  1      }
+   57         
+   58         /*
+   59         void  Devices_ReceiveMsgCallback(uint16 id,uint8 xhuge *msg)
+   60         { 
+   61           //временные переменные для БДГП-С
+   62           __IO  uint8   command = 0;
+   63           __IO  uint8   channel = 0;
+   64           __IO  uint16  length = 0;
+   65           __IO  uint16  time = 0;
+   66           
+   67           uint16  *pSpecCopy = 0;
+   68           
+   69           //Обарботка сообщений стабилизации
+   70           if( id == CAN_BDGPS_CHAN_I_STAB || 
+   71               id == CAN_BDGPS_CHAN_II_STAB || 
+   72               id == CAN_BDGPS_CHAN_III_STAB || 
+   73               id == CAN_BDGPS_CHAN_IV_STAB)
+   74           {
+   75             channel = (uint8)(id & 0x0007) - 1; //номер обрабатываемого канала
+   76               
+   77             SpectrChannel[channel].Ready = 1;
+   78               
+   79           }
+   80           
+   81           //Обработка получения ответа от БДГП-С
+   82           if( id == CAN_BDGPS_CHAN_I_RESPONSE || id == CAN_BDGPS_CHAN_II_RESPONSE || id == CAN_BDGPS_CHAN_III_RESPO
+             -NSE || id == CAN_BDGPS_CHAN_IV_RESPONSE )
+   83           {
+   84             
+   85                 channel = (uint8)(id & 0x0007) - 1; //номер обрабатываемого канала
+   86                 command = msg[0];                   //код команды
+   87                 
+   88                   
+   89                   if(command == 0x07 && msg[2] == 0 && msg[7] == 0)
+   90                   {
+   91                     time = (msg[4]<<8)|msg[3];      
+   92                     length  = (msg[6]<<8)|msg[5]; 
+   93         
+   94                     if(length == 0x400 && time == 0x01)
+   95                     {
+   96                     
+   97                       specChannelIndex[channel] = 0;
+   98                       
+   99                     }
+  100                   }
+  101         
+  102                   else
+  103                   {
+  104                     specChannelsBuf[channel][specChannelIndex[channel]]   = (uint16)((msg[1] << 8) | msg[0]);
+  105                     specChannelsBuf[channel][specChannelIndex[channel]+1] =  (uint16)((msg[3] << 8) | msg[2]);
+  106                     specChannelsBuf[channel][specChannelIndex[channel]+2] =  (uint16)((msg[5] << 8) | msg[4]);
+  107                     specChannelsBuf[channel][specChannelIndex[channel]+3] =  (uint16)((msg[7] << 8) | msg[6]);
+  108                     
+  109         
+  110                     specChannelIndex[channel]+=4;
+  111                   }
+C166 COMPILER V7.53.0.0, DEVICES                                                           12/14/2017 11:31:10 PAGE 3   
+
+  112         
+  113                   if(specChannelIndex[channel] == 1024)
+  114                   {
+  115                     
+  116                     //Devices_BackgroundAccumulation(specChannelsBuf[channel],channel);
+  117                     Devices_SpectrAccumulation(specChannelsBuf[channel],channel);
+  118                     
+  119                     //IMDB_SendPacket(IMDB_SEND_BACKGROUND_SUCCESS,(uint8*)((uint8*)(&channel)),1);
+  120                     specChannelIndex[channel] = 0;
+  121                   }
+  122         
+  123               
+  124               
+  125           }
+  126         }
+  127         
+  128         void  Devices_SpectrAccumulation(uint16 *specArr,uint8  channel)
+  129         {
+  130           uint8 sBufSize = MAX_TIME - 1;
+  131           
+  132           
+  133           
+  134           if(SpectrChannel[channel].Index > sBufSize)
+  135           {
+  136             memcpy(&SpectrChannel[channel].Data[0],&SpectrChannel[channel].Data[1],sizeof(uint16) * SPECTR_SIZE * (s
+             -BufSize - 1));
+  137             SpectrChannel[channel].Index-=1;
+  138             
+  139             if(SpectrChannel[channel].Ready == 0)
+  140             {
+  141               SpectrChannel[channel].Ready = 1;
+  142               IMDB_SendPacket(IMDB_SEND_BACKGROUND_SUCCESS,(uint8*)((uint8*)(&channel)),1);
+  143             }
+  144             
+  145             //IMDB_SendPacket(IMDB_SEND_BACKGROUND_SUCCESS,(uint8*)((uint8*)(&channel)),1);
+  146           }
+  147           
+  148           memcpy(SpectrChannel[channel].Data[SpectrChannel[channel].Index],specArr,sizeof(uint16) * SPECTR_SIZE);
+  149           SpectrChannel[channel].Index++;
+  150         
+  151         //  IMDB_SendPacket(IMDB_SEND_BACKGROUND_SUCCESS,(uint8*)((uint8*)(&SpectrChannel[channel].Index)),1);
+  152         }
+  153         void  Devices_BackgroundAccumulation(uint16 xhuge *specArr,uint8  channel)
+  154         {
+  155           uint16 i = 0;
+  156           float temp = 0,sum = 0;
+  157           __IO float koef = 0;
+  158           uint8 ch = 0;
+  159           
+  160           if(BackgroundSpectr[channel].Index < BACKGROUND_TIME)
+  161           {
+  162             sum = 0;
+  163             
+  164             for(i = 0;i<SPECTR_SIZE;i++){
+  165         
+  166               BackgroundSpectr[channel].Data[i] = BackgroundSpectr[channel].Data[i] + (specArr[i] * 1.0); //копи�
+             -� счёт
+  167             
+  168               sum+=BackgroundSpectr[channel].Data[i];
+  169             }
+  170             
+  171             BackgroundSpectr[channel].Index++;
+C166 COMPILER V7.53.0.0, DEVICES                                                           12/14/2017 11:31:10 PAGE 4   
+
+  172             //IMDB_SendPacket(IMDB_OUTSIDE_DOSE_RATE,(uint8*)((uint32*)(&sum)),4);
+  173           }
+  174           //если завершили накопление спектра
+  175           if((BackgroundSpectr[channel].Ready == 0) && (BackgroundSpectr[channel].Index == BACKGROUND_TIME) )
+  176           {
+  177             temp = 0;
+  178         
+  179             //завершили накопление фона
+  180             BackgroundSpectr[channel].Ready = 1;
+  181             
+  182             
+  183             for(i = 0;i<SPECTR_SIZE;i++){
+  184         
+  185               
+  186               BackgroundSpectr[channel].Data[i] = BackgroundSpectr[channel].Data[i] * ( 1.0f / (float)BACKGROUND_TIME
+             -);
+  187               temp+=BackgroundSpectr[channel].Data[i];
+  188             }
+  189         
+  190             IMDB_SendPacket(IMDB_SEND_BACKGROUND_SUCCESS,(uint8*)((uint8*)(&channel)),1);
+  191             IMDB_SendPacket(IMDB_OUTSIDE_DOSE_RATE,(uint8*)((uint32*)(&temp)),4);
+  192           }
+  193         }
+  194         
+  195         void  Devices_ClearBackgroundData()
+  196         {
+  197           uint8 i = 0;
+  198           uint16 j = 0;
+  199           
+  200           for(i = 0;i<CHANNELS;i++)
+  201           {
+  202           
+  203             BackgroundSpectr[i].Index = 0;
+  204             BackgroundSpectr[i].Ready = 0;
+  205             for(j = 0;j<SPECTR_SIZE;j++)
+  206                 BackgroundSpectr[i].Data[j] = 0.0f;
+  207             
+  208           }
+  209           xmemset(specChannelIndex,0,sizeof(uint16) * CHANNELS);
+  210         
+  211         }
+  212         
+  213         uint16 *  Devices_GetCurrentSpectr(uint8 channel)
+  214         {
+  215           uint16  i,j = 0;
+  216           uint16  *pSumSpectr;
+  217           
+  218           pSumSpectr = (uint16*)malloc(sizeof(uint16) * SPECTR_SIZE);
+  219           xmemset(pSumSpectr,0,sizeof(uint16) * SPECTR_SIZE);
+  220           
+  221           for(i = 0;i<MAX_TIME;i++)
+  222           {
+  223             for(j = 0;j<SPECTR_SIZE;j++)
+  224               pSumSpectr[j] += SpectrChannel[channel].Data[i][j]; //specChannels[i][Channel][j];
+  225               
+  226           }
+  227           for(i = 0;i<SPECTR_SIZE;i++)
+  228             pSumSpectr[j] = pSumSpectr[j] * (1.0 / MAX_TIME);
+  229             
+  230           
+  231           
+  232           return pSumSpectr;
+C166 COMPILER V7.53.0.0, DEVICES                                                           12/14/2017 11:31:10 PAGE 5   
+
+  233         }
+  234         
+  235         uint16 Devices_Probe()
+  236         {
+  237           uint16 i = 0;
+  238           uint16 result = 0;
+  239         
+  240             for(i = 0;i<SPECTR_SIZE;i++)
+  241             {
+  242         
+  243             //  result += specChannels[0][i];
+  244             }
+  245           
+  246           return result;
+  247         }*/
+  248         /*
+  249         *
+  250         *
+  251           Команды для работы с БДГП-С
+  252         *
+  253         *
+  254         */
+  255         
+  256         
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         202     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

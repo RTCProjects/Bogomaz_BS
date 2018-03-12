@@ -1,0 +1,116 @@
+C166 COMPILER V7.53.0.0, BSL                                                               04/13/2017 11:46:31 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE BSL
+OBJECT MODULE PLACED IN bsl.OBJ
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bsl.c XLARGE BROWSE MOD167 DEBUG TABS(2) 
+
+ stmt lvl     source
+
+    1         #include "bsl.h"
+    2         #include "can.h"
+    3         #include "main.h"
+    4         
+    5         /*
+    6         0x00019C - вектор для подпрограммы прошивки данных
+    7         
+    8           019C = FA05
+    9           019E = 0000 - или другой адрес, по которому мы загрузим в ОЗУ по�
+             -�программу загрузчика
+   10         */
+   11         
+   12         void  BSL_Init()
+   13         {
+   14  1          //настройка MO CAN
+   15  1        /*
+   16  1        CAN_IC15 = 0x0068;
+   17  1        
+   18  1        CAN_Message_16[14].MOCTRH = 0x0E08;
+   19  1        CAN_Message_16[14].MOCTRL = 0x0000;
+   20  1        CAN_Message_16[14].MOFCRH = 0x0800;
+   21  1        _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_();
+   22  1      
+   23  1        
+   24  1        CAN_Message_16[15].MOCTRH = 0x0080;
+   25  1        CAN_Message_16[15].MOCTRL = 0x0000;
+   26  1        CAN_Message_16[15].MOIPRL = 0x000F;
+   27  1        CAN_Message_16[15].MOFCRH = 0x0801;
+   28  1        _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_();
+   29  1        
+   30  1        
+   31  1        CAN_Message_16[14].MOARH = 0x9558;   // идентификатор 556
+   32  1        CAN_Message_16[14].MOAMRH = 0x3FFF; //  маска идентификатора
+   33  1        
+   34  1        CAN_Message_16[15].MOARH = 0x9554;   // идентификатор 555
+   35  1        CAN_Message_16[15].MOAMRH = 0x3FFF; //  маска идентификатора
+   36  1        
+   37  1        
+   38  1      
+   39  1        _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_();
+   40  1        _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_();
+   41  1        _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_();
+   42  1        _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); 
+   43  1        
+   44  1        PANCTR_H = 0x010E;         // message object 14 -> List 1
+   45  1        PANCTR = 0x0002;  
+   46  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_();
+   47  1       
+   48  1        PANCTR_H = 0x010F;         // message object 14 -> List 1
+   49  1        PANCTR = 0x0002;  
+   50  1         _nop_(); _nop_(); _nop_(); _nop_(); _nop_(); _nop_();
+   51  1       
+   52  1      
+   53  1        CAN_Message_16[14].MOCTRH = 0x0020; 
+   54  1        CAN_Message_16[14].MOCTRL = 0x0000;
+C166 COMPILER V7.53.0.0, BSL                                                               04/13/2017 11:46:31 PAGE 2   
+
+   55  1      
+   56  1        CAN_Message_16[15].MOCTRH = 0x0020; 
+   57  1        CAN_Message_16[15].MOCTRL = 0x0000;
+   58  1        
+   59  1        __asm
+   60  1        {
+   61  1          CALLS 04H 0E000H
+   62  1        }
+   63  1        */
+   64  1      }
+   65         
+   66         
+   67         void BSL_Start()
+   68         {
+   69  1        /*
+   70  1          1. Очищаем PSRAM
+   71  1          2. Загружаем в PSRAM загрузчик
+   72  1          3. Прыгаем в PSRAM
+   73  1        */
+   74  1        uint8 msgData[8] = {0x09,0x01,0x00,0x00,0x00,0x00,0x00,0x00};
+   75  1        CAN_SendMessage(0x556,msgData,8);
+   76  1          
+   77  1      }
+   78         /*
+   79         void BSL_Receive(void) interrupt 0x67
+   80         {
+   81         
+   82           CAN_Message_16[14].MOCTRH = 0x0100;
+   83         }*/
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =          50     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =           8     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

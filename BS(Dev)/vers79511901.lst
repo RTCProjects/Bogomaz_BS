@@ -1,0 +1,34 @@
+C166 COMPILER V7.53.0.0, VERS79511901                                                      10/31/2017 15:46:28 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE VERS79511901
+OBJECT MODULE PLACED IN .\output\vers79511901.obj
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE vers\vers79511901.c XLARGE BROWSE MOD167 DEBUG PRINT(.\vers79511901.lst) 
+                    -TABS(2) OBJECT(.\output\vers79511901.obj) 
+
+ stmt lvl     source
+
+    1         #include "vers/vers.h"
+    2         
+    3         const sServiceMsg ServiceMsg = {0x12,0x63,79511901};  //XX - FRM, YY - PRTCL, ZZZZZZZZ - Serial
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =    --------     --------
+  NEAR-CONST SIZE  =           6     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

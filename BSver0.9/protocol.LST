@@ -1,0 +1,1059 @@
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE PROTOCOL
+OBJECT MODULE PLACED IN protocol.OBJ
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE protocol.c XLARGE BROWSE MOD167 DEBUG TABS(2) 
+
+ stmt lvl     source
+
+    1         #include "protocol.h"
+    2         #include "asc0.h"
+    3         #include "process.h"
+    4         #include "settings.h"
+    5         #include "devices.h"
+    6         #include "system.h"
+    7         
+    8         #include "bdmg.h"
+    9         #include "bdgp.h"
+   10         #include "bdsp.h"
+   11         /*
+   12         Реализация протокола передачи данных ПО UART для связи ИНК-�
+             -� ИМД-Б
+   13         */
+   14         
+   15         #define BUFFER_SIZE 300
+   16         
+   17          uint8  receiveBuffer[BUFFER_SIZE];
+   18         int rIndex;
+   19         
+   20         float testMS = 0.0f;
+   21         
+   22         
+   23         const sServiceMsg ServiceMsg = {0x12,0x63,79511901};  //XX - FRM, YY - PRTCL, ZZZZZZZZ - Serial
+   24         
+   25         static sProtocolRequests  ProtocolRequests;
+   26         static tMetrologyData     MetrologyData;
+   27         static uint8 visualSpecBuf[1024]; //массив 1024 байта для 4х 128 канальных спе�
+             -�тров(визуализация на ИНК).
+   28         
+   29         void IMDBProtocol_Init(void)
+   30         {
+   31  1        
+   32  1        /*uint16  i = 0;
+   33  1        
+   34  1        for(i = 0;i<1024;i++)
+   35  1          spectrArray[i] = i;
+   36  1      
+   37  1        spectrIndex = 0;*/
+   38  1        testMS = 0;
+   39  1        
+   40  1        rIndex = 0;
+   41  1        memset((uint8*)&ProtocolRequests,0,sizeof(sProtocolRequests));
+   42  1        memset((uint8*)&MetrologyData,0,sizeof(tMetrologyData));
+   43  1      
+   44  1      }
+   45         
+   46         //Фия создания пакета для отправки на ИНК-К
+   47         uint8 *IMDBProtocol_CreatePacket(uint8  cmd,uint8 *pData,uint8 dataSize,uint8 *packSize)
+   48         {
+   49  1        uint8 bufferSize = (uint8)(5 + dataSize);
+   50  1        uint8 *pBuf = (uint8*)malloc(sizeof(uint8) * bufferSize);
+   51  1        
+   52  1        uint16  ks = 0,i = 0;
+   53  1        
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 2   
+
+   54  1        if(pBuf)
+   55  1        {
+   56  2          pBuf[0] = 0x55;
+   57  2          pBuf[1] = bufferSize;
+   58  2          pBuf[2] = cmd;
+   59  2          memcpy((pBuf + 3),pData,dataSize);
+   60  2      
+   61  2            for(i = 0;i<bufferSize - 2;i++)
+   62  2              ks+=pBuf[i];
+   63  2          
+   64  2          memcpy((pBuf + (bufferSize - 2)),&ks,2);
+   65  2          
+   66  2          *packSize = bufferSize;
+   67  2        
+   68  2      
+   69  2        }
+   70  1        return pBuf;
+   71  1      }
+   72         
+   73         /*
+   74           pDataBuf      - указатель на временный буфер данных
+   75           sDataBuf      - размер буфера
+   76           pDataBufIndex - указатель на итератор временного буфера
+   77           InputByte     - байт входного потока UART
+   78           packSize      - размер полученного пакета
+   79         */
+   80         uint8 * IMDBProtocol_GetPacketFromStream(uint8 *pDataBuf,int sDataBuf, int  *pDataBufIndex, uint8 InputByte
+             -, int *packSize)
+   81         {
+   82  1        int index;
+   83  1        int i,ii;
+   84  1        int ks = 0,pKS = 0;
+   85  1        uint16 len;
+   86  1      
+   87  1        uint8 *pD;
+   88  1        int iD = 0;
+   89  1      
+   90  1        if (sDataBuf<=0)  return 0;
+   91  1          index = *pDataBufIndex;
+   92  1        
+   93  1         // удаляем все до байта синхронизации
+   94  1        if ((index>0) && (pDataBuf[0]!=0x55)) {
+   95  2          ii=0;
+   96  2          while ((ii<index) && (pDataBuf[ii]!=0x55))  ii++;
+   97  2          memcpy(&pDataBuf[0],&pDataBuf[ii],index-ii);
+   98  2          index=index-ii;
+   99  2        }
+  100  1        //проверяем переполнение
+  101  1        if(index >= sDataBuf)
+  102  1        {
+  103  2           memcpy(&pDataBuf[0],&pDataBuf[1],sDataBuf-1);
+  104  2            index=sDataBuf-1;
+  105  2          
+  106  2           if ((index>0) && (pDataBuf[0]!=0x55)) {
+  107  3            ii=0;
+  108  3            while ((ii<index) && (pDataBuf[ii]!=0x55))  ii++;
+  109  3            memcpy(&pDataBuf[0],&pDataBuf[ii],index-ii);
+  110  3            index=index-ii;
+  111  3          }
+  112  2        }
+  113  1        
+  114  1      
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 3   
+
+  115  1      
+  116  1      
+  117  1        pDataBuf[index]=InputByte;
+  118  1          index++;
+  119  1            *pDataBufIndex=index;
+  120  1        
+  121  1        pD=(uint8* )pDataBuf;
+  122  1        iD=index;
+  123  1        
+  124  1        while (1) {
+  125  2           if (iD<5)  break;
+  126  2          
+  127  2            if(pD[0] == (uint8)0x55){
+  128  3              len = (uint8)pD[1];
+  129  3              
+  130  3              if(iD>=len)
+  131  3              {
+  132  4                if(len>0){
+  133  5                //pKS = (pD[len-2] << 8) | pD[len-1];
+  134  5                pKS = (pD[len-1] << 8) | pD[len-2];
+  135  5                  
+  136  5                for(i = 0;i<len-2;i++)
+  137  5                  ks+=pD[i];  //посчитали КС
+  138  5                
+  139  5                  if(pKS == ks)
+  140  5                  {
+  141  6                    if(packSize)  *packSize = (len - 5);
+  142  6                    
+  143  6                      return (pD);
+  144  6                  }
+  145  5                }
+  146  4              } 
+  147  3              
+  148  3            }
+  149  2            pD++;
+  150  2            iD--;
+  151  2        }
+  152  1        return 0;
+  153  1        
+  154  1      }
+  155         
+  156         
+  157         //сюда валятся байты из UART
+  158         void IMDB_ReceiveByteCallback(uint8 inputByte)
+  159         {
+  160  1        uint8 *pPackage;
+  161  1        int sPackage;
+  162  1         
+  163  1        pPackage = IMDBProtocol_GetPacketFromStream(receiveBuffer,BUFFER_SIZE,(int*)&rIndex,inputByte,&sPackage);
+  164  1          
+  165  1        if(pPackage)
+  166  1        {
+  167  2          
+  168  2          IMDB_PackageAnalysis(pPackage[2],sPackage,(uint8*)pPackage+3);
+  169  2          rIndex = 0;
+  170  2        }   
+  171  1      
+  172  1      }
+  173         
+  174         void IMDB_PackageAnalysis(uint8 cmd,uint8 bytesCount,uint8  *pData)//анализируем пакет от
+             - ИНК
+  175         {
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 4   
+
+  176  1        uint8 *pSpectr = 0;
+  177  1        uint8 currentFeature = 0;
+  178  1        float currentDose = 0;
+  179  1        float Dose = 0;
+  180  1        
+  181  1        
+  182  1        uint16  spectrIndex = 0;
+  183  1        
+  184  1        switch(cmd)
+  185  1        {
+  186  2          case INK_GET_STATE:
+  187  2          {
+  188  3            if(!ProtocolRequests.rState)
+  189  3              ProtocolRequests.rState++;
+  190  3            //IMDB_SendState();
+  191  3          }break;
+  192  2          
+  193  2          case INK_SET_STATE:
+  194  2          {
+  195  3            Process_SetStatus(pData[0]);
+  196  3            
+  197  3            IMDB_SendState();
+  198  3              //получаем текущий заданный статус
+  199  3              switch(Process_GetOperationMode())
+  200  3              {
+  201  4                case IMDB_INITIALIZATION:{ System_Reset(); }break;                            //режим инициализаци
+             -и
+  202  4                //case IMDB_BACKGROUND_ACCUMULATION:{ Devices_ClearBackgroundData(); }break;    //режим накпл
+             -ения фона
+  203  4                case IMDB_FULLTIME_WORK:
+  204  4                {
+  205  5                    //получили запрос на переход в штатный режим
+  206  5                    if(Process_GetBDMGState() == DEVICE_NOTREADY && Process_GetBDGPState() == DEVICE_NOTREADY && Proces
+             -s_GetBDPSStatus() == DEVICE_NOTREADY){
+  207  6                      IMDB_SendError();
+  208  6                      return;
+  209  6                    }
+  210  5                    if(Process_GetBDPSStatus() == DEVICE_WAITING){
+  211  6                      IMDB_SendError();
+  212  6                      return;
+  213  6                    }
+  214  5                
+  215  5                  
+  216  5                  Process_IMDBStart();
+  217  5                }break;
+  218  4                
+  219  4                //накопление фона
+  220  4                case IMDB_BACKGROUND_ACCUMULATION:
+  221  4                {
+  222  5                  /*
+  223  5                    Приняли команду - накопление фона. Алгоритм поведения 
+             -ПО:
+  224  5                      - Если БДГП-С обнаружен и застабилизирован
+  225  5                        1. Обнуляем фоновый спектр БДГП-С
+  226  5                        2. Обнуляем флаг накопления
+  227  5                        3. Запускаем накопление фона
+  228  5                      - В противном случае
+  229  5                        1. Обнуляем фоновый счёт БДГП-Б
+  230  5                        2. Обнуляем флаг накопления
+  231  5                        3. Запускаем накопление фона
+  232  5                  */
+  233  5                  if(Process_GetBDPSStatus() == DEVICE_READY)
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 5   
+
+  234  5                    BDSP_ResetBackgroundData();
+  235  5                  else if(Process_GetBDGPState() == DEVICE_READY)             
+  236  5                    BDGP_ResetBackgroundData();
+  237  5                  else
+  238  5                    IMDB_SendError();
+  239  5                  
+  240  5                }break;
+  241  4                          
+  242  4                case IMDB_SETTINGS_MODE:
+  243  4                {
+  244  5                  Process_IMDBStop();
+  245  5                }break;
+  246  4                
+  247  4                case IMDB_SPECTR_ACCUMULATION:
+  248  4                {
+  249  5                  BDPS_ClearQuery();
+  250  5                }break;
+  251  4              }
+  252  3            
+  253  3            
+  254  3          }break;
+  255  2          
+  256  2          case INK_DATA_REQUEST:
+  257  2          {
+  258  3              switch(pData[0])
+  259  3              {
+  260  4                  case 0x01:  //запрос МД снаружи
+  261  4                  {
+  262  5                    if(!ProtocolRequests.rOutsideDoseRate)
+  263  5                      ProtocolRequests.rOutsideDoseRate++;
+  264  5                    //IMDB_SendOutsideDoseRate();
+  265  5                  }break;
+  266  4                  
+  267  4                  case 0x02: //запрос признака МД снаружи
+  268  4                  {
+  269  5                    if(!ProtocolRequests.rOutsideFeature)
+  270  5                      ProtocolRequests.rOutsideFeature++;
+  271  5                    //IMDB_SendOutsideDoseFeature();
+  272  5                  }break; 
+  273  4                  
+  274  4                  case 0x03: //запрос МД внутри
+  275  4                  {
+  276  5                    if(!ProtocolRequests.rInsideDoseRate)
+  277  5                      ProtocolRequests.rInsideDoseRate++;
+  278  5                    //IMDB_SendInsideDoseRate();
+  279  5                  }break;
+  280  4                  
+  281  4                  case 0x04:  //запрос признака МД внутри
+  282  4                  {
+  283  5                    if(!ProtocolRequests.rInsideFeature)
+  284  5                      ProtocolRequests.rInsideFeature++;
+  285  5                    //IMDB_SendInsideDoseFeature();
+  286  5                  }break;
+  287  4                  
+  288  4                  case 0x05: //запрос дозы внутри
+  289  4                  {
+  290  5                    if(!ProtocolRequests.rInsideDose)
+  291  5                      ProtocolRequests.rInsideDose++;
+  292  5                    //IMDB_SendInsideDose();
+  293  5                    
+  294  5                  }break; 
+  295  4                  case 0x06: //запрос угла на максимум 
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 6   
+
+  296  4                  {
+  297  5                    if(!ProtocolRequests.rMaxAngle)
+  298  5                      ProtocolRequests.rMaxAngle++;
+  299  5                    //IMDB_SendMaxAngle();
+  300  5                  } break;
+  301  4                    
+  302  4                  case 0x07: //запрос углового распределения
+  303  4                  {   
+  304  5                    if(!ProtocolRequests.rAngularDistribution)
+  305  5                      ProtocolRequests.rAngularDistribution++;
+  306  5                  }break;
+  307  4                  
+  308  4                  case 0x08:  //идентификация
+  309  4                  {
+  310  5                    //IMDB_SendIdentification();
+  311  5                  } break;
+  312  4                  //запрос спектра
+  313  4                  case 0x09:
+  314  4                  {
+  315  5                    spectrIndex = 0;
+  316  5                    
+  317  5                    pSpectr = (uint8*)BDSP_GetCurrentSpectr();
+  318  5                    
+  319  5                    do
+  320  5                    {
+  321  6                        IMDB_SendPacket(IMDB_SPECTR + spectrIndex,(uint8 *)(pSpectr + (spectrIndex * 128) ),128);
+  322  6                    
+  323  6      
+  324  6                      spectrIndex++;
+  325  6                      
+  326  6                      _srvwdt_();
+  327  6                    }
+  328  5                    while(spectrIndex < SPECTR_SIZE / 64);
+  329  5                    
+  330  5                  }break;
+  331  4                  default: /*IMDB_SendPacket(IMDB_ERROR,0,0);*/ break;
+  332  4              }
+  333  3              
+  334  3          }break;
+  335  2          
+  336  2          case INK_GET_SHIELDING_FACTOR: { IMDB_SendPacket(IMDB_SHIELDING_FACTOR,(uint8*)((uint32*)(&MainSettings.
+             -shieldingFactor)),4);  }break;
+  337  2          
+  338  2          case INK_SET_SHIELDING_FACTOR:
+  339  2          {
+  340  3            memcpy(&MainSettings.shieldingFactor,pData,4);
+  341  3              SETTINGS_Save();
+  342  3            IMDB_SendPacket(IMDB_SHIELDING_FACTOR,(uint8*)((uint32*)(&MainSettings.shieldingFactor)),4);
+  343  3          }break;
+  344  2          
+  345  2          case INK_SET_ACC_TIME:
+  346  2          {
+  347  3            memcpy(&MainSettings.accumulationTime,pData,2);
+  348  3              SETTINGS_Save();
+  349  3            IMDB_SendPacket(IMDB_SPECTRACC_TIME,(uint8*)((uint16*)(&MainSettings.accumulationTime)),2);
+  350  3          }break;
+  351  2          
+  352  2          case INK_SET_LIMIT_DETECT:
+  353  2          {
+  354  3            memcpy((&MainSettings.limitDetect) + (pData[0] - 1),pData + 1,4);
+  355  3            
+  356  3            SETTINGS_Save();
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 7   
+
+  357  3            
+  358  3            IMDB_SendPacket(IMDB_LIMIT_DETECT,(uint8*)pData,bytesCount);
+  359  3          }break;
+  360  2          
+  361  2          case INK_START_MEASURE:
+  362  2          {
+  363  3            /*//приняли команду запуска измерений
+  364  3            if(Process_GetBDPSStatus() == DEVICE_READY){
+  365  3              BDSP_StartSpectrAccumulation(pData[0]);
+  366  3              
+  367  3              IMDB_SendPacket(IMDB_START_MEASURE,(uint8*)&pData[0],sizeof(uint8));
+  368  3            }
+  369  3            */
+  370  3          }break;
+  371  2          
+  372  2          case INK_GET_FIRMWARE_INFO:
+  373  2          {
+  374  3            IMDB_SendPacket(IMDB_SERVICE,(uint8*)&ServiceMsg,sizeof(sServiceMsg));
+  375  3          }break;
+  376  2          
+  377  2          case METROLOGY_READPARAM_REQUEST:
+  378  2          {
+  379  3              IMDB_Metrology_SendBDParametrs();
+  380  3          }break;
+  381  2          
+  382  2          case METROLOGY_WRITEPARAM_REQUEST:
+  383  2          {
+  384  3            IMDB_Metrology_WriteBDParametrs(pData);
+  385  3          }break;
+  386  2          
+  387  2          case METROLOGY_DEFAULT_SETTINGS_REQUEST:
+  388  2          {
+  389  3            IMDB_Metrology_DefaultSettings();
+  390  3          }break;
+  391  2          
+  392  2          case METROLOGY_READ_SETTINGS_REQUEST:
+  393  2          {
+  394  3            IMDB_Metrology_ReadBSParametrs();
+  395  3          }break;
+  396  2          
+  397  2          case METROLOGY_WRITE_SETTINGS_REQUEST:
+  398  2          {
+  399  3            IMDB_Metrology_WriteBSParametrs(pData);
+  400  3          }break;
+  401  2          
+  402  2          //команда инициализации БД для получения данных метролог
+             -ии
+  403  2          case METROLOGY_STARTBD_REQUEST:
+  404  2          {
+  405  3            IMDB_Metrology_StartBD(pData);
+  406  3          }break;
+  407  2          
+  408  2          //команда запроса данных от БД
+  409  2          case METROLOGY_DATA_REQUEST:
+  410  2          {
+  411  3            IMDB_Metrology_GetBDData();
+  412  3          }break;
+  413  2          
+  414  2          //включение режимов
+  415  2          case METROLOGY_SPECTR_ACCUMMODE_REQUEST:
+  416  2          {
+  417  3            IMDB_Metrology_SpectrometryMode(pData);
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 8   
+
+  418  3          }break;
+  419  2          
+  420  2          case METROLOGY_SPECTR_ACCUMBLOCKDATA_REQUEST:
+  421  2          {
+  422  3            IMDB_Metrology_SendAccumSpectrBlockData(pData);
+  423  3          }break;
+  424  2          
+  425  2          default:
+  426  2          {
+  427  3            /*IMDB_SendPacket(IMDB_ERROR,0,0);*/
+  428  3          }break;
+  429  2          
+  430  2        }
+  431  1      }
+  432         void IMDB_SendIdentification()
+  433         {
+  434  1          IMDB_SendPacket(IMDB_NUCLIDE_IDENTIFICATION,0,0);
+  435  1      }
+  436         
+  437         void IMDB_SendState()
+  438         {
+  439  1        uint8 stateByte = Process_GetInfo();
+  440  1          IMDB_SendPacket(IMDB_STATE,&stateByte,1);
+  441  1      }
+  442         void IMDB_SendReady()
+  443         {
+  444  1        uint8 stateByte = Process_GetInfo();
+  445  1          IMDB_SendPacket(IMDB_SEND_READY,&stateByte,1);
+  446  1      }
+  447         
+  448         void IMDB_SendInsideDose()
+  449         {
+  450  1        float Dose = 0;
+  451  1        
+  452  1        if(Process_GetBDMGState())
+  453  1          Dose = BDMG_GetDose();
+  454  1        else{
+  455  2          if(Process_GetBDPSStatus() == DEVICE_READY)
+  456  2            Dose = BDSP_GetDose() * MainSettings.shieldingFactor;
+  457  2          else
+  458  2            Dose = BDGP_GetDose() * MainSettings.shieldingFactor;
+  459  2        }
+  460  1        IMDB_SendPacket(IMDB_INSIDE_DOSE,(uint8*)((uint32*)&Dose),sizeof(float));
+  461  1      }
+  462         
+  463         //получаем МД снаружи
+  464         void IMDB_SendOutsideDoseRate()
+  465         {
+  466  1        float doseRateVal = 0;
+  467  1        
+  468  1      
+  469  1        if(Process_GetBDPSStatus() == DEVICE_READY)
+  470  1          doseRateVal = 0.567f;
+  471  1        else{
+  472  2          if(Process_GetBDGPState())
+  473  2            doseRateVal = BDGP_GetAverageDoseRate();
+  474  2          else
+  475  2            doseRateVal = BDGP_GetAverageDoseRate() * MainSettings.shieldingFactor;
+  476  2        }
+  477  1        
+  478  1        IMDB_SendPacket(IMDB_OUTSIDE_DOSE_RATE,(uint8*)((uint32*)(&doseRateVal)),sizeof(float));
+  479  1      }
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 9   
+
+  480         //МД внутри
+  481         void IMDB_SendInsideDoseRate()
+  482         {
+  483  1        float doseRateVal = 0;
+  484  1          
+  485  1        if(Process_GetBDMGState())
+  486  1          doseRateVal = BDMG_GetCurrentDose();
+  487  1        else
+  488  1        {
+  489  2          if(Process_GetBDPSStatus() == DEVICE_READY)
+  490  2            doseRateVal = 0.002;
+  491  2          else
+  492  2            doseRateVal = BDGP_GetAverageDoseRate() / MainSettings.shieldingFactor;
+  493  2        }
+  494  1        
+  495  1        IMDB_SendPacket(IMDB_INSIDE_DOSE_RATE,(uint8*)((uint32*)(&doseRateVal)),sizeof(float));
+  496  1      }
+  497         /*
+  498         Проверка признака МД TO-DO исправить если подклчюен только �
+             -�дин блок
+  499         */
+  500         
+  501         void  IMDB_SendInsideDoseFeature()
+  502         {
+  503  1        uint8 currentFeature = BDMG_GetInsideFeature();
+  504  1        
+  505  1          IMDB_SendPacket(IMDB_INSIDE_FEATURE,&currentFeature,sizeof(uint8));
+  506  1      }
+  507         void  IMDB_SendOutsideDoseFeature()
+  508         {
+  509  1        uint8 currentFeature = BDGP_GetOutsideFeature();
+  510  1          
+  511  1          IMDB_SendPacket(IMDB_OUTSIDE_FEATURE,(uint8*)((uint32*)(&currentFeature)),sizeof(uint8));
+  512  1      }
+  513         void IMDB_SendMaxAngle()
+  514         {
+  515  1        float maxAngle = 0;
+  516  1        
+  517  1            if(Process_GetBDGPState() == DEVICE_READY)
+  518  1              maxAngle = BDGP_GetMaximumAngle();
+  519  1            else if(Process_GetBDPSStatus() == DEVICE_READY)
+  520  1              maxAngle = BDSP_GetMaximumAngle();
+  521  1            else {
+  522  2              IMDB_SendPacket(IMDB_ERROR,0,0);
+  523  2              return;
+  524  2            }
+  525  1        
+  526  1          IMDB_SendPacket(IMDB_RADIATION_DIRECT,(uint8*)((uint32*)(&maxAngle)),sizeof(float));
+  527  1      }
+  528         void IMDB_SendDoseExceeded(uint8  Number)
+  529         {
+  530  1        IMDB_SendPacket(IMDB_SEND_DOSE_EXCEEDED,&Number,sizeof(uint8));
+  531  1      }
+  532         void IMDB_SendDoseRateExceeded(uint8  Number) //превышение порога МД
+  533         {
+  534  1        IMDB_SendPacket(IMDB_SEND_DOSE_RATE_EXCEEDED,&Number,sizeof(uint8));
+  535  1        
+  536  1      }
+  537         void IMDB_SendNuclideDetection(eDetectionState  State)
+  538         { 
+  539  1        IMDB_SendPacket(IMDB_SEND_NUCLIDE_DETECTION,(uint8*)&State,sizeof(uint8));
+  540  1      }
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 10  
+
+  541         
+  542         void IMDB_SendCanTransmitError(uint8  erNum)
+  543         {
+  544  1        IMDB_SendPacket(IMDB_CAN_ERROR,&erNum,sizeof(uint8));
+  545  1      }
+  546         
+  547         void IMDB_SendPacket(uint8  cmd,uint8 *pData, int dataSize)
+  548         {
+  549  1        uint8 packSize = 0,i=0;
+  550  1        uint8 *pPackage = IMDBProtocol_CreatePacket(cmd,pData,dataSize,&packSize);
+  551  1        
+  552  1        if(pPackage)
+  553  1        {
+  554  2          for(i = 0;i<packSize;i++)
+  555  2            sendbyte(pPackage[i]);
+  556  2          
+  557  2          free(pPackage);
+  558  2        }
+  559  1      }
+  560         
+  561         
+  562         
+  563         void  IMDB_SendAngularDistribution()
+  564         { 
+  565  1        float *fpData;
+  566  1        
+  567  1        //если нет спектрометра
+  568  1        if(Process_GetBDPSStatus() == DEVICE_NOTREADY)
+  569  1        {
+  570  2          //и есть БДГП-Б
+  571  2          if( Process_GetBDGPState() == DEVICE_READY)
+  572  2          {
+  573  3            //и накоплен фон
+  574  3            if(BDGP_GetBackgroundState()){
+  575  4              fpData = BDGP_GetAngularDiagram();//отправляем диаграмму углового расп�
+             -�еделения
+  576  4              IMDB_SendPacket(IMDB_ANGULAR_DISTRIBUTION,(uint8*)fpData,sizeof(float) * 48);
+  577  4            }
+  578  3            else
+  579  3              IMDB_SendPacket(IMDB_ERROR,0,0);
+  580  3          }
+  581  2          else
+  582  2            IMDB_SendPacket(IMDB_ERROR,0,0);
+  583  2        }
+  584  1        //обнаружен готовый и застабилизированный спектрометр
+  585  1        else if(Process_GetBDPSStatus() == DEVICE_READY)
+  586  1        {
+  587  2          if(BDSP_GetBackgroundReady()){
+  588  3            fpData = BDSP_GetAngularDiagram();//отправляем диаграмму углового распр
+             -еделения
+  589  3            IMDB_SendPacket(IMDB_ANGULAR_DISTRIBUTION,(uint8*)fpData,sizeof(float) * 48);
+  590  3            //IMDB_SendPacket(IMDB_ERROR,0,0);
+  591  3          }
+  592  2          else
+  593  2            IMDB_SendPacket(IMDB_ERROR,0,0);
+  594  2        }
+  595  1        else
+  596  1          IMDB_SendPacket(IMDB_ERROR,0,0);
+  597  1        
+  598  1      
+  599  1      }
+  600         
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 11  
+
+  601         void  IMDB_Process()
+  602         {
+  603  1      
+  604  1        if(ProtocolRequests.rState){
+  605  2          IMDB_SendState();
+  606  2          ProtocolRequests.rState = 0;
+  607  2        }
+  608  1        
+  609  1        if(ProtocolRequests.rOutsideDoseRate){
+  610  2          IMDB_SendOutsideDoseRate();
+  611  2          ProtocolRequests.rOutsideDoseRate = 0;
+  612  2        }
+  613  1        
+  614  1        if(ProtocolRequests.rOutsideFeature){
+  615  2          IMDB_SendOutsideDoseFeature();
+  616  2          ProtocolRequests.rOutsideFeature = 0;
+  617  2        }
+  618  1        
+  619  1        if(ProtocolRequests.rInsideDoseRate){
+  620  2          IMDB_SendInsideDoseRate();
+  621  2          ProtocolRequests.rInsideDoseRate = 0;
+  622  2        }
+  623  1        
+  624  1        if(ProtocolRequests.rInsideFeature){
+  625  2          IMDB_SendInsideDoseFeature();
+  626  2          ProtocolRequests.rInsideFeature = 0;
+  627  2        }
+  628  1        
+  629  1        if(ProtocolRequests.rInsideDose){
+  630  2          IMDB_SendInsideDose();
+  631  2          ProtocolRequests.rInsideDose = 0;
+  632  2        }
+  633  1        
+  634  1        if(ProtocolRequests.rAngularDistribution){
+  635  2          IMDB_SendAngularDistribution(); 
+  636  2          ProtocolRequests.rAngularDistribution = 0;
+  637  2        }
+  638  1        
+  639  1        if(ProtocolRequests.rMaxAngle){
+  640  2          IMDB_SendMaxAngle();  
+  641  2          ProtocolRequests.rMaxAngle = 0;
+  642  2        }
+  643  1        
+  644  1        if(ProtocolRequests.rMetrologySendCurrentSpectrProcess){
+  645  2          IMDB_Metrology_SendCurrentSpectrData();
+  646  2        }
+  647  1        
+  648  1        //CALLBACK-И
+  649  1        //иденлификация источника
+  650  1        if(ProtocolRequests.rNuclideDetectionCallback){
+  651  2          IMDB_SendNuclideDetection(E_DETECTION_START);
+  652  2          ProtocolRequests.rNuclideDetectionCallback = 0;
+  653  2        }
+  654  1        //окончание идентификации источника
+  655  1        if(ProtocolRequests.rNuclideEndDetectionCallback){
+  656  2          IMDB_SendNuclideDetection(E_DETECTION_END);
+  657  2          ProtocolRequests.rNuclideEndDetectionCallback = 0;
+  658  2        } 
+  659  1        
+  660  1        
+  661  1      }
+  662         /**********************************************************************************
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 12  
+
+  663         /**********************************************************************************
+  664         *****************ФУНКЦИИ ДЛЯ УСТАНОВКИ В ОЧЕРЕДЬ СООБЩЕНИЙ ОТ  ИМ�
+             -�-Б***************
+  665         **********************************************************************************
+  666         **********************************************************************************/
+  667         
+  668         void IMDB_NuclideDetectionSignalCallback()
+  669         {
+  670  1        ProtocolRequests.rNuclideDetectionCallback = 1;
+  671  1      }
+  672         void IMDB_NuclideEndDetectionSignalCallback()
+  673         {
+  674  1        ProtocolRequests.rNuclideEndDetectionCallback = 1;
+  675  1      }
+  676         
+  677         /**********************************************************************************
+  678         /**********************************************************************************
+  679         *****************ФУНКЦИИ ДЛЯ МЕТРОЛОГИЧЕСКОГО ПРОТОКОЛА****************
+             -************
+  680         **********************************************************************************
+  681         **********************************************************************************/
+  682         void IMDB_Metrology_SendBDParametrs()
+  683         {
+  684  1        uint16  sizeBDMGParam = sizeof(tBDMGParametrs);
+  685  1        uint16  sizeBDGPParam = sizeof(tBDGPParametrs);
+  686  1        uint16  sizeBDSPParam = sizeof(tBDSPParametrs);
+  687  1        
+  688  1        uint8   *pParamPack;
+  689  1        uint16  PackSize = sizeBDMGParam + sizeBDGPParam * 2 + sizeBDSPParam;
+  690  1        
+  691  1        
+  692  1        //запрашиваем параметры от БД
+  693  1        if(Process_GetBDMGState() == DEVICE_READY){
+  694  2          BDMG_ParametrRequest(0x94,0);//запрашиваем первый параметр, остальные 
+             -выдаются по цепочке
+  695  2        }
+  696  1        if(Process_GetBDGPState() == DEVICE_READY){
+  697  2          BDGP_ParametrRequest(1,0x93,0);//запрашиваем первый параметр, остальны�
+             -� выдаются по цепочке
+  698  2        }
+  699  1        //спектрометр либо готов либо в режиме ожидания
+  700  1        if(Process_GetBDPSStatus() != DEVICE_NOTREADY)
+  701  1        {
+  702  2          //тут запрос параметров спектрометра
+  703  2        }
+  704  1        
+  705  1          pParamPack = (uint8*)malloc(PackSize);
+  706  1        
+  707  1          if(pParamPack){
+  708  2            memcpy(pParamPack,BDMG_GetParametrs(),sizeBDMGParam);
+  709  2            memcpy(pParamPack + sizeBDMGParam,BDGP_GetParametrs(),sizeBDGPParam * 2);
+  710  2            memcpy(pParamPack + sizeBDMGParam + sizeBDGPParam * 2,BDSP_GetParametrs(),sizeBDSPParam);
+  711  2            
+  712  2            IMDB_SendPacket(METROLOGY_READPARAM_RESPONSE,pParamPack,PackSize);
+  713  2            
+  714  2            free(pParamPack);
+  715  2          }
+  716  1          
+  717  1        
+  718  1      }
+  719         //запись параметров метрологии
+  720         void IMDB_Metrology_WriteBDParametrs(uint8  *pData)
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 13  
+
+  721         {
+  722  1        uint16  sizeBDMGParam = sizeof(tBDMGParametrs);
+  723  1        uint16  sizeBDGPParam = sizeof(tBDGPParametrs);
+  724  1        uint16  sizeBDSPParam = sizeof(tBDSPParametrs);
+  725  1        
+  726  1        if(pData)
+  727  1        {
+  728  2          //1. Обрабатываем параметры БДМГ
+  729  2          memcpy(BDMG_GetParametrs(),pData,sizeBDMGParam);
+  730  2            BDMG_StartWritingParametrs();
+  731  2          //2. Обрабатываем параметры БДГП-Б
+  732  2            System_Delay(100000);
+  733  2          memcpy(BDGP_GetParametrs(),pData + sizeBDMGParam,sizeBDGPParam * 2);
+  734  2            BDGP_StartWritingParametrs(0);  //запрос с 1 диапазона
+  735  2          //3. Обрабатываем параметры БДГП-С
+  736  2          memcpy(BDSP_GetParametrs(),pData + sizeBDMGParam + sizeBDGPParam * 2,sizeBDSPParam);
+  737  2          
+  738  2          IMDB_SendPacket(METROLOGY_WRITEPARAM_RESPONSE,0,0);
+  739  2        }
+  740  1        else
+  741  1          IMDB_SendPacket(IMDB_ERROR,0,0);
+  742  1      }
+  743         void  IMDB_Metrology_DefaultSettings()
+  744         {
+  745  1        SETTINGS_Default();
+  746  1        IMDB_SendPacket(METROLOGY_DEFAULT_SETTINGS_RESPONSE,0,0);
+  747  1        
+  748  1        System_Reset();
+  749  1      }
+  750         //чтение параметров из БС
+  751         void  IMDB_Metrology_ReadBSParametrs()
+  752         {
+  753  1        IMDB_SendPacket(METROLOGY_READ_SETTINGS_RESPONSE,(uint8*)&MainSettings,sizeof(tSettings));
+  754  1      }
+  755         void IMDB_Metrology_WriteBSParametrs(uint8  *pData)
+  756         {
+  757  1        if(pData)
+  758  1        {
+  759  2          memcpy((uint8*)&MainSettings,(uint8*)pData,sizeof(tSettings));
+  760  2          
+  761  2          SETTINGS_Save();
+  762  2          IMDB_SendPacket(METROLOGY_WRITE_SETTINGS_RESPONSE,0,0);
+  763  2        }
+  764  1        else
+  765  1          IMDB_SendPacket(IMDB_ERROR,0,0);
+  766  1      }
+  767         void IMDB_SendError()
+  768         {
+  769  1        IMDB_SendPacket(IMDB_ERROR,0,0);
+  770  1      }
+  771         
+  772         void IMDB_Metrology_StartBD(uint8 *pData)
+  773         {
+  774  1        /*
+  775  1        1. Проверяем, в каком режиме находится ИМДБ, если не в штат�
+             -�ом и не в режиме настройки, то шлём еррор
+  776  1            если в штатном, то переключаем в настройку и проверяем н�
+             -� надичие БД
+  777  1          1 - БДГП-С
+  778  1          2 - БДГП-Б I
+  779  1          3 - БДГП-Б II
+  780  1          4 - БДМГ-Б I
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 14  
+
+  781  1          5 - БДМГ-Б II
+  782  1          6 - БДМГ-Б III
+  783  1        */
+  784  1        uint8 bdIndex = pData[0]; //получаем индекс БД
+  785  1        
+  786  1        if(bdIndex > 0 && bdIndex < 7){
+  787  2          //при приёме останавливаем все блоки
+  788  2          Process_IMDBStop();
+  789  2          //запоминаем индекс выбранного диапазона БД
+  790  2          MetrologyData.rangeIndex = bdIndex;
+  791  2          //если ИМДБ в режиме штат. работы, то останавливаем ИМДБ и 
+             -переводим его в режим настройки
+  792  2          if(Process_GetOperationMode() == IMDB_FULLTIME_WORK){
+  793  3            
+  794  3            //Process_SetStatus(IMDB_SETTINGS_MODE);
+  795  3            
+  796  3            //IMDB_SendState();
+  797  3          }
+  798  2          
+  799  2          
+  800  2          if(Process_GetOperationMode() == IMDB_FULLTIME_WORK)  //метрология в режиме настро
+             -йки
+  801  2          {
+  802  3            switch(bdIndex)
+  803  3            {
+  804  4              case 2:BDGP_ForcedStart(2);break;
+  805  4              case 3:BDGP_ForcedStart(3);break;
+  806  4              case 4:BDMG_ForcedStart(1);break;
+  807  4              case 5:BDMG_ForcedStart(2);break;
+  808  4              case 6:BDMG_ForcedStart(3);break;
+  809  4              
+  810  4            }
+  811  3            
+  812  3      
+  813  3            
+  814  3            IMDB_SendPacket(METROLOGY_STARTBD_RESPONSE,(uint8*)&bdIndex,sizeof(uint8));
+  815  3          }
+  816  2          else
+  817  2            IMDB_SendError();
+  818  2        }
+  819  1        else
+  820  1          IMDB_SendError();
+  821  1        
+  822  1      }
+  823         void IMDB_Metrology_GetBDData()
+  824         {
+  825  1          if(MetrologyData.rangeIndex == 2 || MetrologyData.rangeIndex == 3)
+  826  1          {
+  827  2            BDGP_GetAngularDiagram();
+  828  2              MetrologyData.doseRate = BDGP_GetCurrentDoseRate();
+  829  2              MetrologyData.currentAngle = BDGP_GetMaximumAngle();
+  830  2          }
+  831  1          if(MetrologyData.rangeIndex == 4 || MetrologyData.rangeIndex == 5 || MetrologyData.rangeIndex == 6)
+  832  1          {
+  833  2            MetrologyData.doseRate = BDMG_GetCurrentDose();
+  834  2            MetrologyData.currentAngle = 0;
+  835  2          }
+  836  1        
+  837  1      
+  838  1        
+  839  1        IMDB_SendPacket(METROLOGY_DATA_RESPONSE,(uint8*)&MetrologyData,sizeof(tMetrologyData));
+  840  1        
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 15  
+
+  841  1      }
+  842         void  IMDB_Metrology_SpectrometryMode(uint8 *pData)
+  843         {
+  844  1        /*
+  845  1        Получили команду на передачу/накопление спектров
+  846  1        */
+  847  1        switch(pData[0])
+  848  1        {
+  849  2          case 0:{
+  850  3            
+  851  3            
+  852  3            Process_SetStatus(IMDB_FULLTIME_WORK);
+  853  3                  
+  854  3              ProtocolRequests.rMetrologySendCurrentSpectr = 0;
+  855  3            
+  856  3            IMDB_SendPacket(METROLOGY_SPECTR_ACCUMMODE_RESPONSE,(uint8*)pData,3);
+  857  3          }break; //отмена операции
+  858  2          
+  859  2          case 1:{
+  860  3            Process_SetStatus(IMDB_FULLTIME_WORK);
+  861  3              ProtocolRequests.rMetrologySendCurrentSpectr = 1; //ставим флаг отправки спект�
+             -�ов 4х спектров по 128 каналам
+  862  3              ProtocolRequests.rMetrologySendCurrentSpectrProcess = 1;
+  863  3            
+  864  3            IMDB_SendPacket(METROLOGY_SPECTR_ACCUMMODE_RESPONSE,(uint8*)pData,3);
+  865  3          }break;
+  866  2          
+  867  2          case 2:{
+  868  3            Process_SetStatus(IMDB_SPECTR_ACCUMULATION);
+  869  3            ProtocolRequests.rMetrologySendCurrentSpectr = 0; 
+  870  3            
+  871  3              MainSettings.accumulationTime = (uint16) (pData[2]<<8)|pData[1];
+  872  3              BDSP_StartSpectrAccumulation(ACCUM_ONLY);
+  873  3            
+  874  3            IMDB_SendPacket(METROLOGY_SPECTR_ACCUMMODE_RESPONSE,(uint8*)pData,3);
+  875  3          }break;
+  876  2          
+  877  2          default: IMDB_SendError(); break;
+  878  2        }
+  879  1      }
+  880         
+  881         void  IMDB_Metrology_SendCurrentSpectrData()
+  882         {
+  883  1      
+  884  1        uint16  spectrIndex = 0;
+  885  1        
+  886  1        //если нет запроса на передачу спектра то выходим из функц
+             -ии
+  887  1        if(!ProtocolRequests.rMetrologySendCurrentSpectr)
+  888  1          return;
+  889  1        
+  890  1        ProtocolRequests.rMetrologySendCurrentSpectrProcess = 0;
+  891  1        
+  892  1        //visualSpecBuf = (uint8*)malloc(sizeof(uint16) * 128 * 4);
+  893  1        
+  894  1        //if(visualSpecBuf)
+  895  1        {
+  896  2        //  memset((uint8*)visualSpecBuf,0,sizeof(uint8) * SPECTR_SIZE);
+  897  2        
+  898  2          
+  899  2          
+  900  2          memcpy( visualSpecBuf,       (uint16*)BDSP_GetChannelSpectr(0),sizeof(uint16) * 128);
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 16  
+
+  901  2          memcpy((visualSpecBuf + 256),(uint16*)BDSP_GetChannelSpectr(1),sizeof(uint16) * 128);
+  902  2          memcpy((visualSpecBuf + 512),(uint16*)BDSP_GetChannelSpectr(2),sizeof(uint16) * 128);
+  903  2          memcpy((visualSpecBuf + 768),(uint16*)BDSP_GetChannelSpectr(3),sizeof(uint16) * 128);
+  904  2          
+  905  2          
+  906  2          spectrIndex = 0;
+  907  2          
+  908  2                      do
+  909  2                      {
+  910  3                        IMDB_SendPacket(0xF0 + spectrIndex,(uint8 *)(visualSpecBuf + (spectrIndex * 128) ),128);
+  911  3      
+  912  3                        spectrIndex++;
+  913  3                        
+  914  3                        _srvwdt_();
+  915  3                      }
+  916  2                      while(spectrIndex < 8);
+  917  2                      
+  918  2          
+  919  2        }
+  920  1        ProtocolRequests.rMetrologySendCurrentSpectrProcess = 1;
+  921  1                    
+  922  1      }
+  923         void  IMDB_Metrology_SendAccumSpectrBlockData(uint8 *pData)
+  924         {
+  925  1        __IO uint8 tempVar = 1;
+  926  1        
+  927  1        uint8   *pSendData;
+  928  1        
+  929  1        uint8   Channel = pData[0]; //номер канала
+  930  1        
+  931  1        uint16  Start = (uint16)(pData[2] << 8)|pData[1]; //начальнйый индекс спектра
+  932  1        uint16  Count = (uint16)(pData[4] << 8)|pData[3];   //кол-во спектров
+  933  1        
+  934  1        if(Start == 976)
+  935  1        {
+  936  2          tempVar = 2;
+  937  2        }
+  938  1        
+  939  1        if(Channel >= 0 && Channel < 4){
+  940  2          if(Start >= 0 && Start < 1024){
+  941  3            if(Count > 0 && Count < 62){
+  942  4              if((Start + Count) <= 1024){
+  943  5              uint8 *pSpectrData = BDSP_GetAccumulationSpectr(Channel);
+  944  5              
+  945  5                  pSendData = (uint8*)malloc(sizeof(uint32) * Count + sizeof(uint8) * 5);
+  946  5                
+  947  5          
+  948  5                  memcpy((uint8*)pSendData,(uint8*)pData,sizeof(uint8) * 5);
+  949  5                  memcpy((uint8*)(pSendData+5),pSpectrData + (Start * 4),sizeof(uint32) * Count);
+  950  5                
+  951  5      
+  952  5                  IMDB_SendPacket(METROLOGY_SPECTR_ACCUMBLOCKDATA_RESPONSE,pSendData,sizeof(uint32) * Count + sizeof(u
+             -int8) * 5);
+  953  5                
+  954  5                  free(pSendData);
+  955  5              
+  956  5              }
+  957  4              else
+  958  4                IMDB_SendError();
+  959  4            }
+  960  3            else
+  961  3              IMDB_SendError();
+C166 COMPILER V7.53.0.0, PROTOCOL                                                          04/17/2017 11:10:29 PAGE 17  
+
+  962  3          }
+  963  2          else
+  964  2            IMDB_SendError();
+  965  2        }
+  966  1        else
+  967  1          IMDB_SendError();
+  968  1      
+  969  1        
+  970  1        
+  971  1          
+  972  1      }
+  973         
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =        4692     --------
+  NEAR-CONST SIZE  =           6     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           6     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =        1346     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =           8     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

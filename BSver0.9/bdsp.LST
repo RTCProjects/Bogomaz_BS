@@ -1,0 +1,919 @@
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE BDSP
+OBJECT MODULE PLACED IN bdsp.OBJ
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdsp.c XLARGE BROWSE MOD167 DEBUG TABS(2) 
+
+ stmt lvl     source
+
+    1         #include "bdsp.h"
+    2         #include "can.h"
+    3         #include "process.h"
+    4         #include "protocol.h"
+    5         #include "settings.h"
+    6         #include "system.h"
+    7         
+    8         #include "bdgp.h"
+    9         
+   10         const uint8 mResetBDSP[] = {0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00};
+   11         const uint8 mStartBDSP[] = {0x07,0x01,0x00,0x00,0x00,0x00,0x00,0x00};
+   12         const uint8 mStopBDSP[] = {0x07,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+   13         
+   14         const uint8 mSpectrSize1024[] = {0x02,0x05,0x00,0x01,0x00,0x00,0x00,0x00};  //128
+   15         const uint8 mSpectrSize128[] = {0x02,0x05,0x00,0x04,0x00,0x00,0x00,0x00}; //128
+   16         
+   17         static uint8  channelStartCnt = 0;  //счётчик включаемых каналов
+   18         static uint16 radiationMaximum = 0;     //угол на максимум 
+   19         
+   20         
+   21         static  tBDSPData           BDSPData[CHANNELS]; //каналы спектрометра
+   22         static  eSpecMode           BDPSChannelSize;
+   23         static  eSpecAccumMode      BDSPAccumMode;
+   24         static  eSpecMeasureNumber  BDSPMeasureNumber;  
+   25         static  tBDSPParametrs      BDSPParametrs;
+   26         
+   27         void  BDSP_CalculateIntegral()
+   28         {
+   29  1        uint16  i,j,k;
+   30  1        uint32  integralSum = 0;
+   31  1        
+   32  1        //считаем интеграл для каждого канала
+   33  1        for(k = 0;k<CHANNELS;k++)
+   34  1        {
+   35  2          BDSPData[k].Integral = 0;
+   36  2          integralSum = 0;
+   37  2          
+   38  2          for(i = 0;i</*MainSettings.accumulationTime*/QUERY_SIZE;i++)
+   39  2            for(j = 0;j<BDPSChannelSize;j++)
+   40  2              integralSum += BDSPData[k].Data[i][j];
+   41  2          
+   42  2          BDSPData[k].Integral = integralSum ;// MainSettings.accumulationTime;
+   43  2        }
+   44  1      
+   45  1      }
+   46         
+   47         uint16  BDSP_MinCounter(uint8 *minChannelIndex)
+   48         {
+   49  1        uint8 i = 0;
+   50  1        uint32  result = 0xFFFFFFFF;
+   51  1          
+   52  1          for(i = 0;i<CHANNELS;i++)
+   53  1          {
+   54  2            if(BDSPData[i].Integral < result){
+   55  3              result = BDSPData[i].Integral;
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 2   
+
+   56  3              *minChannelIndex = i;}
+   57  2          }
+   58  1          
+   59  1        return (uint16)result;
+   60  1      }
+   61         
+   62         uint16 BDSP_MaxCounter(uint8  *maxChannelIndex)
+   63         {
+   64  1        uint8 i = 0;
+   65  1        uint32  result = 0;
+   66  1        
+   67  1          for(i = 0;i<CHANNELS;i++)
+   68  1          {
+   69  2            if(BDSPData[i].Integral > result){
+   70  3              result = BDSPData[i].Integral;
+   71  3              *maxChannelIndex = i;}
+   72  2          }
+   73  1      
+   74  1        return (uint16)result;
+   75  1      }
+   76         
+   77         void BDSP_Reset()
+   78         {
+   79  1        uint8 i = 0;
+   80  1        
+   81  1        channelStartCnt = 0;
+   82  1        
+   83  1        BDPSChannelSize = SIZE_1024;  //размерность спектра - 1024 канала
+   84  1        BDSPAccumMode = ACCUM_ONLY;
+   85  1        BDSPMeasureNumber = MEASURE_ONE;
+   86  1        
+   87  1        for(i = 0;i<CHANNELS;i++)
+   88  1        {
+   89  2          memset(BDSPData[i].Data,0,sizeof(uint16) * QUERY_SIZE * SPECTR_SIZE);
+   90  2          memset(BDSPData[i].InputData,0,sizeof(uint16) * SPECTR_SIZE * 2);
+   91  2          memset(BDSPData[i].BackgroundData,0,sizeof(float) * SPECTR_SIZE);
+   92  2          memset(BDSPData[i].BackgroundData128,0,sizeof(float) * SPECTR_SIZE_128);
+   93  2          memset(BDSPData[i].AccumSpectrData,0,sizeof(float) * SPECTR_SIZE);
+   94  2          
+   95  2          BDSPData[i].DataCounter = 0;
+   96  2          BDSPData[i].Serial = 0;
+   97  2          BDSPData[i].Ready = 0;
+   98  2          BDSPData[i].QueryIndex = 0;
+   99  2          BDSPData[i].Background = 0;
+  100  2          BDSPData[i].BackgroundIndex = 0;
+  101  2          BDSPData[i].AccumSpectrIndex = 0;
+  102  2          BDSPData[i].ActiveBuffer = 0;
+  103  2          BDSPData[i].ChangeBufferEvent = 0;
+  104  2          BDSPData[i].Dose = 0;
+  105  2          BDSPData[i].AccumSpectr = 0;
+  106  2        }
+  107  1        
+  108  1        memset((uint8*)&BDSPParametrs,0,sizeof(tBDSPParametrs));
+  109  1        
+  110  1        CAN_SendMessage(CAN_BDSP_DATA_TX,mResetBDSP,8);
+  111  1      }
+  112         void BDSP_StopChannel(uint8 Channel)
+  113         {
+  114  1        CAN_SendMessage(CAN_BDSP_DATA_TX + Channel + 1,mStopBDSP,8);
+  115  1      }
+  116         
+  117         void BDSP_Start()
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 3   
+
+  118         {
+  119  1        CAN_SendMessage(CAN_BDSP_DATA_TX + 1,mStartBDSP,8);
+  120  1        CAN_SendMessage(CAN_BDSP_DATA_TX + 2,mStartBDSP,8);
+  121  1        CAN_SendMessage(CAN_BDSP_DATA_TX + 3,mStartBDSP,8);
+  122  1        CAN_SendMessage(CAN_BDSP_DATA_TX + 4,mStartBDSP,8);
+  123  1      
+  124  1      }
+  125         
+  126         void BDSP_Stop()
+  127         {
+  128  1        /*
+  129  1        BDSP_StopChannel(0);
+  130  1        BDSP_StopChannel(1);
+  131  1        BDSP_StopChannel(2);
+  132  1        BDSP_StopChannel(3);
+  133  1        */
+  134  1        CAN_SendMessage(CAN_BDSP_DATA_TX + 1,mStopBDSP,8);
+  135  1        CAN_SendMessage(CAN_BDSP_DATA_TX + 2,mStopBDSP,8);
+  136  1        CAN_SendMessage(CAN_BDSP_DATA_TX + 3,mStopBDSP,8);
+  137  1        CAN_SendMessage(CAN_BDSP_DATA_TX + 4,mStopBDSP,8);  
+  138  1      }
+  139         void BDSP_SetSpectrSize(eSpecMode eMode)
+  140         {
+  141  1        switch(eMode)
+  142  1        {
+  143  2          case SIZE_1024:
+  144  2          {
+  145  3            CAN_SendMessage(CAN_BDSP_DATA_TX + 1,mSpectrSize1024,8);
+  146  3            CAN_SendMessage(CAN_BDSP_DATA_TX + 2,mSpectrSize1024,8);
+  147  3            CAN_SendMessage(CAN_BDSP_DATA_TX + 3,mSpectrSize1024,8);
+  148  3            CAN_SendMessage(CAN_BDSP_DATA_TX + 4,mSpectrSize1024,8);  
+  149  3      
+  150  3              BDPSChannelSize = SIZE_1024;
+  151  3          }break;
+  152  2          
+  153  2          case SIZE_128:
+  154  2          {
+  155  3            CAN_SendMessage(CAN_BDSP_DATA_TX + 1,mSpectrSize128,8);
+  156  3            CAN_SendMessage(CAN_BDSP_DATA_TX + 2,mSpectrSize128,8);
+  157  3            CAN_SendMessage(CAN_BDSP_DATA_TX + 3,mSpectrSize128,8);
+  158  3            CAN_SendMessage(CAN_BDSP_DATA_TX + 4,mSpectrSize128,8);
+  159  3            
+  160  3              BDPSChannelSize = SIZE_128;
+  161  3          }break;
+  162  2        }
+  163  1      }
+  164         
+  165         void  BDSP_InsertData(uint8 Channel,uint8 *pData)
+  166         {
+  167  1        float sum = 0,i = 0;
+  168  1        uint16 time = 0;
+  169  1        uint16 length = 0;
+  170  1        
+  171  1        uint8 activeBuffer = BDSPData[Channel].ActiveBuffer;  //получаем индекс активного �
+             -�уфера
+  172  1        
+  173  1                //проверка на задание логического номера
+  174  1                if(Process_GetOperationMode() == IMDB_INITIALIZATION)
+  175  1                {
+  176  2                  if(pData[0] == 0x00 && pData[1] == Channel + 1){
+  177  3                      BDSPData[Channel].Ready = 1;
+  178  3                        channelStartCnt++;
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 4   
+
+  179  3                      
+  180  3                        if(channelStartCnt == CHANNELS)
+  181  3                          Process_BDPSStatus(DEVICE_WAITING); //ожидаем стабы
+  182  3                  }
+  183  2                }
+  184  1        
+  185  1                if(pData[0] == 0x07 && pData[2] == 0 && pData[7] == 0)
+  186  1                {
+  187  2                  time = (pData[4]<<8)|pData[3];      
+  188  2                  length  = (pData[6]<<8)|pData[5]; 
+  189  2      
+  190  2                  if(length == BDPSChannelSize && time == 0x01)
+  191  2                  {
+  192  3                  
+  193  3                    BDSPData[Channel].DataCounter = 0;
+  194  3                    BDSPData[Channel].ChangeBufferEvent = 0;
+  195  3                  }
+  196  2                }
+  197  1      
+  198  1                else
+  199  1                {
+  200  2                  BDSPData[Channel].InputData[activeBuffer][ BDSPData[Channel].DataCounter ] = (uint16)((pData[1] << 8
+             -) | pData[0]);
+  201  2                  BDSPData[Channel].InputData[activeBuffer][ BDSPData[Channel].DataCounter + 1 ] = (uint16)((pData[3] 
+             -<< 8) | pData[2]);
+  202  2                  BDSPData[Channel].InputData[activeBuffer][ BDSPData[Channel].DataCounter + 2 ] = (uint16)((pData[5] 
+             -<< 8) | pData[4]);
+  203  2                  BDSPData[Channel].InputData[activeBuffer][ BDSPData[Channel].DataCounter + 3 ] = (uint16)((pData[7] 
+             -<< 8) | pData[6]);
+  204  2                  
+  205  2                  /*
+  206  2                  specChannelsBuf[channel][specChannelIndex[channel]]   = (uint16)((msg[1] << 8) | msg[0]);
+  207  2                  specChannelsBuf[channel][specChannelIndex[channel]+1] =  (uint16)((msg[3] << 8) | msg[2]);
+  208  2                  specChannelsBuf[channel][specChannelIndex[channel]+2] =  (uint16)((msg[5] << 8) | msg[4]);
+  209  2                  specChannelsBuf[channel][specChannelIndex[channel]+3] =  (uint16)((msg[7] << 8) | msg[6]);
+  210  2                  
+  211  2                  
+  212  2                  specChannelIndex[channel]+=4;*/
+  213  2                  BDSPData[Channel].DataCounter += 4;
+  214  2                }
+  215  1      
+  216  1                if(BDSPData[Channel].DataCounter == BDPSChannelSize)
+  217  1                {
+  218  2                  //1. Проверяем, накоплен ли фон
+  219  2                  //2. Если да, то заполняем очередь спектров
+  220  2                  //3. В фии проверки заполнения очереди спектров проверя�
+             -�м, заполнена ли очередь и выполняем рассчёты
+  221  2                    if(BDSPData[Channel].ActiveBuffer == 1)
+  222  2                      BDSPData[Channel].ActiveBuffer = 0;
+  223  2                    else
+  224  2                      BDSPData[Channel].ActiveBuffer = 1;
+  225  2                    
+  226  2                    BDSPData[Channel].ChangeBufferEvent = 1;  //ставим флаг сработки события с
+             -мены буфера
+  227  2                  /*
+  228  2                  //проверили, если накопили фон
+  229  2                  if( (BDSPData[0].Background == 1) && (BDSPData[1].Background == 1) && (BDSPData[2].Background == 1) 
+             -&& (BDSPData[3].Background == 1) )
+  230  2                  {
+  231  2                    
+  232  2                    //BDSP_InsertInQuery(BDSPData[Channel].InputData,Channel);
+  233  2                  }
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 5   
+
+  234  2                  else
+  235  2                  {
+  236  2                    //BDSP_BackgroundAccumulation(Channel,BDSPData[Channel].InputData);
+  237  2                  }*/
+  238  2      
+  239  2                  
+  240  2                  BDSPData[Channel].DataCounter = 0;
+  241  2                }
+  242  1      }
+  243         
+  244         void  BDSP_InsertCmd(uint8  Channel,uint8 *pData) //получили сообщение по 00X, аппар
+             -атный номер канала - 1 от программного
+  245         {
+  246  1        uint8 Serial = 0;
+  247  1      
+  248  1        
+  249  1        if(Channel == 0)  //получили аварийное сообщение от всех БД
+  250  1        {
+  251  2          //приняли команду с серийным номером
+  252  2          if(pData[0] == 0x01 && pData[1] == 0x01 && pData[2] == 0x00 & pData[3] == 0x00)
+  253  2          {
+  254  3              Serial = pData[4];  //получаем текущий серийный номер
+  255  3            
+  256  3            pData[0] = 0x00;
+  257  3            pData[1] = Serial;  //(channelStartCnt+1);//присваиваем его в ответное сообщ
+             -ение и посылаем его на блок
+  258  3            
+  259  3            CAN_SendMessage(CAN_BDSP_DATA_TX,pData,8);
+  260  3            //channelStartCnt++;
+  261  3          }
+  262  2          /*if(pData[0] == 0x01 && pData[1] == 0x01)//получили сообщение от БД
+  263  2          {
+  264  2            BDSPData[channelStartCnt].Ready = 1;
+  265  2            channelStartCnt++;
+  266  2          }
+  267  2          if(channelStartCnt == CHANNELS)
+  268  2            Process_BDPSStatus(DEVICE_WAITING); //ожидаем стабы*/
+  269  2          
+  270  2          
+  271  2        }
+  272  1        else  // сообщение успешной стабилизации
+  273  1        {
+  274  2          
+  275  2          if(pData[0] == 0x02 && pData[1] == 0x01)
+  276  2          {
+  277  3            
+  278  3            BDSPData[Channel - 1].Ready = 2;
+  279  3            
+  280  3      
+  281  3            
+  282  3            
+  283  3            
+  284  3            
+  285  3            //CAN_SendMessageIT(CAN_BDSP_DATA_TX + Channel,mSpectrSize1024,8);
+  286  3            //System_Delay(50);
+  287  3          
+  288  3            if(BDSPData[0].Ready == 2 && BDSPData[1].Ready == 2 && BDSPData[2].Ready == 2 && BDSPData[3].Ready == 2
+             -)
+  289  3              Process_BDPSStatus(DEVICE_READY);
+  290  3          }
+  291  2        }
+  292  1      }
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 6   
+
+  293         void  BDSP_SetParametrs()
+  294         {
+  295  1          uint8 Channel = 0;
+  296  1          uint8 MsgData[8];
+  297  1      
+  298  1        for(Channel = 1;Channel<5;Channel++){
+  299  2        
+  300  2              MsgData[0] = 0x02;
+  301  2              MsgData[1] = 0x00;
+  302  2              MsgData[2] = 0x01;
+  303  2              MsgData[3] = 0xD0;
+  304  2              MsgData[4] = 0x07;
+  305  2              MsgData[5] = 0x00;
+  306  2              MsgData[6] = 0x00;
+  307  2              MsgData[7] = 0x00;
+  308  2            
+  309  2            
+  310  2            CAN_SendMessage(CAN_BDSP_DATA_TX + Channel,MsgData,8);
+  311  2            
+  312  2              MsgData[0] = 0x02;
+  313  2              MsgData[1] = 0x01;
+  314  2              MsgData[2] = 0x01;
+  315  2              MsgData[3] = 0x34;
+  316  2              MsgData[4] = 0x07;
+  317  2              MsgData[5] = 0x00;
+  318  2              MsgData[6] = 0x00;
+  319  2              MsgData[7] = 0x00;
+  320  2            
+  321  2            
+  322  2            CAN_SendMessage(CAN_BDSP_DATA_TX + Channel,MsgData,8);
+  323  2            
+  324  2              MsgData[0] = 0x02;
+  325  2              MsgData[1] = 0x02;
+  326  2              MsgData[2] = 0x01;
+  327  2              MsgData[3] = 0xE8;
+  328  2              MsgData[4] = 0x03;
+  329  2              MsgData[5] = 0x00;
+  330  2              MsgData[6] = 0x00;
+  331  2              MsgData[7] = 0x00;
+  332  2            
+  333  2            
+  334  2            CAN_SendMessage(CAN_BDSP_DATA_TX + Channel,MsgData,8);
+  335  2          }
+  336  1      }
+  337         
+  338         
+  339         void BDSP_BackgroundAccumulation(uint8  Channel,uint16  *pData)
+  340         {
+  341  1        uint16  i = 0,j = 0,sI = 0;
+  342  1        
+  343  1        float temp = 0;
+  344  1        float foobarMD = 0.667f;
+  345  1        
+  346  1      
+  347  1        if(BDSPData[Channel].BackgroundIndex < BACKGROUND_TIME){
+  348  2          for(i = 0;i<SPECTR_SIZE;i++){
+  349  3            BDSPData[Channel].BackgroundData[i] = BDSPData[Channel].BackgroundData[i] + (pData[i] * 1.0); //коп�
+             -�м счёт
+  350  3          }
+  351  2          BDSPData[Channel].BackgroundIndex++;
+  352  2        }
+  353  1        
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 7   
+
+  354  1        if((BDSPData[Channel].Background == 0) && (BDSPData[Channel].BackgroundIndex == BACKGROUND_TIME) ){
+  355  2          //завершили накопление фона
+  356  2          BDSPData[Channel].Background = 1;
+  357  2      
+  358  2            BDSP_StopChannel(Channel);//останавливаем канал   
+  359  2              
+  360  2              System_Delay(300000);
+  361  2          
+  362  2            BDSP_SetSpectrSize(SIZE_128);//ставим размер спектра 128 каналов
+  363  2          //проверяем, накопили ли мы фон у всех каналов
+  364  2          if((BDSPData[0].Background == 1) && (BDSPData[1].Background == 1) && (BDSPData[2].Background == 1) && (B
+             -DSPData[3].Background == 1))
+  365  2          {
+  366  3            
+  367  3            IMDB_SendPacket(IMDB_SEND_BACKGROUND_SUCCESS,(uint8*)&foobarMD,sizeof(float));//отсылаем усп
+             -ех в накоплении фона
+  368  3            Process_SetStatus(IMDB_FULLTIME_WORK);//переключаемся в режим штатной раб�
+             -�ты
+  369  3            Process_IMDBStart();  //запускаем комплекс 
+  370  3          }
+  371  2          //получаем скорость счёта для 128 канального фонового спек
+             -тра
+  372  2            sI = 0;
+  373  2          for(i = 0;i<SPECTR_SIZE_128;i++){
+  374  3            BDSPData[Channel].BackgroundData128[i] = (BDSPData[Channel].BackgroundData[sI]     + BDSPData[Channel].
+             -BackgroundData[sI + 1] + 
+  375  3                                                      BDSPData[Channel].BackgroundData[sI + 2] + BDSPData[Channel].BackgroundData[sI + 
+             -3] + 
+  376  3                                                      BDSPData[Channel].BackgroundData[sI + 4] + BDSPData[Channel].BackgroundData[sI + 
+             -5] + 
+  377  3                                                      BDSPData[Channel].BackgroundData[sI + 6] + BDSPData[Channel].BackgroundData[sI + 
+             -7]);
+  378  3            sI+=8;
+  379  3          }
+  380  2          temp = 0;
+  381  2          
+  382  2          for(i = 0;i<SPECTR_SIZE_128;i++){
+  383  3            BDSPData[Channel].BackgroundData128[i] = BDSPData[Channel].BackgroundData128[i] * BACKGROUND_KOEF;//( 1
+             -.0f / (float)BACKGROUND_TIME);
+  384  3            
+  385  3            temp += BDSPData[Channel].BackgroundData128[i];
+  386  3          }
+  387  2          //IMDB_SendPacket(IMDB_INSIDE_DOSE,(uint8*)((uint32*)&temp),sizeof(float));
+  388  2          
+  389  2          temp = 0;
+  390  2          
+  391  2          //получаем скорость счёта 
+  392  2          for(i = 0;i<SPECTR_SIZE;i++){
+  393  3            BDSPData[Channel].BackgroundData[i] = BDSPData[Channel].BackgroundData[i] * BACKGROUND_KOEF;//( 1.0f / 
+             -(float)BACKGROUND_TIME);
+  394  3            
+  395  3            temp += BDSPData[Channel].BackgroundData[i];
+  396  3          }
+  397  2          //IMDB_SendPacket(IMDB_INSIDE_DOSE,(uint8*)((uint32*)&temp),sizeof(float));
+  398  2          
+  399  2          
+  400  2        }
+  401  1      }
+  402         void BDSP_ResetBackgroundData()
+  403         {
+  404  1        uint8 i = 0;
+  405  1        
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 8   
+
+  406  1        //останавливаем спектрометр
+  407  1        BDSP_Stop();
+  408  1        BDSP_SetSpectrSize(SIZE_1024);
+  409  1        
+  410  1          for(i = 0;i<CHANNELS;i++){
+  411  2            BDSPData[i].BackgroundIndex = 0;
+  412  2            BDSPData[i].Background = 0;
+  413  2            
+  414  2            memset(BDSPData[i].BackgroundData,0,sizeof(float) * SPECTR_SIZE);
+  415  2            memset(BDSPData[i].BackgroundData128,0,sizeof(float) * SPECTR_SIZE_128);
+  416  2            
+  417  2          }
+  418  1        BDSP_Start();
+  419  1      }
+  420         
+  421         void BDSP_InsertInQuery(uint16 xhuge  *pData, uint8 Channel)//фия получения данных в о�
+             -�ередь
+  422         {
+  423  1        uint16 i = 0;
+  424  1        uint16  sBufSize = QUERY_SIZE;//MainSettings.accumulationTime - 1;
+  425  1        float temp = 0;
+  426  1        
+  427  1        if(BDSPData[Channel].QueryIndex > sBufSize)
+  428  1        {
+  429  2          memcpy(&BDSPData[Channel].Data[0],&BDSPData[Channel].Data[1],sizeof(uint16) * SPECTR_SIZE * (sBufSize ))
+             -;
+  430  2          BDSPData[Channel].QueryIndex-=1;
+  431  2      
+  432  2        }
+  433  1        
+  434  1        memcpy(BDSPData[Channel].Data[BDSPData[Channel].QueryIndex],pData,sizeof(uint16) * SPECTR_SIZE);
+  435  1        BDSPData[Channel].QueryIndex++;
+  436  1        /*for(i = 0;i<SPECTR_SIZE;i++)
+  437  1          temp+=BDSPData[Channel].Data[BDSPData[Channel].QueryIndex][i];
+  438  1        
+  439  1        IMDB_SendPacket(IMDB_SEND_BACKGROUND_SUCCESS,(uint8*)((uint8*)(&Channel)),1);
+  440  1        IMDB_SendPacket(IMDB_INSIDE_DOSE,(uint8*)((uint32*)&temp),sizeof(float));
+  441  1        */
+  442  1        
+  443  1        
+  444  1        //IMDB_SendPacket(IMDB_16BITWORD,(uint8*)&BDSPData[Channel].QueryIndex,sizeof(uint16));
+  445  1        //IMDB_SendPacket(IMDB_16BITWORD,(uint8*)&Channel,sizeof(uint16));
+  446  1        
+  447  1      }
+  448         /*
+  449         float BDSP_BackgroundExcess() //ф-ия рассчёта превышения по фону
+  450         {
+  451           float fQuantile = 0;
+  452           
+  453           uint8 maxIntegralIndex = 0;
+  454           
+  455           uint16  accTime = MainSettings.accumulationTime;
+  456           uint16  i = 0,j = 0;
+  457           
+  458             BDSP_CalculateIntegral();
+  459             BDSP_MaxCounter(&maxIntegralIndex);
+  460           
+  461           BDSPData[maxIntegralIndex].ppMax = 0;
+  462           BDSPData[maxIntegralIndex].ppBackgroundMax = 0;
+  463           
+  464           for(i = 0;i<accTime;i++){
+  465             for(j = 0;j<SPECTR_SIZE;j++){
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 9   
+
+  466               BDSPData[maxIntegralIndex].ppMax += BDSPData[maxIntegralIndex].Data[i][j];
+  467               
+  468               if(i == 0){
+  469                 BDSPData[maxIntegralIndex].ppBackgroundMax += BDSPData[maxIntegralIndex].BackgroundData[j];
+  470               }
+  471             }
+  472           }
+  473           
+  474           BDSPData[maxIntegralIndex].ppBackgroundMax = BDSPData[maxIntegralIndex].ppBackgroundMax * accTime;
+  475           
+  476           fQuantile = (BDSPData[maxIntegralIndex].ppMax - BDSPData[maxIntegralIndex].ppBackgroundMax) / (sqrt(BDSPD
+             -ata[maxIntegralIndex].ppBackgroundMax) + 1.0f);
+  477           
+  478           
+  479           
+  480           return fQuantile;
+  481         }
+  482         */
+  483         uint8 BDSP_BackgroundDetection()  //ф-ия идентификации и превышения МД на ф
+             -оне
+  484         {
+  485  1        uint8 i = 0;
+  486  1        uint8 maxIntegralIndex = 0;
+  487  1        uint8 backgroundCalcFlag = 0; //рассчёт счёта из скорости счёта фона
+  488  1        uint16  accTime = QUERY_SIZE;//MainSettings.accumulationTime;
+  489  1        uint16  startInd = 0, endInd = 0,j = 0,  k = 0;
+  490  1        
+  491  1        uint16  maxIntegral = 0;
+  492  1        
+  493  1      
+  494  1        uint8 iResult = 0;
+  495  1        
+  496  1        float fQuantile = 0;
+  497  1        
+  498  1        BDSP_CalculateIntegral();
+  499  1        BDSP_MaxCounter(&maxIntegralIndex);
+  500  1        
+  501  1        for(j = 1;j<123;j++){
+  502  2            BDSPData[maxIntegralIndex].ppMax = 0;
+  503  2            BDSPData[maxIntegralIndex].ppBackgroundMax = 0;
+  504  2            
+  505  2              startInd = 118 - 0.957f * j;
+  506  2              endInd = 126 - j;
+  507  2          
+  508  2            for(i = 0;i<accTime;i++){
+  509  3                for(k = startInd;k<endInd;k++){
+  510  4                BDSPData[maxIntegralIndex].ppMax += BDSPData[maxIntegralIndex].Data[i][k];
+  511  4                if(i == 0)
+  512  4                  BDSPData[maxIntegralIndex].ppBackgroundMax += BDSPData[maxIntegralIndex].BackgroundData128[k];          
+  513  4              }
+  514  3            }
+  515  2            
+  516  2            BDSPData[maxIntegralIndex].ppBackgroundMax = BDSPData[maxIntegralIndex].ppBackgroundMax * accTime;
+  517  2            fQuantile = (BDSPData[maxIntegralIndex].ppMax - BDSPData[maxIntegralIndex].ppBackgroundMax) / (sqrt(BDS
+             -PData[maxIntegralIndex].ppBackgroundMax) + 1.0f);
+  518  2            
+  519  2            if(fQuantile > MainSettings.limitDetect[0]){
+  520  3                return 1;
+  521  3          }
+  522  2        }
+  523  1        return 0;
+  524  1      }
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 10  
+
+  525         uint8 BDSP_Identification(uint16  *ePhotoPeak, uint16 *iSpdCounter)//ф-ия идентификации в 
+             -спектрометрическом режиме
+  526         {
+  527  1        uint8   iResult = 0xFF;
+  528  1        uint16  maxIntegralIndex = 0;
+  529  1        uint16  accTime = MainSettings.accumulationTime;
+  530  1        uint16  i = 0, j = 0, k = 0;
+  531  1        uint16  startInd = 0, endInd = 0;
+  532  1        uint32  maxIntegralValue = 0;
+  533  1        
+  534  1        float  fQuantile = 0;
+  535  1        uint16 ePhoto = 0;    //энергия фотопика
+  536  1        uint16 spCounter = 0; //скорость счёта в окне
+  537  1        //находим спектр с максимальным интегралом
+  538  1        for(i = 0;i<CHANNELS;i++){
+  539  2          BDSPData[i].Integral = 0;
+  540  2            for(j = 0;j<SPECTR_SIZE;j++){
+  541  3              BDSPData[i].Integral += BDSPData[i].AccumSpectrData[j];
+  542  3            }
+  543  2            if(BDSPData[i].Integral > maxIntegralValue){
+  544  3              maxIntegralValue = BDSPData[i].Integral;
+  545  3              maxIntegralIndex = i;
+  546  3            }
+  547  2        }
+  548  1        for(j = 1;j<984;j++){
+  549  2            //считаем квантиль превышения по фону
+  550  2            BDSPData[maxIntegralIndex].ppMax = 0;
+  551  2            BDSPData[maxIntegralIndex].ppBackgroundMax = 0;
+  552  2          
+  553  2            startInd = 946 - 0.957f * j;
+  554  2            endInd = 1004 - j;
+  555  2          
+  556  2            for(k = startInd;k<endInd;k++){
+  557  3                BDSPData[maxIntegralIndex].ppMax += BDSPData[maxIntegralIndex].AccumSpectrData[k];
+  558  3                BDSPData[maxIntegralIndex].ppBackgroundMax += BDSPData[maxIntegralIndex].BackgroundData[k];         
+  559  3            }
+  560  2              //теперь высчитываем квантиль
+  561  2              BDSPData[maxIntegralIndex].ppBackgroundMax = BDSPData[maxIntegralIndex].ppBackgroundMax * accTime;
+  562  2              fQuantile = (BDSPData[maxIntegralIndex].ppMax - BDSPData[maxIntegralIndex].ppBackgroundMax) / (sqrt(BD
+             -SPData[maxIntegralIndex].ppBackgroundMax) + 1.0f);
+  563  2            
+  564  2            if(fQuantile > MainSettings.limitDetect[0]){
+  565  3              if(j >= 746 && j <= 775){
+  566  4                return iResult = 1;
+  567  4              }
+  568  3              else if(j >= 696 && j <= 726){
+  569  4                return iResult = 2;
+  570  4              }
+  571  3              else if(j >= 508 && j <= 546){
+  572  4                return iResult = 3;
+  573  4              }
+  574  3              else if(j >= 852 && j <= 875){
+  575  4                return iResult = 4;
+  576  4              }
+  577  3              else{
+  578  4                return iResult = 0;
+  579  4              }
+  580  3            }
+  581  2        }
+  582  1        //получаем энергию фотопика
+  583  1        *ePhotoPeak = 2925 - 2.9355f * iResult;
+  584  1        *iSpdCounter = BDSPData[maxIntegralIndex].ppMax * (1.0f / accTime);
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 11  
+
+  585  1        
+  586  1        return iResult;
+  587  1      }
+  588         void BDSP_StartSpectrAccumulation(eSpecAccumMode Mode)
+  589         {
+  590  1        /*
+  591  1        0. Остановили спектрометр
+  592  1        1. Произвели очистку очереди данных
+  593  1        1. Переводим спектрометр в режим 1024 канал
+  594  1        2. Запускаем спектрометр
+  595  1        */
+  596  1        BDSP_Stop();
+  597  1        BDSP_ClearData();
+  598  1        
+  599  1          BDSPAccumMode = Mode; //запоминаем режим накопления
+  600  1          
+  601  1          Process_SetStatus(IMDB_SPECTR_ACCUMULATION);
+  602  1        
+  603  1        BDSP_SetSpectrSize(SIZE_1024);
+  604  1        BDSP_Start();
+  605  1        
+  606  1      }
+  607         void  BDSP_SpectrAccumulation(uint8 Channel,uint16  *pData)
+  608         {
+  609  1        uint16 i = 0;
+  610  1        uint8   nuclideIndex = 0;
+  611  1      
+  612  1        
+  613  1        sSpecModeData currentData;
+  614  1        
+  615  1        
+  616  1        if(BDSPData[Channel].AccumSpectrIndex < MainSettings.accumulationTime){
+  617  2          
+  618  2          for(i = 0;i<SPECTR_SIZE;i++){
+  619  3            BDSPData[Channel].AccumSpectrData[i] = BDSPData[Channel].AccumSpectrData[i] + pData[i]; //копим с
+             -чёт
+  620  3          }
+  621  2          BDSPData[Channel].AccumSpectrIndex++;
+  622  2        }
+  623  1        
+  624  1        if(BDSPData[Channel].AccumSpectr == 0 && BDSPData[Channel].AccumSpectrIndex >= MainSettings.accumulationT
+             -ime)
+  625  1        {
+  626  2          BDSPData[Channel].AccumSpectr = 1;
+  627  2          
+  628  2            
+  629  2            
+  630  2              
+  631  2          
+  632  2            if(BDSPAccumMode == ACCUM_ONLY){
+  633  3              
+  634  3                //BDSP_StopChannel(Channel);//останавливаем канал   
+  635  3                IMDB_SendPacket(METROLOGY_SEND_ACCUMSPECTR_SUCCESS,(uint8*)&Channel,sizeof(uint8)); //отправк�
+             -� сообщения об успешном накоплении спектра
+  636  3            }
+  637  2            
+  638  2            if( BDSPData[0].AccumSpectr == 1 && 
+  639  2                BDSPData[1].AccumSpectr == 1 &&
+  640  2                BDSPData[2].AccumSpectr == 1 &&
+  641  2                BDSPData[3].AccumSpectr == 1){
+  642  3      
+  643  3                  
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 12  
+
+  644  3                  
+  645  3                  BDSP_SetSpectrSize(SIZE_128);//ставим размер спектра 128 каналов
+  646  3                  
+  647  3                  
+  648  3                    if(BDSPAccumMode == ACCUM_AND_MEASURE){
+  649  4                      //TODO рассчёт данных для отправки в сообщении об оконча
+             -нии измерения. На данный момент установлена заглушка
+  650  4                      currentData.fMaxAngle = 1.34f;
+  651  4                      currentData.fDoseRate = 0.076f;
+  652  4      
+  653  4                      nuclideIndex = BDSP_Identification(&currentData.ePhotoPeak,&currentData.iSpdCounter);
+  654  4                    
+  655  4                      currentData.iSpdCounter = nuclideIndex; //TODO
+  656  4                    
+  657  4                      IMDB_SendPacket(IMDB_SEND_SPECTR_ACCUM_SUCCESS,(uint8*)&currentData,sizeof(sSpecModeData));
+  658  4                    }
+  659  3                    
+  660  3                    
+  661  3                  Process_SetStatus(IMDB_FULLTIME_WORK);
+  662  3                  //IMDB_SendState();
+  663  3              
+  664  3            }
+  665  2        }
+  666  1        
+  667  1        
+  668  1      }
+  669         
+  670         void BDSP_ClearData()
+  671         {
+  672  1        uint8 i = 0;
+  673  1        
+  674  1        for(i = 0;i<CHANNELS;i++){
+  675  2          memset(BDSPData[i].InputData,0,sizeof(uint16) * SPECTR_SIZE * 2);
+  676  2          memset(BDSPData[i].WorkData,0,sizeof(uint16) * SPECTR_SIZE);
+  677  2          memset(BDSPData[i].AccumSpectrData,0,sizeof(float) * SPECTR_SIZE);
+  678  2          
+  679  2          BDSPData[i].ActiveBuffer = 0;
+  680  2          BDSPData[i].AccumSpectrIndex = 0;
+  681  2          BDSPData[i].AccumSpectr = 0;
+  682  2        }
+  683  1      }
+  684         
+  685         void BDPS_ClearQuery()
+  686         {
+  687  1        uint8 i = 0;
+  688  1        
+  689  1          for(i = 0;i<CHANNELS;i++){
+  690  2            memset(BDSPData[i].Data,0,sizeof(uint16) * SPECTR_SIZE * QUERY_SIZE);
+  691  2            BDSPData[i].QueryIndex = 0;
+  692  2          }
+  693  1      }
+  694         
+  695         
+  696         uint8 *BDSP_GetCurrentSpectr()
+  697         {
+  698  1        uint8 channel = 0;
+  699  1        
+  700  1          BDSP_CalculateIntegral();
+  701  1          BDSP_MaxCounter(&channel);  //получаем индекс канала с макс. счётом
+  702  1          
+  703  1        return BDSP_GetChannelSpectr(channel);
+  704  1      }
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 13  
+
+  705         uint8 *BDSP_GetChannelSpectr(uint8  channel)
+  706         {
+  707  1        
+  708  1        
+  709  1        return (uint8*)&BDSPData[channel].WorkData[0];
+  710  1      }
+  711         uint8 *BDSP_GetAccumulationSpectr(uint8 Channel)
+  712         {
+  713  1        return (uint8*)&BDSPData[Channel].AccumSpectrData[0];
+  714  1      }
+  715         
+  716         
+  717         float *BDSP_GetAngularDiagram()
+  718         {
+  719  1        float *pAngleDiagramm;
+  720  1        
+  721  1        uint16 cntMin = BDSP_MinCounter(0);
+  722  1        uint16 cntMax = BDSP_MaxCounter(0);
+  723  1        
+  724  1        float sensorArray[12];
+  725  1        
+  726  1        BDSP_CalculateIntegral();
+  727  1        
+  728  1          memset(sensorArray,0,sizeof(float) * 12);
+  729  1        
+  730  1          sensorArray[0] = (uint16)BDSPData[0].Integral;
+  731  1          sensorArray[4] = (uint16)BDSPData[1].Integral;
+  732  1          sensorArray[7] = (uint16)BDSPData[2].Integral;
+  733  1          sensorArray[9] = (uint16)BDSPData[3].Integral;
+  734  1        
+  735  1        
+  736  1        
+  737  1          pAngleDiagramm  = BDGP_DirectionDiagramm(sensorArray, 12, cntMin,cntMax,&radiationMaximum,SPEC_MODE); 
+  738  1        
+  739  1        return pAngleDiagramm;
+  740  1      }
+  741         uint16  BDSP_GetMaximumAngle()
+  742         {
+  743  1        return radiationMaximum;
+  744  1      }
+  745         float   BDSP_GetDose()
+  746         {
+  747  1        return 0.002f;//BDSPData[0].Dose;
+  748  1      }
+  749         
+  750         uint8 BDSP_GetBackgroundReady()
+  751         {
+  752  1        if( (BDSPData[0].Background == 1) && (BDSPData[1].Background == 1) && (BDSPData[2].Background == 1) && (B
+             -DSPData[3].Background == 1) ){
+  753  2            return 1;
+  754  2        }
+  755  1        else
+  756  1          return 0;
+  757  1      }
+  758         
+  759         
+  760         void  BDSP_Process()
+  761         {
+  762  1        uint8 i = 0;
+  763  1        
+  764  1        /*switch(Process_GetOperationMode())
+  765  1        {
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 14  
+
+  766  1          case IMDB_FULLTIME_WORK:
+  767  1          {*/
+  768  1            for(i = 0;i<CHANNELS;i++)
+  769  1            {
+  770  2              //зарегистрировали процесс смены буфера
+  771  2              if(BDSPData[i].ChangeBufferEvent){
+  772  3                BDSPData[i].ChangeBufferEvent = 0;
+  773  3                
+  774  3                if(BDSPData[i].ActiveBuffer == 1)
+  775  3                  memcpy(BDSPData[i].WorkData,BDSPData[i].InputData[0],sizeof(uint16) * SPECTR_SIZE);
+  776  3                else
+  777  3                  memcpy(BDSPData[i].WorkData,BDSPData[i].InputData[1],sizeof(uint16) * SPECTR_SIZE); 
+  778  3                
+  779  3                /*
+  780  3                Костыль, из за наводки затираем первые 48 каналов
+  781  3                */
+  782  3                if(BDPSChannelSize == SIZE_128)
+  783  3                  memset(&BDSPData[i].WorkData[0],0,sizeof(uint16) * 6);
+  784  3                else
+  785  3                  memset(&BDSPData[i].WorkData[0],0,sizeof(uint16) * 48);
+  786  3                
+  787  3                
+  788  3                switch(Process_GetOperationMode())
+  789  3                {
+  790  4                  case IMDB_FULLTIME_WORK:{
+  791  5                    //проверяем, накоплен ли фон у всех каналов
+  792  5                    if( (BDSPData[0].Background == 1) && (BDSPData[1].Background == 1) && (BDSPData[2].Background == 1)
+             - && (BDSPData[3].Background == 1) ) { 
+  793  6                      BDSP_InsertInQuery(BDSPData[i].WorkData,i);
+  794  6                    }
+  795  5                    /*
+  796  5                      TODO Добавить проверку на режим накопления фона 
+  797  5                    
+  798  5                    else
+  799  5                      BDSP_BackgroundAccumulation(i,BDSPData[i].WorkData);
+  800  5                    */
+  801  5                  }break;
+  802  4                  
+  803  4                  case IMDB_BACKGROUND_ACCUMULATION:{
+  804  5                    //если фон текущего канала не накоплен
+  805  5                    if(BDSPData[i].Background == 0)
+  806  5                      BDSP_BackgroundAccumulation(i,BDSPData[i].WorkData);//записываем фон
+  807  5                  }break;
+  808  4                  
+  809  4                  case IMDB_SPECTR_ACCUMULATION:{
+  810  5                    BDSP_SpectrAccumulation(i,BDSPData[i].WorkData);
+  811  5                  }break;
+  812  4                }
+  813  3              }
+  814  2            }
+  815  1          /*}break;
+  816  1          
+  817  1          case IMDB_SPECTR_ACCUMULATION:
+  818  1          {
+  819  1            BDSP_SpectrAccumulation(i,BDSPData[i].WorkData);
+  820  1          }break;
+  821  1        }*/
+  822  1      }
+  823         uint8 *BDSP_GetParametrs()
+  824         {
+  825  1        return (uint8*)&BDSPParametrs;
+  826  1      }
+C166 COMPILER V7.53.0.0, BDSP                                                              04/17/2017 11:10:31 PAGE 15  
+
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =        8892     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =          40     --------
+  NEAR-DATA SIZE   =           9     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =      141484     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          12     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

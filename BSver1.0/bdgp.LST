@@ -1,0 +1,1339 @@
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE BDGP
+OBJECT MODULE PLACED IN .\output\bdgp.obj
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdgp.c XLARGE BROWSE MOD167 DEBUG TABS(2) OBJECT(.\output\bdgp.obj) 
+
+ stmt lvl     source
+
+    1         #include "bdgp.h"
+    2         #include "bdsp.h"
+    3         
+    4         #include "can.h"
+    5         #include "process.h"
+    6         #include "protocol.h"
+    7         #include "float.h"
+    8         
+    9         #include "settings.h"
+   10         
+   11         static float fLikelihoods[360];
+   12         static float fAngleDiagramm[48];
+   13         static uint8  msgCounterBDGP = 0;
+   14         
+   15         const float   fNormalBDSPFactor = 0.285714f;
+   16         
+   17         const uint8   startBDGPMsg[] = {0x40};
+   18         const uint8   stopBDGPMsg[] = {0x41};
+   19         const uint8   resetBDGPMsg[] = {0x42};
+   20         //для гранаты
+   21         
+   22         const float BDGPdirectionCoef[] = {
+   23         1.0f,
+   24         0.999996f,
+   25         0.999982f,
+   26         0.999961f,
+   27         0.99993f,
+   28         0.99989f,
+   29         0.999842f,
+   30         0.999785f,
+   31         0.99972f,
+   32         0.999646f,
+   33         0.999563f,
+   34         0.999471f,
+   35         0.999371f,
+   36         0.999262f,
+   37         0.999145f,
+   38         0.99902f,
+   39         0.998886f,
+   40         0.998743f,
+   41         0.998592f,
+   42         0.998433f,
+   43         0.998266f,
+   44         0.998091f,
+   45         0.997907f,
+   46         0.997716f,
+   47         0.997516f,
+   48         0.997309f,
+   49         0.997094f,
+   50         0.996871f,
+   51         0.99664f,
+   52         0.996402f,
+   53         0.996156f,
+   54         0.995903f,
+   55         0.995643f,
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 2   
+
+   56         0.995375f,
+   57         0.9951f,
+   58         0.994818f,
+   59         0.99453f,
+   60         0.994234f,
+   61         0.993932f,
+   62         0.993623f,
+   63         0.993307f,
+   64         0.992985f,
+   65         0.992657f,
+   66         0.992322f,
+   67         0.991982f,
+   68         0.991635f,
+   69         0.991283f,
+   70         0.990924f,
+   71         0.990561f,
+   72         0.990191f,
+   73         0.989817f,
+   74         0.989437f,
+   75         0.989052f,
+   76         0.988662f,
+   77         0.988267f,
+   78         0.987868f,
+   79         0.987464f,
+   80         0.987055f,
+   81         0.986642f,
+   82         0.986225f,
+   83         0.985804f,
+   84         0.985379f,
+   85         0.98495f,
+   86         0.984518f,
+   87         0.984082f,
+   88         0.983643f,
+   89         0.983201f,
+   90         0.982755f,
+   91         0.982307f,
+   92         0.981856f,
+   93         0.981402f,
+   94         0.980946f,
+   95         0.980487f,
+   96         0.980027f,
+   97         0.979564f,
+   98         0.9791f,
+   99         0.978633f,
+  100         0.978165f,
+  101         0.977696f,
+  102         0.977225f,
+  103         0.976754f,
+  104         0.976281f,
+  105         0.975807f,
+  106         0.975333f,
+  107         0.974858f,
+  108         0.974383f,
+  109         0.973907f,
+  110         0.973432f,
+  111         0.972956f,
+  112         0.972481f,
+  113         0.972005f,
+  114         0.971531f,
+  115         0.971057f,
+  116         0.970583f,
+  117         0.970111f,
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 3   
+
+  118         0.96964f,
+  119         0.969169f,
+  120         0.968701f,
+  121         0.968233f,
+  122         0.967767f,
+  123         0.967303f,
+  124         0.966841f,
+  125         0.966381f,
+  126         0.965923f,
+  127         0.965467f,
+  128         0.965013f,
+  129         0.964563f,
+  130         0.964114f,
+  131         0.963669f,
+  132         0.963227f,
+  133         0.962787f,
+  134         0.962351f,
+  135         0.961918f,
+  136         0.961488f,
+  137         0.961062f,
+  138         0.96064f,
+  139         0.960222f,
+  140         0.959807f,
+  141         0.959396f,
+  142         0.95899f,
+  143         0.958588f,
+  144         0.952701f,
+  145         0.935417f,
+  146         0.912921f,
+  147         0.886712f,
+  148         0.8575f,
+  149         0.825714f,
+  150         0.791644f,
+  151         0.755501f,
+  152         0.71745f,
+  153         0.67762f,
+  154         0.63612f,
+  155         0.593042f,
+  156         0.548465f,
+  157         0.50246f,
+  158         0.455088f,
+  159         0.406407f,
+  160         0.356468f,
+  161         0.30532f,
+  162         0.253008f,
+  163         0.209271f,
+  164         0.183096f,
+  165         0.163388f,
+  166         0.147567f,
+  167         0.134443f,
+  168         0.123329f,
+  169         0.113776f,
+  170         0.105474f,
+  171         0.098197f,
+  172         0.091773f,
+  173         0.086069f,
+  174         0.080979f,
+  175         0.07642f,
+  176         0.07232f,
+  177         0.068624f,
+  178         0.065283f,
+  179         0.062256f,
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 4   
+
+  180         0.059509f,
+  181         0.057013f,
+  182         0.054743f,
+  183         0.052676f,
+  184         0.050794f,
+  185         0.049079f,
+  186         0.047519f,
+  187         0.046099f,
+  188         0.04481f,
+  189         0.04364f,
+  190         0.042583f,
+  191         0.041629f,
+  192         0.040773f,
+  193         0.040008f,
+  194         0.03933f,
+  195         0.038735f,
+  196         0.038217f,
+  197         0.037775f,
+  198         0.037406f,
+  199         0.037106f,
+  200         0.036875f,
+  201         0.036711f,
+  202         0.036613f,
+  203         0.036581f
+  204         };
+  205         //для спектрометра
+  206         const float BDSPdirectionCoef[] = {
+  207         1.0000,
+  208         1.0000,
+  209         1.0000,
+  210         0.99949,
+  211         0.9961,
+  212         0.9948,
+  213         0.99357,
+  214         0.99241,
+  215         0.9913,
+  216         0.99025,
+  217         0.98925,
+  218         0.98829,
+  219         0.98736,
+  220         0.98647,
+  221         0.9856,
+  222         0.98474,
+  223         0.9839,
+  224         0.98307,
+  225         0.98224,
+  226         0.98141,
+  227         0.98057,
+  228         0.97971,
+  229         0.97884,
+  230         0.97794,
+  231         0.97701,
+  232         0.97604,
+  233         0.97504,
+  234         0.97399,
+  235         0.97289,
+  236         0.97174,
+  237         0.97053,
+  238         0.96925,
+  239         0.96791,
+  240         0.96649,
+  241         0.965,
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 5   
+
+  242         0.96343,
+  243         0.96177,
+  244         0.96002,
+  245         0.95817,
+  246         0.95623,
+  247         0.95419,
+  248         0.95204,
+  249         0.94978,
+  250         0.9474,
+  251         0.94491,
+  252         0.9423,
+  253         0.93956,
+  254         0.93669,
+  255         0.93369,
+  256         0.93056,
+  257         0.92728,
+  258         0.92387,
+  259         0.92031,
+  260         0.9166,
+  261         0.91274,
+  262         0.90872,
+  263         0.90455,
+  264         0.90021,
+  265         0.89571,
+  266         0.89105,
+  267         0.88621,
+  268         0.88121,
+  269         0.87603,
+  270         0.87067,
+  271         0.86514,
+  272         0.85942,
+  273         0.85352,
+  274         0.84744,
+  275         0.84116,
+  276         0.8347,
+  277         0.82804,
+  278         0.82119,
+  279         0.81414,
+  280         0.8069,
+  281         0.79945,
+  282         0.79181,
+  283         0.78396,
+  284         0.7759,
+  285         0.76764,
+  286         0.75917,
+  287         0.7505,
+  288         0.74161,
+  289         0.73251,
+  290         0.7232,
+  291         0.71368,
+  292         0.70394,
+  293         0.69398,
+  294         0.68381,
+  295         0.67342,
+  296         0.66281,
+  297         0.65198,
+  298         0.64094,
+  299         0.62967,
+  300         0.61818,
+  301         0.60647,
+  302         0.59454,
+  303         0.58239,
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 6   
+
+  304         0.57002,
+  305         0.55742,
+  306         0.54461,
+  307         0.53522,
+  308         0.52851,
+  309         0.51786,
+  310         0.50698,
+  311         0.49591,
+  312         0.48469,
+  313         0.47337,
+  314         0.46199,
+  315         0.45058,
+  316         0.43919,
+  317         0.42785,
+  318         0.41658,
+  319         0.40543,
+  320         0.39442,
+  321         0.38358,
+  322         0.37293,
+  323         0.36251,
+  324         0.35233,
+  325         0.3424,
+  326         0.33276,
+  327         0.32342,
+  328         0.3144,
+  329         0.3057,
+  330         0.29734,
+  331         0.28933,
+  332         0.28168,
+  333         0.27439,
+  334         0.26748,
+  335         0.26093,
+  336         0.25476,
+  337         0.24897,
+  338         0.24354,
+  339         0.23848,
+  340         0.23378,
+  341         0.22943,
+  342         0.22543,
+  343         0.22176,
+  344         0.21841,
+  345         0.21537,
+  346         0.21261,
+  347         0.21013,
+  348         0.20789,
+  349         0.20589,
+  350         0.20409,
+  351         0.20247,
+  352         0.201,
+  353         0.19965,
+  354         0.1984,
+  355         0.19721,
+  356         0.19605,
+  357         0.193825,
+  358         0.19206,
+  359         0.19145,
+  360         0.19095,
+  361         0.19054,
+  362         0.19022,
+  363         0.18997,
+  364         0.1898,
+  365         0.18968,
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 7   
+
+  366         0.18962,
+  367         0.1896,
+  368         0.18963,
+  369         0.18969,
+  370         0.18977,
+  371         0.18988,
+  372         0.19,
+  373         0.19013,
+  374         0.19027,
+  375         0.19041,
+  376         0.19055,
+  377         0.19068,
+  378         0.19081,
+  379         0.19092,
+  380         0.19102,
+  381         0.19111,
+  382         0.19118,
+  383         0.19122,
+  384         0.19125,
+  385         0.19126,
+  386         0.19125,
+  387         0.19122
+  388         };
+  389         
+  390         static tBDGPData      BDGPData;
+  391         static tBDGPParametrs BDGPParametrs[2];
+  392         
+  393         static float      doseArray[SLIDER_SIZE];
+  394         
+  395         static uint8      sliderCounter = 0;
+  396         static uint8      dynamicMode = 0;
+  397         static uint8      sliderMax = 0;
+  398         static uint8      currentRangeIndex = 0;  //номер текущего диапазона
+  399         
+  400         uint16  BDGP_MinCounter()
+  401         {
+  402  1        uint8   i = 0;
+  403  1        uint16  result = 0xFFFF;
+  404  1        
+  405  1          for(i = 0;i<SENSORS;i++){
+  406  2            if(BDGPData.WorkData[i] < result)
+  407  2              result = BDGPData.WorkData[i];
+  408  2          }
+  409  1        return result;
+  410  1      }
+  411         uint16  BDGP_MaxCounter()
+  412         {
+  413  1        uint8   i = 0;
+  414  1        uint16  result = 0;
+  415  1        
+  416  1          for(i = 0;i<SENSORS;i++){
+  417  2            if(BDGPData.WorkData[i] > result)
+  418  2              result = BDGPData.WorkData[i];
+  419  2          }
+  420  1        return result;
+  421  1      }
+  422         
+  423         float BDGP_MinSumSensData()
+  424         {
+  425  1        uint8 i = 0;
+  426  1        float result = FLT_MAX;
+  427  1          for(i = 0;i<SENSORS;i++){
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 8   
+
+  428  2            if(BDGPData.fCorrectionSumSensData[i] < result)
+  429  2              result = BDGPData.fCorrectionSumSensData[i];
+  430  2          }
+  431  1        return result;
+  432  1      }
+  433         float BDGP_MaxSumSensData()
+  434         {
+  435  1        uint8 i = 0;
+  436  1        float result = FLT_MIN;
+  437  1          for(i = 0;i<SENSORS;i++){
+  438  2            if(BDGPData.fCorrectionSumSensData[i] > result)
+  439  2              result = BDGPData.fCorrectionSumSensData[i];
+  440  2          }
+  441  1        return result;
+  442  1      }
+  443         
+  444         void  BDGP_Reset()
+  445         {
+  446  1        msgCounterBDGP = 0;
+  447  1        sliderCounter = 0;
+  448  1        dynamicMode = 0;
+  449  1        sliderMax = 0;
+  450  1        
+  451  1        memset(doseArray,0,sizeof(float) * SLIDER_SIZE);
+  452  1        memset((uint8*)&BDGPData,0,sizeof(tBDGPData));
+  453  1        memset((uint8*)&BDGPParametrs,0,sizeof(tBDGPParametrs) * 2);
+  454  1        
+  455  1        CAN_SendMessage(CAN_BDGP_CMD_TX,resetBDGPMsg,1);
+  456  1        
+  457  1        
+  458  1      
+  459  1      }
+  460         
+  461         
+  462         /*
+  463         Фия отправки CAN сообщения на запрос параметра из БД
+  464           range - 1,2 / диапазоны блока БДГП
+  465           paramIndex - ИД параметра
+  466           paramSubIndex - Субиндекс параметра
+  467         */
+  468         void  BDGP_ParametrRequest(uint8  range,uint8 paramIndex,uint8  paramSubIndex)
+  469         {
+  470  1        uint16  canID = 0x222 + range;
+  471  1        
+  472  1        uint8 Data[8];
+  473  1          
+  474  1          memset((uint8*)Data,0,sizeof(uint8) * 8);
+  475  1          
+  476  1          Data[0] = 0x05;
+  477  1          Data[1] = paramIndex;
+  478  1          Data[2] = 0x00;
+  479  1          Data[3] = paramSubIndex;
+  480  1        
+  481  1        CAN_SendMessage(canID,Data,8);
+  482  1      }
+  483         /*
+  484         Ф-ия отправки CAN сообщения на запись параметра в БД
+  485           range - 1,2 диапазоны блок БДГП
+  486           paramIndex - индекс параметра
+  487           paramSubIndex - субиндекс параметра
+  488           *pParam - указатель на данные с параметром
+  489           dataSize - рамер параметра
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 9   
+
+  490         */
+  491         void BDGP_WriteParametr(uint8 range,uint8 paramIndex,uint8 paramSubIndex, uint8 *pParam,int dataSize)
+  492         {
+  493  1        uint16  canID = 0x222 + range;
+  494  1        uint8 Data[8];
+  495  1        
+  496  1          memset((uint8*)Data,0,sizeof(uint8) * 8);
+  497  1        
+  498  1          Data[0] = 0x04;
+  499  1          Data[1] = paramIndex;
+  500  1          Data[2] = 0x00;
+  501  1          Data[3] = paramSubIndex;
+  502  1        
+  503  1          memcpy(Data + 4,(uint32*)(pParam),dataSize);
+  504  1        
+  505  1        CAN_SendMessageIT(canID,Data,8);
+  506  1          
+  507  1      }
+  508         //запуск записи параметров в БД
+  509         void  BDGP_StartWritingParametrs(uint8  rangeIndex)
+  510         {
+  511  1        BDGP_WriteParametr(1 + rangeIndex,0x93,0,(uint8*)&BDGPParametrs[0].fCorrectionFactors[0],sizeof(float));
+  512  1      }
+  513         
+  514         void  BDGP_Start()
+  515         {
+  516  1        CAN_SendMessage(CAN_BDGP_CMD_TX,startBDGPMsg,1);
+  517  1      }
+  518         void  BDGP_ForcedStart(uint8  rangeNumber)
+  519         {
+  520  1        uint8 pData[2];
+  521  1        
+  522  1      
+  523  1          pData[0] = 0x40;
+  524  1          pData[1] = rangeNumber;
+  525  1        
+  526  1        CAN_SendMessage(CAN_BDGP_CMD_TX,pData,2);
+  527  1      }
+  528         
+  529         void  BDGP_Stop()
+  530         {
+  531  1        CAN_SendMessage(CAN_BDGP_CMD_TX,stopBDGPMsg,1);
+  532  1      }
+  533         
+  534         void  BDGP_InsertParametrs(uint16 regID,uint8 *pData)
+  535         {
+  536  1        uint32  rangesPack = 0;
+  537  1        uint8   rangeIndex = 0;
+  538  1      
+  539  1          if(regID == 0x423) rangeIndex = 0;
+  540  1          else if(regID == 0x424) rangeIndex = 1;
+  541  1          else return;
+  542  1        
+  543  1        //запрос параметра
+  544  1        if(pData[0] == 0x05)
+  545  1        {
+  546  2          switch(pData[1])
+  547  2          {
+  548  3            case 0x93:
+  549  3            {
+  550  4              memcpy((uint8*)&BDGPParametrs[rangeIndex].fCorrectionFactors[pData[3]],(pData + 4),4);
+  551  4              
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 10  
+
+  552  4                if(pData[3]<12){
+  553  5                  BDGP_ParametrRequest(rangeIndex + 1,0x93,pData[3]+1);
+  554  5                }
+  555  4                else
+  556  4                  BDGP_ParametrRequest(rangeIndex + 1,0x94,0);
+  557  4                
+  558  4              
+  559  4            }break;
+  560  3            
+  561  3            case 0x94:
+  562  3            {
+  563  4                memcpy((uint8*)&BDGPParametrs[rangeIndex].fDeadTime,(pData + 4),4);
+  564  4                  BDGP_ParametrRequest(rangeIndex + 1,0x95,0);
+  565  4            }break;
+  566  3            
+  567  3            case 0x95:
+  568  3            {
+  569  4              memcpy((uint8*)&BDGPParametrs[rangeIndex].fEffectCounters,(pData + 4),4);
+  570  4                  BDGP_ParametrRequest(rangeIndex + 1,0x96,0);
+  571  4            }break;
+  572  3            
+  573  3            case 0x96:
+  574  3            {
+  575  4              memcpy((uint8*)&BDGPParametrs[rangeIndex].fSensCounters,(pData + 4),4);
+  576  4                  BDGP_ParametrRequest(rangeIndex + 1,0x97,0);
+  577  4            }break;
+  578  3            
+  579  3            case 0x97:
+  580  3            {
+  581  4              memcpy((uint8*)&BDGPParametrs[rangeIndex].rangeMin,pData + 4,2);
+  582  4              memcpy((uint8*)&BDGPParametrs[rangeIndex].rangeMax,pData + 6,2);
+  583  4                //аналогичный запрос со второго этажа БД
+  584  4                if(rangeIndex == 0)
+  585  4                  BDGP_ParametrRequest( 2,0x93,0);
+  586  4                else
+  587  4                  IMDB_BDGPGetParametrsSignalCallback();
+  588  4            }break;
+  589  3          }
+  590  2        }
+  591  1        //задание параметра
+  592  1        if(pData[0] == 0x04)
+  593  1        {
+  594  2          switch(pData[1])
+  595  2          {
+  596  3            case 0x93:
+  597  3            {
+  598  4                if(pData[3]<12){
+  599  5                  BDGP_WriteParametr(rangeIndex + 1,0x93,pData[3] + 1,(uint8*)&BDGPParametrs[rangeIndex].fCorrectionFa
+             -ctors[pData[3] + 1],sizeof(float));
+  600  5                  
+  601  5                }
+  602  4                else
+  603  4                  BDGP_WriteParametr(rangeIndex + 1,0x94,0,(uint8*)&BDGPParametrs[rangeIndex].fDeadTime,sizeof(float))
+             -;
+  604  4            }break;
+  605  3            
+  606  3            case 0x94:
+  607  3            {
+  608  4              BDGP_WriteParametr(rangeIndex + 1,0x95,0,(uint8*)&BDGPParametrs[rangeIndex].fEffectCounters,sizeof(flo
+             -at));
+  609  4            }break;
+  610  3            
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 11  
+
+  611  3            case 0x95:
+  612  3            {
+  613  4              BDGP_WriteParametr(rangeIndex + 1,0x96,0,(uint8*)&BDGPParametrs[rangeIndex].fSensCounters,sizeof(float
+             -));
+  614  4            }break;
+  615  3            
+  616  3            case 0x96:
+  617  3            {
+  618  4              rangesPack = BDGPParametrs[rangeIndex].rangeMax; 
+  619  4              rangesPack = rangesPack << 16;
+  620  4              rangesPack = rangesPack|BDGPParametrs[rangeIndex].rangeMin;
+  621  4                
+  622  4      
+  623  4                BDGP_WriteParametr(rangeIndex + 1,0x97,0,(uint8*)&rangesPack,sizeof(float));
+  624  4            }break;
+  625  3            
+  626  3            case 0x97:
+  627  3            {
+  628  4              if(rangeIndex == 0)
+  629  4                BDGP_StartWritingParametrs(1);
+  630  4              else//тут сохраняем
+  631  4              {
+  632  5                BDGP_WriteParametr(1,0xE0,0xFF,0,0);
+  633  5                BDGP_WriteParametr(2,0xE0,0xFF,0,0);
+  634  5                IMDB_BDGPWriteParametrsSignalCallback();
+  635  5              }
+  636  4                
+  637  4              
+  638  4            }break;
+  639  3          }
+  640  2        }
+  641  1      
+  642  1      }
+  643         /*
+  644         Ф-ия накопления фона работает тольео в режиме штатной раб�
+             -�ты и только при отсутствии спектрометра
+  645         */
+  646         void  BDGP_BackgroundAccumulation(uint16  *pData)
+  647         {
+  648  1        uint8   i = 0;
+  649  1        
+  650  1        float fCurrentData = 0; 
+  651  1        
+  652  1        if(BDGPData.BackgroundIndex < BACKGROUND_TIME){
+  653  2          for(i = 0;i<SENSORS;i++){
+  654  3            fCurrentData = ((pData[i] * BDGPParametrs[currentRangeIndex].fCorrectionFactors[i]) / (1.0f - pData[i] 
+             -* BDGPParametrs[currentRangeIndex].fDeadTime));
+  655  3            
+  656  3            BDGPData.BackgroundAverageSpeed += fCurrentData;
+  657  3          }
+  658  2          BDGPData.BackgroundAverageDose += BDGPData.currentDose;
+  659  2          BDGPData.BackgroundIndex++;
+  660  2        }
+  661  1        if((BDGPData.Background == 0) && (BDGPData.BackgroundIndex == BACKGROUND_TIME) ){
+  662  2          BDGPData.Background = 1;  
+  663  2          BDGPData.BackgroundAverageSpeed = BDGPData.BackgroundAverageSpeed / BACKGROUND_TIME;
+  664  2          BDGPData.BackgroundAverageDose = BDGPData.BackgroundAverageDose / BACKGROUND_TIME;
+  665  2          
+  666  2              IMDB_SendPacket(IMDB_SEND_BACKGROUND_SUCCESS,(uint8*)&BDGPData.BackgroundAverageDose,sizeof(float));//
+             -отсылаем успех в накоплении фона
+  667  2              Process_SetStatus(IMDB_FULLTIME_WORK);//переключаемся в режим штатной раб
+             -оты
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 12  
+
+  668  2        } 
+  669  1      }
+  670         void  BDGP_ResetBackgroundData()
+  671         {
+  672  1        BDGPData.BackgroundAverageSpeed = 0;
+  673  1        BDGPData.BackgroundAverageDose = 0;
+  674  1        
+  675  1        BDGPData.BackgroundIndex = 0;
+  676  1        BDGPData.Background = 0;
+  677  1      }
+  678         
+  679         void  BDGP_InsertDataNew(uint16 regID,uint8 *pData)
+  680         {
+  681  1        uint8 activeBuffer = BDGPData.ActiveBuffer;
+  682  1        
+  683  1        if(pData[0] == 0x40 && pData[1] == 0xFF)//поймали первое сообщение
+  684  1        {
+  685  2          //определяем номер диапазона
+  686  2          if(regID == 0x723)
+  687  2            currentRangeIndex = 0;
+  688  2          if(regID == 0x724)
+  689  2            currentRangeIndex = 1;
+  690  2          //копируем данные МД и средней скорости счёта
+  691  2          memcpy((uint8*)&BDGPData.counterRate,(uint8*)pData+2,sizeof(uint16));
+  692  2          memcpy((uint8*)&BDGPData.currentDose,(uint8*)pData+4,sizeof(float));
+  693  2          
+  694  2          msgCounterBDGP = 0;
+  695  2        }
+  696  1        else
+  697  1        {
+  698  2          BDGPData.InputData[activeBuffer][msgCounterBDGP * 4]       = (uint16)((pData[1] << 8) | pData[0]);
+  699  2          BDGPData.InputData[activeBuffer][(msgCounterBDGP * 4) + 1] = (uint16)((pData[3] << 8) | pData[2]);
+  700  2          BDGPData.InputData[activeBuffer][(msgCounterBDGP * 4) + 2] = (uint16)((pData[5] << 8) | pData[4]);
+  701  2          BDGPData.InputData[activeBuffer][(msgCounterBDGP * 4) + 3] = (uint16)((pData[7] << 8) | pData[6]);
+  702  2          
+  703  2          msgCounterBDGP++;
+  704  2          /*
+  705  2          //копируем скорости счёта текущего пакета с данными
+  706  2          memcpy((uint16*)BDGPData.sensorsCntCopy + (msgCounterBDGP * 4),(uint8*)pData,sizeof(uint16) * 4);
+  707  2          
+  708  2          msgCounterBDGP++;
+  709  2          //есил получили все пакеты со скоростями, то копируем их в
+             - рабочий массив
+  710  2          if(msgCounterBDGP == 3){
+  711  2            memcpy((uint8*)BDGPData.sensorsCnt,(uint8*)BDGPData.sensorsCntCopy,sizeof(uint16) * SENSORS);
+  712  2            
+  713  2            BDGPData.CanPackageEvent = 1;
+  714  2          }*/
+  715  2            if(msgCounterBDGP == 3){
+  716  3              if(BDGPData.ActiveBuffer == 1)
+  717  3                BDGPData.ActiveBuffer = 0;
+  718  3              else
+  719  3                BDGPData.ActiveBuffer = 1;
+  720  3              
+  721  3              BDGPData.ChangeBufferEvent = 1;
+  722  3            }
+  723  2        }
+  724  1      }
+  725         
+  726         void  BDGP_InsertCmd(uint8  *pData)
+  727         {
+  728  1        if(pData[0] == 0x42)
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 13  
+
+  729  1        {
+  730  2          Process_BDGPStatus(DEVICE_READY);
+  731  2          
+  732  2          //запрашиваем параметры блока 1 диапазон, коэфициенты, су�
+             -�индекс - первый коэфицент
+  733  2          BDGP_ParametrRequest(1,0x93,0);
+  734  2        }
+  735  1      }
+  736         float BDGP_GetAverageDoseRate()
+  737         {
+  738  1        return BDGPData.averageDose;
+  739  1      }
+  740         float   BDGP_GetCurrentDoseRate()
+  741         {
+  742  1        return BDGPData.currentDose;
+  743  1      }
+  744         
+  745         uint8 *BDGP_GetParametrs()
+  746         {
+  747  1        return (uint8*)&BDGPParametrs;
+  748  1      }
+  749         
+  750         float *BDGP_DirectionDiagramm(float *pData, uint8 SensCount, float cntMin,float cntMax, uint16  *pAngleMax,
+             - eAngDiagrammMode Mode)
+  751         {
+  752  1        //float correctionData[SENSORS];
+  753  1        uint16  lIndex[SENSORS];
+  754  1        int16 f = 0,g = 0,b = 0;
+  755  1        uint8   i = 0,j = 0;
+  756  1        
+  757  1        //uint16  cntMin = BDGP_MinCounter();
+  758  1        //uint16  cntMax = BDGP_MaxCounter();
+  759  1        float fK = 0.0f;
+  760  1        float fZ = 0.0f;
+  761  1        float *directionCoef;
+  762  1        float SignalLevel = 0;
+  763  1        float BackLevel = 0;
+  764  1          
+  765  1        //float *fLikelihoods = (float*)malloc(sizeof(float)*360);
+  766  1        //float *fAngleDiagramm = (float*)malloc(sizeof(float)*49);
+  767  1        
+  768  1        float fLHMin = 100000;  //минимум функции правдоподобия
+  769  1        float fLHMax = -100000; //максимум функции правдоподобия
+  770  1        float fNLMax = -100000;//FLT_MIN; //максимум сжатой функции
+  771  1        float fNormizeKoef = 0.0f;  //коэффициент нормировки
+  772  1        float fCountersSum = 0.0f;  //сумма счетов счётчиков БД за время движка
+  773  1        float fLLSum = 0;
+  774  1        
+  775  1        float fLog = 0; //подлогарифм. функция
+  776  1        float fFullLog = 0;
+  777  1        
+  778  1        float fFirstRecalKoef = 0;
+  779  1        float fSecondRecalKoef = 0;
+  780  1        
+  781  1        tBDSPParametrs  *curBDSPSettings;
+  782  1        
+  783  1        
+  784  1        if(Mode == CNTR_MODE){
+  785  2          fK = 0.8f - ((cntMin + 1) / (cntMax + 1));  //коэф. разрыхления жопы
+  786  2          directionCoef = BDGPdirectionCoef;
+  787  2        }
+  788  1        else{
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 14  
+
+  789  2          fK = sqrt((cntMin + 1) / (cntMax + 1));
+  790  2          curBDSPSettings = (tBDSPParametrs*)BDSP_GetParametrs();
+  791  2          directionCoef = BDSPdirectionCoef;
+  792  2        }
+  793  1        
+  794  1        memset(fAngleDiagramm,0,sizeof(float) * 48);
+  795  1        
+  796  1        SignalLevel = (cntMax - cntMin) / (1 - directionCoef[180]);
+  797  1        BackLevel = (cntMin - directionCoef[180] * cntMax) / (1 - directionCoef[180]);
+  798  1        
+  799  1        //корректировка скоростей счёта
+  800  1        if(BackLevel <= 0.0f)
+  801  1          BackLevel = 0.1f;
+  802  1        if(SignalLevel <= 0.0f)
+  803  1          SignalLevel = 1.0f;
+  804  1        
+  805  1        fLog = (SignalLevel / BackLevel);
+  806  1        
+  807  1        //if(fLikelihoods)
+  808  1        {
+  809  2      
+  810  2        
+  811  2          for(f = 0;f<360;f++)
+  812  2          {
+  813  3            for(i = 0;i<SensCount;i++)
+  814  3            {
+  815  4              if(Mode == CNTR_MODE){        
+  816  5                if( abs(-f + (30 * i)) < 181)
+  817  5                {
+  818  6                  lIndex[i] = abs(-f + (30 * i));
+  819  6                }
+  820  5                else if((360 - f + 30 * i) < 181 )
+  821  5                {
+  822  6                  lIndex[i] = (360 - f + 30 * i);
+  823  6                }
+  824  5                else
+  825  5                {
+  826  6                  lIndex[i] = abs(360 + f - 30 * i);
+  827  6                }
+  828  5              }
+  829  4              else{
+  830  5                if( abs(-f + (90 * i)) < 181)
+  831  5                {
+  832  6                  lIndex[i] = abs(-f + (90 * i));
+  833  6                }
+  834  5                else if((360 - f + 90 * i) < 181 )
+  835  5                {
+  836  6                  lIndex[i] = (360 - f + 90 * i);
+  837  6                }
+  838  5                else
+  839  5                {
+  840  6                  lIndex[i] = abs(360 + f - 90 * i);
+  841  6                }
+  842  5              }
+  843  4            }
+  844  3            //вычисляем ф-ию правдоподобия
+  845  3            fLikelihoods[f] = 0;
+  846  3            
+  847  3            for(i = 0;i<SensCount;i++)
+  848  3            {
+  849  4              if(Mode == CNTR_MODE)
+  850  4                fLikelihoods[f] += (pData[i] * BDGPParametrs[currentRangeIndex].fCorrectionFactors[i] * log(1 + fLog 
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 15  
+
+             -* directionCoef[lIndex[i]]) - SignalLevel * directionCoef[lIndex[i]]);
+  851  4              if(Mode == SPEC_MODE)
+  852  4                fLikelihoods[f] += (pData[i] * curBDSPSettings->fAligmentFactors[i] * log(1 + fLog * directionCoef[lI
+             -ndex[i]]) - SignalLevel * directionCoef[lIndex[i]]);
+  853  4            }
+  854  3          }
+  855  2          //находим минимум 
+  856  2          for(f = 0;f<360;f++)
+  857  2            if(fLikelihoods[f] < fLHMin)
+  858  2              fLHMin = fLikelihoods[f];
+  859  2      
+  860  2          //находим максимум
+  861  2          for(f = 0;f<360;f++)
+  862  2            if(fLikelihoods[f]>fLHMax)
+  863  2              fLHMax = fLikelihoods[f];
+  864  2          
+  865  2            //перекалибровка функции правдоподобия для гранаты
+  866  2          if(Mode == CNTR_MODE)
+  867  2          {
+  868  3            //вычисляем Z
+  869  3            fZ = (fLHMin - (1.0f - fK) * fLHMax) / (fK * fLHMin);
+  870  3            //перекалибровка с учетом fZ
+  871  3            for(f = 0;f<360;f++)
+  872  3              fLikelihoods[f] = fLikelihoods[f] - fZ * fLHMin;
+  873  3      
+  874  3            
+  875  3          }
+  876  2          
+  877  2          //перекалибровка для спектрометра
+  878  2          if(Mode == SPEC_MODE)
+  879  2          {
+  880  3            fFirstRecalKoef = fLHMin - ( ((fLHMax - fLHMin) * fK) / (1 - fK));
+  881  3            
+  882  3            //вычисляем новый максимум
+  883  3            fLHMax = fLHMax - fFirstRecalKoef;//fLHMin - ( ((fLHMax - fLHMin) * fK) / (1 - fK));
+  884  3            //перекалибровываем
+  885  3            for(f = 0;f<360;f++)
+  886  3              //fLikelihoods[f] = (fLikelihoods[f] - fLHMin - ( ((fLHMax - fLHMin) * fK) / (1 - fK) )) / fLHMax;
+  887  3                fLikelihoods[f] = (fLikelihoods[f] - fFirstRecalKoef) / fLHMax;
+  888  3            
+  889  3            //находим новый минимум
+  890  3            fLHMin = 100000;
+  891  3            for(f = 0;f<360;f++)
+  892  3              if(fLikelihoods[f] < fLHMin)
+  893  3                fLHMin = fLikelihoods[f];
+  894  3            //пересчитываем минимум
+  895  3            fLHMin = pow(fLHMin, 1 + 8 * pow(fLHMin,8) );
+  896  3              
+  897  3            fSecondRecalKoef = (fK * fK - fLHMin) / (1 - fK * fK);
+  898  3              
+  899  3            //вторая перекалибровка
+  900  3            for(f = 0;f<360;f++){
+  901  4              //fLikelihoods[f] = (pow(fLikelihoods[f],1+8*pow(fLikelihoods[f],8)) + ( (fK*fK - fLHMin)/(1 - fK*fK) 
+             -) ) / (1 + ( (fK*fK - fLHMin)/(1 - fK*fK) ));
+  902  4              fLikelihoods[f] = (pow(fLikelihoods[f], 1 + 8 * pow(fLikelihoods[f],8) ) + fSecondRecalKoef) / ( 1 + f
+             -SecondRecalKoef);
+  903  4            }
+  904  3            
+  905  3            
+  906  3          }
+  907  2            fLHMax = -100000;
+  908  2            //находим максимум и угол
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 16  
+
+  909  2            for(f = 0;f<360;f++)
+  910  2            {
+  911  3              if(fLikelihoods[f]>fLHMax){
+  912  4                fLHMax = fLikelihoods[f];
+  913  4                *pAngleMax = f;
+  914  4              }
+  915  3            }     
+  916  2            
+  917  2            
+  918  2      
+  919  2          
+  920  2      //    if(fAngleDiagramm)
+  921  2            {
+  922  3              
+  923  3              
+  924  3              for(f = 347;f<=359;f++)
+  925  3                fAngleDiagramm[0] += fLikelihoods[f];
+  926  3              for(f = 0;f<=13;f++)
+  927  3                fAngleDiagramm[0] += fLikelihoods[f];
+  928  3              
+  929  3              
+  930  3              for(f = 354;f<=359;f++)
+  931  3                fAngleDiagramm[1] += fLikelihoods[f];
+  932  3              for(f = 0;f<=20;f++)
+  933  3                fAngleDiagramm[1] += fLikelihoods[f];
+  934  3              
+  935  3              g = 2;
+  936  3              b = 2;
+  937  3              
+  938  3              do
+  939  3              {
+  940  4                fLLSum = 0;
+  941  4                
+  942  4                for(f = b;f<b + 27;f++)
+  943  4                {
+  944  5                  fAngleDiagramm[g] += fLikelihoods[f];
+  945  5                  //fLLSum += fLikelihoods[f];
+  946  5                }
+  947  4                //fAngleDiagramm[g] = (1 / fLHMax) * fLLSum;
+  948  4                
+  949  4                if(g%2 == 0)
+  950  4                  b = b + 7;  //7
+  951  4                else
+  952  4                  b = b + 8;  //8
+  953  4                
+  954  4                g++;
+  955  4              }
+  956  3              while(g<47);
+  957  3              
+  958  3              
+  959  3                fAngleDiagramm[47] = 0;
+  960  3              for(f = 339;f<=359;f++)
+  961  3                fAngleDiagramm[47] += fLikelihoods[f];
+  962  3              for(f = 0;f<=5;f++)
+  963  3                fAngleDiagramm[47] += fLikelihoods[f];      
+  964  3              
+  965  3              //максимум сжатой функции
+  966  3              for(g = 0;g<48;g++)
+  967  3                if(fAngleDiagramm[g] > fNLMax)
+  968  3                  fNLMax = fAngleDiagramm[g];
+  969  3              
+  970  3              if(Mode == CNTR_MODE){
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 17  
+
+  971  4                
+  972  4              for(i = SLIDER_SIZE - sliderMax;i < SLIDER_SIZE;i++)
+  973  4                for(j = 0;j<SensCount;j++)
+  974  4                  fCountersSum += BDGPData.sensorsCntQuery[i][j];
+  975  4                
+  976  4              fCountersSum = fCountersSum / SensCount;
+  977  4                
+  978  4              if(fCountersSum < (sliderMax * BDGPData.BackgroundAverageSpeed))
+  979  4                  fNormizeKoef = 0.5f;
+  980  4              else
+  981  4                  fNormizeKoef = 1.0f - 0.5f * ( (sliderMax * BDGPData.BackgroundAverageSpeed) / fCountersSum );
+  982  4              }
+  983  3              if(Mode == SPEC_MODE)
+  984  3              {
+  985  4                if( ( (pData[0]+pData[1]+pData[2]+pData[3])) <= BDSP_GetBackgroundQueryIntegral())
+  986  4                  fNormizeKoef = 0.5f;
+  987  4                else{
+  988  5                  fNormizeKoef = 1.0f - 0.5f * (BDSP_GetBackgroundQueryIntegral() /  (pData[0]+pData[1]+pData[2]+pData
+             -[3]));
+  989  5                }
+  990  4              }
+  991  3              
+  992  3              for(g = 0;g<48;g++)
+  993  3                fAngleDiagramm[g] = fAngleDiagramm[g] * fNormizeKoef / fNLMax;
+  994  3                /*if(fNLMax == FLT_MIN)
+  995  3                  for(g = 0;g<48;g++)
+  996  3                    fAngleDiagramm[g] = 1;
+  997  3                else      
+  998  3                  for(g = 0;g<48;g++)
+  999  3                    fAngleDiagramm[g] = fAngleDiagramm[g] / fNLMax;*/
+ 1000  3              } 
+ 1001  2          
+ 1002  2          
+ 1003  2          //free(fLikelihoods);
+ 1004  2        }
+ 1005  1        return fAngleDiagramm;
+ 1006  1        
+ 1007  1      }
+ 1008         float *BDGP_GetAngularDiagram()
+ 1009         {
+ 1010  1        uint8 i = 0;
+ 1011  1        
+ 1012  1        float cntMin = BDGP_MinSumSensData();
+ 1013  1        float cntMax = BDGP_MaxSumSensData();
+ 1014  1        
+ 1015  1        float *pAngleDiagramm;  
+ 1016  1      
+ 1017  1          pAngleDiagramm  = (float*)BDGP_DirectionDiagramm(BDGPData.fCorrectionSumSensData, SENSORS, cntMin,cntMax,
+             -&BDGPData.radiationMaximum,CNTR_MODE);
+ 1018  1          
+ 1019  1      
+ 1020  1        //    memcpy(BDGPData.nLikelihoods,pAngleDiagramm,sizeof(float) * 48);
+ 1021  1        return  pAngleDiagramm;
+ 1022  1      
+ 1023  1      
+ 1024  1        //return BDGPData.nLikelihoods;
+ 1025  1      }
+ 1026         
+ 1027         void  BDGP_DataArrayCorrection(uint8  oldSize)
+ 1028         {
+ 1029  1        /*
+ 1030  1        1. Копирование хвоста массива(размером oldSize) в начало масс�
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 18  
+
+             -�ва
+ 1031  1        2. Обнуление остальной части массива со смещением oldSize
+ 1032  1        3. Установка параметра sliderCounter в соответствии со значение�
+             -� oldSize
+ 1033  1        4. Сброс флага QuerySuccess
+ 1034  1        */
+ 1035  1        memcpy(&doseArray[0],&doseArray[SLIDER_SIZE - oldSize - 1],sizeof(float) * oldSize);
+ 1036  1        memset(&doseArray[oldSize],0,sizeof(float) * (SLIDER_SIZE - oldSize));
+ 1037  1          
+ 1038  1        memcpy(BDGPData.sensorsCntQuery[0],BDGPData.sensorsCntQuery[SLIDER_SIZE - oldSize - 1],sizeof(float) * SE
+             -NSORS * oldSize);
+ 1039  1        memset(BDGPData.sensorsCntQuery[oldSize],0,sizeof(float) * SENSORS * (SLIDER_SIZE - oldSize));
+ 1040  1        
+ 1041  1          sliderCounter = oldSize;
+ 1042  1          
+ 1043  1          BDGPData.QuerySuccess = 0;
+ 1044  1      }
+ 1045         void  BDGP_BackgroundIdentification()
+ 1046         {
+ 1047  1        uint8 i = 0, j = 0;
+ 1048  1        float fSum = 0;
+ 1049  1        
+ 1050  1      
+ 1051  1        
+ 1052  1          BDGPData.fQuantile = 0;
+ 1053  1        
+ 1054  1          for(i = 0;i<SENSORS;i++){
+ 1055  2            fSum += (BDGPData.fCorrectionSumSensData[i] * sliderMax);
+ 1056  2          }
+ 1057  1                //берём 'хвост' массива, т.к. там самые свежие значения МД
+             - и счетов
+ 1058  1                /*for(i = SLIDER_SIZE - sliderMax;i < SLIDER_SIZE;i++){
+ 1059  1                  for(j = 0;j<SENSORS;j++)
+ 1060  1                    fSum += BDGPData.sensorsCntQuery[i][j];
+ 1061  1                }*/
+ 1062  1      
+ 1063  1          
+ 1064  1          BDGPData.fQuantile = (fSum - (sliderMax * BDGPData.BackgroundAverageSpeed)) / (sqrt(sliderMax * BDGPData
+             -.BackgroundAverageSpeed) + 1);
+ 1065  1        
+ 1066  1          if(BDGPData.fQuantile > MainSettings.limitDetect[0])
+ 1067  1          {
+ 1068  2            //ставим флаг идентификации нуклида
+ 1069  2            if(!BDGPData.NuclideDetection){
+ 1070  3              BDGPData.NuclideDetection = 1;
+ 1071  3            
+ 1072  3              IMDB_NuclideDetectionSignalCallback();
+ 1073  3              
+ 1074  3              
+ 1075  3            }
+ 1076  2          }
+ 1077  1          else
+ 1078  1          {
+ 1079  2            //если была идентификация
+ 1080  2            if(BDGPData.NuclideDetection){
+ 1081  3              BDGPData.NuclideDetection = 0;
+ 1082  3              IMDB_NuclideEndDetectionSignalCallback(); //шлём сигнал для отправки сообще
+             -ния о сброе обнаружения источника
+ 1083  3            }
+ 1084  2          }
+ 1085  1      }
+ 1086         
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 19  
+
+ 1087         void  BDGP_Process()
+ 1088         {
+ 1089  1        uint8     i = 0,j=0;
+ 1090  1        
+ 1091  1        
+ 1092  1        
+ 1093  1        if(BDGPData.ChangeBufferEvent == 1)
+ 1094  1        {
+ 1095  2          BDGPData.ChangeBufferEvent = 0;
+ 1096  2          
+ 1097  2          if(BDGPData.ActiveBuffer == 1)
+ 1098  2              memcpy(BDGPData.WorkData,BDGPData.InputData[0],sizeof(uint16) * SENSORS);
+ 1099  2          else
+ 1100  2              memcpy(BDGPData.WorkData,BDGPData.InputData[1],sizeof(uint16) * SENSORS); 
+ 1101  2          
+ 1102  2              //////////////////////////////
+ 1103  2              //накопление фона для БДГП-yБ//
+ 1104  2              //////////////////////////////
+ 1105  2              /*
+ 1106  2                TO-DO сделать режим накопления фона!
+ 1107  2              */
+ 1108  2                //выполняем проверку на текущий рабочий статус системы
+ 1109  2              if(Process_GetOperationMode() == IMDB_BACKGROUND_ACCUMULATION){
+ 1110  3              //и проверку на наличие спектрометра
+ 1111  3                if(Process_GetBDPSStatus() == DEVICE_NOTREADY){
+ 1112  4                  BDGP_BackgroundAccumulation((uint16*)BDGPData.WorkData);//корректировка счетов п
+             -роисходит при подсчёте фоновой скорости счёта
+ 1113  4                }
+ 1114  3              }   
+ 1115  2          
+ 1116  2          
+ 1117  2          BDGPData.averageDose = 0;
+ 1118  2          //динамический движок получения средней МД
+ 1119  2            if(sliderCounter<SLIDER_SIZE){
+ 1120  3              doseArray[sliderCounter] = BDGPData.currentDose;
+ 1121  3              
+ 1122  3              //заполняем очередь счетов с поправкой на попр. коэф и мё
+             -ртвое время
+ 1123  3              
+ 1124  3              for(i = 0;i<SENSORS;i++)
+ 1125  3                BDGPData.sensorsCntQuery[sliderCounter][i] = ((BDGPData.WorkData[i] * BDGPParametrs[currentRangeIndex
+             -].fCorrectionFactors[i]) / (1.0f - BDGPData.WorkData[i] * BDGPParametrs[currentRangeIndex].fDeadTime));
+ 1126  3              
+ 1127  3              sliderCounter++;
+ 1128  3            }
+ 1129  2            else
+ 1130  2            {
+ 1131  3              if(!BDGPData.QuerySuccess)  //накопили очереди МД и счетов
+ 1132  3                BDGPData.QuerySuccess = 1;
+ 1133  3              
+ 1134  3              memcpy(&doseArray[0],&doseArray[1],sizeof(float) * (SLIDER_SIZE - 1));
+ 1135  3              memcpy(BDGPData.sensorsCntQuery[0],BDGPData.sensorsCntQuery[1],sizeof(float) * SENSORS * (SLIDER_SIZE 
+             -- 1));
+ 1136  3              
+ 1137  3              
+ 1138  3              doseArray[SLIDER_SIZE - 1] = BDGPData.currentDose;
+ 1139  3              
+ 1140  3              for(i = 0;i<SENSORS;i++)
+ 1141  3                BDGPData.sensorsCntQuery[SLIDER_SIZE - 1][i] = ((BDGPData.WorkData[i] * BDGPParametrs[currentRangeInd
+             -ex].fCorrectionFactors[i]) / (1.0f - BDGPData.WorkData[i] * BDGPParametrs[currentRangeIndex].fDeadTime));
+ 1142  3            }
+ 1143  2              
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 20  
+
+ 1144  2              memset(BDGPData.fCorrectionSumSensData,0,sizeof(float) * SENSORS);  //очищаем усредненн
+             -ый по движку массив
+ 1145  2            
+ 1146  2              if(BDGPData.QuerySuccess)
+ 1147  2              {
+ 1148  3                //если накопили движок МД, то в зависимости от скорости �
+             -�чёта подсчитываем текущую МД
+ 1149  3                
+ 1150  3                /*
+ 1151  3                  TO-DO! Программная корректировка массивов движков в соот
+             -ветствии с изменением времения накопления движка в большую сторо
+             -ну
+ 1152  3                */
+ 1153  3                if(BDGPData.counterRate < 3){
+ 1154  4                  /*if(sliderMax == 10)
+ 1155  4                    BDGP_DataArrayCorrection(sliderMax);*/
+ 1156  4                  
+ 1157  4                  sliderMax = 30;
+ 1158  4                }
+ 1159  3                else if(BDGPData.counterRate > 1 && BDGPData.counterRate < 12){
+ 1160  4                  /*if(sliderMax == 2)
+ 1161  4                    BDGP_DataArrayCorrection(sliderMax);*/
+ 1162  4                  
+ 1163  4                  sliderMax = 10;
+ 1164  4                }
+ 1165  3                else if(BDGPData.counterRate > 8)
+ 1166  3                  sliderMax = 2;
+ 1167  3                else;
+ 1168  3                //берём 'хвост' массива, т.к. там самые свежие значения МД
+             - и счетов
+ 1169  3                for(i = SLIDER_SIZE - sliderMax;i < SLIDER_SIZE;i++){
+ 1170  4                  BDGPData.averageDose += doseArray[i];
+ 1171  4                  for(j = 0;j<SENSORS;j++)
+ 1172  4                    BDGPData.fCorrectionSumSensData[j] += BDGPData.sensorsCntQuery[i][j];
+ 1173  4                }
+ 1174  3            
+ 1175  3                
+ 1176  3                BDGPData.averageDose = BDGPData.averageDose / sliderMax;
+ 1177  3                
+ 1178  3                  for(j = 0;j<SENSORS;j++)
+ 1179  3                    BDGPData.fCorrectionSumSensData[j] = BDGPData.fCorrectionSumSensData[j] / sliderMax;          
+ 1180  3              }
+ 1181  2              else
+ 1182  2              {
+ 1183  3                //если нет, то выводим усреднение по счётчику накоплени�
+             -�
+ 1184  3                for(i = 0;i<sliderCounter;i++){
+ 1185  4                  BDGPData.averageDose += doseArray[i];
+ 1186  4                  for(j = 0;j<SENSORS;j++)
+ 1187  4                    BDGPData.fCorrectionSumSensData[j] += BDGPData.sensorsCntQuery[i][j];
+ 1188  4                  
+ 1189  4                }
+ 1190  3                
+ 1191  3                if(sliderCounter != 0){
+ 1192  4                  BDGPData.averageDose = BDGPData.averageDose / sliderCounter;
+ 1193  4                  
+ 1194  4                  for(j = 0;j<SENSORS;j++)
+ 1195  4                    BDGPData.fCorrectionSumSensData[j] = BDGPData.fCorrectionSumSensData[j] / sliderCounter;
+ 1196  4                }
+ 1197  3              }
+ 1198  2              BDGPData.Dose += (BDGPData.currentDose * DOSE_TO_HOUR);
+ 1199  2              //BDGPData.Dose= BDGPData.Dose * DOSE_TO_HOUR;
+C166 COMPILER V7.53.0.0, BDGP                                                              10/31/2017 16:48:58 PAGE 21  
+
+ 1200  2              //фоновая идентификация
+ 1201  2              if(Process_GetBDPSStatus() == DEVICE_NOTREADY){
+ 1202  3                if(BDGPData.Background){
+ 1203  4                  BDGP_BackgroundIdentification();
+ 1204  4                }
+ 1205  3              }
+ 1206  2                    
+ 1207  2        }
+ 1208  1      }
+ 1209         
+ 1210         //float BDGP_GetMaximumAngle()
+ 1211         uint16  BDGP_GetMaximumAngle()
+ 1212         {
+ 1213  1        //float fAngle = (float)BDGPData.radiationMaximum;
+ 1214  1        //return fAngle;
+ 1215  1        return BDGPData.radiationMaximum;
+ 1216  1      }
+ 1217         float BDGP_GetDose()
+ 1218         {
+ 1219  1        return BDGPData.Dose;
+ 1220  1      }
+ 1221         uint8   BDGP_GetBackgroundState()
+ 1222         {
+ 1223  1        return BDGPData.Background;
+ 1224  1      }
+ 1225         
+ 1226         uint8 BDGP_GetOutsideFeature()
+ 1227         { 
+ 1228  1          if(BDGPData.currentDose >= 1.3f * BDGPData.averageDose)
+ 1229  1            return 1; //МД увеличилась
+ 1230  1          else if(BDGPData.currentDose <= 0.7f * BDGPData.averageDose)
+ 1231  1            return 2; //МД уменьшилась
+ 1232  1          else
+ 1233  1            return 0; //МД неизменилась
+ 1234  1      }
+ 1235         
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =       10138     --------
+  NEAR-CONST SIZE  =           7     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =        1448     --------
+  NEAR-DATA SIZE   =           5     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =        3668     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          30     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

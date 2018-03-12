@@ -1,0 +1,326 @@
+C166 COMPILER V7.53.0.0, DEVICES                                                           04/17/2017 11:10:30 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE DEVICES
+OBJECT MODULE PLACED IN devices.OBJ
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE devices.c XLARGE BROWSE MOD167 DEBUG TABS(2) 
+
+ stmt lvl     source
+
+    1         #include "devices.h"
+    2         #include "can.h"
+    3         #include "protocol.h"
+    4         #include "process.h"
+    5         #include "protocol.h"
+    6         //устройства
+    7         #include "bdmg.h" //БДМГ-Б
+    8         #include "bdgp.h" //БДГП-Б
+    9         #include "bdsp.h" //БДГП-С
+   10         /*
+   11         Реализация работы с блоками детектирования комплекса ИМД
+             --Б
+   12         */
+   13         /*
+   14         uint16  specChannelsBuf[CHANNELS][SPECTR_SIZE]; //8КБ
+   15         uint16  specChannelIndex[CHANNELS];       //индекс кол-ва принятых пакетов спек�
+             -�ра по CAN
+   16         
+   17         tSpectrChannel      SpectrChannel[CHANNELS];            //каналы спектрометра 
+   18         tBackgroundSpectr   BackgroundSpectr[CHANNELS];         //Фоновый спектр
+   19         */
+   20         void  Devices_SendStateRequest()
+   21         {/*
+   22  1        uint8 i = 0;
+   23  1        uint16 j = 0;
+   24  1        
+   25  1        memset(specChannelIndex,0,sizeof(uint16) * CHANNELS);
+   26  1        memset(specChannelsBuf,0,sizeof(uint16) * CHANNELS * SPECTR_SIZE);
+   27  1      
+   28  1      
+   29  1      
+   30  1        for(i = 0;i<CHANNELS;i++)
+   31  1        {
+   32  1      
+   33  1          SpectrChannel[i].Index = 0;
+   34  1          SpectrChannel[i].stabFlag = 0;
+   35  1          SpectrChannel[i].Ready = 0;
+   36  1          xmemset(SpectrChannel[i].Data,0,sizeof(uint16) * MAX_TIME * SPECTR_SIZE);
+   37  1      
+   38  1          
+   39  1          
+   40  1          BackgroundSpectr[i].Index = 0;
+   41  1          BackgroundSpectr[i].Ready = 0;
+   42  1          xmemset(BackgroundSpectr[i].Data,0,sizeof(float) * SPECTR_SIZE);
+   43  1        }*/
+   44  1        //команда сброса для все БД
+   45  1        BDSP_Reset();
+   46  1        BDGP_Reset();
+   47  1        BDMG_Reset(); 
+   48  1      
+   49  1      }
+   50         /*
+   51         Фия получения CAN сообщений от всех каналов БДГП-С
+   52         */
+   53         void  Devices_ReceiveMsgCallback(uint16 id,uint8 xhuge *msg)
+C166 COMPILER V7.53.0.0, DEVICES                                                           04/17/2017 11:10:30 PAGE 2   
+
+   54         {
+   55  1        switch(id)
+   56  1        {
+   57  2          case CAN_BDMG_CMD_RX:     BDMG_InsertCmd(msg);  break;
+   58  2          case CAN_BDMG_DATA_RX:    BDMG_InsertData(msg); break;
+   59  2          case CAN_BDGP_CMD_RX:     BDGP_InsertCmd(msg);  break;
+   60  2      //    case CAN_BDGP_DATA_II_RX: BDGP_InsertData(2,msg); break;  //приём данных с 1 диапазо
+             -на, TODO сделать приём I и II диапазонов
+   61  2      //    case CAN_BDGP_DATA_III_RX:  BDGP_InsertData(3,msg); break;  //приём данных с 1 диапаз�
+             -�на, TODO сделать приём I и II диапазонов
+   62  2      
+   63  2          
+   64  2          //спектрометр данные
+   65  2          case CAN_BDSP_DATA_CH1_RX:  BDSP_InsertData(0,msg); break;
+   66  2          case CAN_BDSP_DATA_CH2_RX:  BDSP_InsertData(1,msg); break;
+   67  2          case CAN_BDSP_DATA_CH3_RX:  BDSP_InsertData(2,msg); break;
+   68  2          case CAN_BDSP_DATA_CH4_RX:  BDSP_InsertData(3,msg); break;
+   69  2          
+   70  2        //  case CAN_BDSP_EMER_ALL_RX:  BDSP_InsertEmer(msg);   break;
+   71  2          //спектрометр стабилизация
+   72  2          case CAN_BDSP_EMER_CH1_RX:  BDSP_InsertCmd(0,msg);  break;
+   73  2          case CAN_BDSP_EMER_CH2_RX:  BDSP_InsertCmd(1,msg);  break;
+   74  2          case CAN_BDSP_EMER_CH3_RX:  BDSP_InsertCmd(2,msg);  break;
+   75  2          case CAN_BDSP_EMER_CH4_RX:  BDSP_InsertCmd(3,msg);  break;
+   76  2          
+   77  2        }
+   78  1      }
+   79         
+   80         /*
+   81         void  Devices_ReceiveMsgCallback(uint16 id,uint8 xhuge *msg)
+   82         { 
+   83           //временные переменные для БДГП-С
+   84           __IO  uint8   command = 0;
+   85           __IO  uint8   channel = 0;
+   86           __IO  uint16  length = 0;
+   87           __IO  uint16  time = 0;
+   88           
+   89           uint16  *pSpecCopy = 0;
+   90           
+   91           //Обарботка сообщений стабилизации
+   92           if( id == CAN_BDGPS_CHAN_I_STAB || 
+   93               id == CAN_BDGPS_CHAN_II_STAB || 
+   94               id == CAN_BDGPS_CHAN_III_STAB || 
+   95               id == CAN_BDGPS_CHAN_IV_STAB)
+   96           {
+   97             channel = (uint8)(id & 0x0007) - 1; //номер обрабатываемого канала
+   98               
+   99             SpectrChannel[channel].Ready = 1;
+  100               
+  101           }
+  102           
+  103           //Обработка получения ответа от БДГП-С
+  104           if( id == CAN_BDGPS_CHAN_I_RESPONSE || id == CAN_BDGPS_CHAN_II_RESPONSE || id == CAN_BDGPS_CHAN_III_RESPO
+             -NSE || id == CAN_BDGPS_CHAN_IV_RESPONSE )
+  105           {
+  106             
+  107                 channel = (uint8)(id & 0x0007) - 1; //номер обрабатываемого канала
+  108                 command = msg[0];                   //код команды
+  109                 
+  110                   
+  111                   if(command == 0x07 && msg[2] == 0 && msg[7] == 0)
+  112                   {
+C166 COMPILER V7.53.0.0, DEVICES                                                           04/17/2017 11:10:30 PAGE 3   
+
+  113                     time = (msg[4]<<8)|msg[3];      
+  114                     length  = (msg[6]<<8)|msg[5]; 
+  115         
+  116                     if(length == 0x400 && time == 0x01)
+  117                     {
+  118                     
+  119                       specChannelIndex[channel] = 0;
+  120                       
+  121                     }
+  122                   }
+  123         
+  124                   else
+  125                   {
+  126                     specChannelsBuf[channel][specChannelIndex[channel]]   = (uint16)((msg[1] << 8) | msg[0]);
+  127                     specChannelsBuf[channel][specChannelIndex[channel]+1] =  (uint16)((msg[3] << 8) | msg[2]);
+  128                     specChannelsBuf[channel][specChannelIndex[channel]+2] =  (uint16)((msg[5] << 8) | msg[4]);
+  129                     specChannelsBuf[channel][specChannelIndex[channel]+3] =  (uint16)((msg[7] << 8) | msg[6]);
+  130                     
+  131         
+  132                     specChannelIndex[channel]+=4;
+  133                   }
+  134         
+  135                   if(specChannelIndex[channel] == 1024)
+  136                   {
+  137                     
+  138                     //Devices_BackgroundAccumulation(specChannelsBuf[channel],channel);
+  139                     Devices_SpectrAccumulation(specChannelsBuf[channel],channel);
+  140                     
+  141                     //IMDB_SendPacket(IMDB_SEND_BACKGROUND_SUCCESS,(uint8*)((uint8*)(&channel)),1);
+  142                     specChannelIndex[channel] = 0;
+  143                   }
+  144         
+  145               
+  146               
+  147           }
+  148         }
+  149         
+  150         void  Devices_SpectrAccumulation(uint16 *specArr,uint8  channel)
+  151         {
+  152           uint8 sBufSize = MAX_TIME - 1;
+  153           
+  154           
+  155           
+  156           if(SpectrChannel[channel].Index > sBufSize)
+  157           {
+  158             memcpy(&SpectrChannel[channel].Data[0],&SpectrChannel[channel].Data[1],sizeof(uint16) * SPECTR_SIZE * (s
+             -BufSize - 1));
+  159             SpectrChannel[channel].Index-=1;
+  160             
+  161             if(SpectrChannel[channel].Ready == 0)
+  162             {
+  163               SpectrChannel[channel].Ready = 1;
+  164               IMDB_SendPacket(IMDB_SEND_BACKGROUND_SUCCESS,(uint8*)((uint8*)(&channel)),1);
+  165             }
+  166             
+  167             //IMDB_SendPacket(IMDB_SEND_BACKGROUND_SUCCESS,(uint8*)((uint8*)(&channel)),1);
+  168           }
+  169           
+  170           memcpy(SpectrChannel[channel].Data[SpectrChannel[channel].Index],specArr,sizeof(uint16) * SPECTR_SIZE);
+  171           SpectrChannel[channel].Index++;
+  172         
+  173         //  IMDB_SendPacket(IMDB_SEND_BACKGROUND_SUCCESS,(uint8*)((uint8*)(&SpectrChannel[channel].Index)),1);
+C166 COMPILER V7.53.0.0, DEVICES                                                           04/17/2017 11:10:30 PAGE 4   
+
+  174         }
+  175         void  Devices_BackgroundAccumulation(uint16 xhuge *specArr,uint8  channel)
+  176         {
+  177           uint16 i = 0;
+  178           float temp = 0,sum = 0;
+  179           __IO float koef = 0;
+  180           uint8 ch = 0;
+  181           
+  182           if(BackgroundSpectr[channel].Index < BACKGROUND_TIME)
+  183           {
+  184             sum = 0;
+  185             
+  186             for(i = 0;i<SPECTR_SIZE;i++){
+  187         
+  188               BackgroundSpectr[channel].Data[i] = BackgroundSpectr[channel].Data[i] + (specArr[i] * 1.0); //копи�
+             -� счёт
+  189             
+  190               sum+=BackgroundSpectr[channel].Data[i];
+  191             }
+  192             
+  193             BackgroundSpectr[channel].Index++;
+  194             //IMDB_SendPacket(IMDB_OUTSIDE_DOSE_RATE,(uint8*)((uint32*)(&sum)),4);
+  195           }
+  196           //если завершили накопление спектра
+  197           if((BackgroundSpectr[channel].Ready == 0) && (BackgroundSpectr[channel].Index == BACKGROUND_TIME) )
+  198           {
+  199             temp = 0;
+  200         
+  201             //завершили накопление фона
+  202             BackgroundSpectr[channel].Ready = 1;
+  203             
+  204             
+  205             for(i = 0;i<SPECTR_SIZE;i++){
+  206         
+  207               
+  208               BackgroundSpectr[channel].Data[i] = BackgroundSpectr[channel].Data[i] * ( 1.0f / (float)BACKGROUND_TIME
+             -);
+  209               temp+=BackgroundSpectr[channel].Data[i];
+  210             }
+  211         
+  212             IMDB_SendPacket(IMDB_SEND_BACKGROUND_SUCCESS,(uint8*)((uint8*)(&channel)),1);
+  213             IMDB_SendPacket(IMDB_OUTSIDE_DOSE_RATE,(uint8*)((uint32*)(&temp)),4);
+  214           }
+  215         }
+  216         
+  217         void  Devices_ClearBackgroundData()
+  218         {
+  219           uint8 i = 0;
+  220           uint16 j = 0;
+  221           
+  222           for(i = 0;i<CHANNELS;i++)
+  223           {
+  224           
+  225             BackgroundSpectr[i].Index = 0;
+  226             BackgroundSpectr[i].Ready = 0;
+  227             for(j = 0;j<SPECTR_SIZE;j++)
+  228                 BackgroundSpectr[i].Data[j] = 0.0f;
+  229             
+  230           }
+  231           xmemset(specChannelIndex,0,sizeof(uint16) * CHANNELS);
+  232         
+  233         }
+C166 COMPILER V7.53.0.0, DEVICES                                                           04/17/2017 11:10:30 PAGE 5   
+
+  234         
+  235         uint16 *  Devices_GetCurrentSpectr(uint8 channel)
+  236         {
+  237           uint16  i,j = 0;
+  238           uint16  *pSumSpectr;
+  239           
+  240           pSumSpectr = (uint16*)malloc(sizeof(uint16) * SPECTR_SIZE);
+  241           xmemset(pSumSpectr,0,sizeof(uint16) * SPECTR_SIZE);
+  242           
+  243           for(i = 0;i<MAX_TIME;i++)
+  244           {
+  245             for(j = 0;j<SPECTR_SIZE;j++)
+  246               pSumSpectr[j] += SpectrChannel[channel].Data[i][j]; //specChannels[i][Channel][j];
+  247               
+  248           }
+  249           for(i = 0;i<SPECTR_SIZE;i++)
+  250             pSumSpectr[j] = pSumSpectr[j] * (1.0 / MAX_TIME);
+  251             
+  252           
+  253           
+  254           return pSumSpectr;
+  255         }
+  256         
+  257         uint16 Devices_Probe()
+  258         {
+  259           uint16 i = 0;
+  260           uint16 result = 0;
+  261         
+  262             for(i = 0;i<SPECTR_SIZE;i++)
+  263             {
+  264         
+  265             //  result += specChannels[0][i];
+  266             }
+  267           
+  268           return result;
+  269         }*/
+  270         /*
+  271         *
+  272         *
+  273           Команды для работы с БДГП-С
+  274         *
+  275         *
+  276         */
+  277         
+  278         
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         202     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+C166 COMPILER V7.53.0.0, DEVICES                                                           04/17/2017 11:10:30 PAGE 6   
+
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

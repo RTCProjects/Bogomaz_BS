@@ -1,0 +1,96 @@
+C166 COMPILER V7.53.0.0, ASC0                                                              04/13/2017 11:46:30 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE ASC0
+OBJECT MODULE PLACED IN asc0.OBJ
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE asc0.c XLARGE BROWSE MOD167 DEBUG TABS(2) 
+
+ stmt lvl     source
+
+    1         #include "asc0.h"
+    2         #include "protocol.h"
+    3         
+    4         static bit volatile transmit_finish; 
+    5         static bit volatile empty_TBUF;
+    6         static bit volatile recive_finish;            
+    7         
+    8         
+    9         void serial_TX_irq (void) interrupt S0TINT = 42 {
+   10  1        transmit_finish = 1;           
+   11  1      }
+   12         
+   13         void serial_TX_BUF_irc (void) interrupt S0TBINT = 71 {
+   14  1        empty_TBUF = 1;
+   15  1      }
+   16         
+   17         void serial_RX_irq (void) interrupt S0RINT = 43 {
+   18  1       
+   19  1         
+   20  1        IMDB_ReceiveByteCallback(S0RBUF);
+   21  1        
+   22  1        recive_finish = 1;    
+   23  1        
+   24  1      }
+   25         
+   26         //char putchar (char c) {           // substitute function for putchar 
+   27         void sendbyte(char c){
+   28  1        while (!transmit_finish & !empty_TBUF & !S0TIR & !S0TBIR);
+   29  1        _atomic_(0); 
+   30  1        if (transmit_finish) transmit_finish = 0;
+   31  1        if (empty_TBUF) empty_TBUF = 0;
+   32  1        _endatomic_();
+   33  1        _atomic_(0); 
+   34  1        S0TIR = 0;
+   35  1        S0TBIR = 0;
+   36  1        _endatomic_();
+   37  1        _atomic_(0);                   // start un-interruptable code 
+   38  1        S0TBUF = c;
+   39  1        _endatomic_();
+   40  1      //  return(c);
+   41  1      }
+   42         /*
+   43         char _getkeyserial_RX (void) { // substitute function for _getkey 
+   44           while (!recive_finish & !S0RIR);
+   45           _atomic_(0);                   // start un-interruptable code 
+   46           recive_finish = 0;
+   47           S0RIR = 0;      
+   48           _endatomic_();         // end un-interruptable code
+   49           return(S0RBUF);
+   50         }
+   51            */
+   52         void init_asc0 (unsigned long freq, unsigned int baud) {
+   53  1       
+   54  1        
+   55  1        S0BG = (unsigned int)(freq / (32*(unsigned long) baud)) - 1;  // baudrate reload
+C166 COMPILER V7.53.0.0, ASC0                                                              04/13/2017 11:46:30 PAGE 2   
+
+   56  1        DP3 |= 0x0400;                                       // Set TXD for output 
+   57  1        DP3 &= 0xF7FF;                                      // Set RXD for input 
+   58  1        ALTSEL0P3 |= 0x0400;                                 // Configure port pins for serial interface 0    
+   59  1        P3 |= 0x0400;                                       // Set TXD high 
+   60  1        S0CON = 0x8011;
+   61  1        S0RIC = 0x0044;                                     // Enable serial receive interrupt 
+   62  1        S0TIC = 0x0045;                                     // Enable serial transmit interrupt 
+   63  1        transmit_finish = 1;
+   64  1      }
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         254     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =           3     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,139 @@
+C166 COMPILER V7.53.0.0, SYSTEM                                                            04/13/2017 11:46:30 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE SYSTEM
+OBJECT MODULE PLACED IN system.OBJ
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE system.c XLARGE BROWSE MOD167 DEBUG TABS(2) 
+
+ stmt lvl     source
+
+    1         #include "system.h"
+    2         
+    3         sbit P2_8 = P2^8;
+    4         
+    5         uint8 System_RAMTest(void)
+    6         {
+    7  1          __IO uint32 cnt = 0;
+    8  1          __IO uint32 temp = 0;
+    9  1          uint32  index = 0;
+   10  1          uint16    *ramStart = 0x600000;
+   11  1      
+   12  1          uint16  ramData = 0;
+   13  1          uint16  loopData = 0;
+   14  1        
+   15  1          xmemset(ramStart,0,0x80000);
+   16  1        
+   17  1          for(index = 0;index<0x40000;index++)
+   18  1          {
+   19  2            (*(ramStart+index)) = (uint16)index;
+   20  2          }
+   21  1        
+   22  1          for(index = 0;index<0x40000;index++)
+   23  1          {
+   24  2            ramData = (*((uint16*)ramStart+index));
+   25  2          
+   26  2            
+   27  2            if(ramData != (uint16)index)
+   28  2            {
+   29  3              return 0;
+   30  3            } 
+   31  2          }
+   32  1          xmemset(ramStart,0,0x80000);
+   33  1          
+   34  1          return 1;
+   35  1      }
+   36         
+   37         void  System_Delay(unsigned long z){
+   38  1        __IO unsigned long x;
+   39  1        for (x = 0; x < z; x++){
+   40  2          _nop_();
+   41  2          _nop_();
+   42  2          
+   43  2        }
+   44  1      }
+   45         void  System_Reset()
+   46         {
+   47  1          __asm { SRST }
+   48  1      }
+   49         
+   50         void  System_LEDPulse()
+   51         {
+   52  1      
+   53  1      }
+   54         
+   55         void  System_LEDState(eLEDState State)
+C166 COMPILER V7.53.0.0, SYSTEM                                                            04/13/2017 11:46:30 PAGE 2   
+
+   56         {
+   57  1        switch(State)
+   58  1        {
+   59  2          case LED_ON:
+   60  2          {
+   61  3            if(T3R)
+   62  3              T3R = 0;
+   63  3              CC8 = 0xC500;
+   64  3          }break;
+   65  2          
+   66  2          case LED_OFF:
+   67  2          {
+   68  3            if(T3R)
+   69  3              T3R = 0;
+   70  3            CC8 = 0xC001;
+   71  3          }break;
+   72  2          
+   73  2          case LED_BLINKY_FAST:
+   74  2          {
+   75  3            T3CON = 0x0003;
+   76  3            T3R = 1;
+   77  3            
+   78  3          }break;
+   79  2          
+   80  2          case LED_BLINKY_LOW:
+   81  2          {
+   82  3            T3CON = 0x0005;
+   83  3            T3R = 1;
+   84  3          }break;
+   85  2        }
+   86  1      }
+   87         
+   88         void _timer1(void) interrupt T1IC_VEC
+   89         {
+   90  1        
+   91  1        T1 = 0xC000;
+   92  1      
+   93  1        
+   94  1      }
+   95         void _timer3(void) interrupt T3IC_VEC
+   96         {
+   97  1      CC8 = 0xC500; 
+   98  1        /*
+   99  1        if(CC8 == 0xC500){
+  100  1          CC8 = 0xC001;
+  101  1          return;}
+  102  1        if(CC8 == 0xC001){
+  103  1          
+  104  1          return;}*/
+  105  1      }
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         318     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+C166 COMPILER V7.53.0.0, SYSTEM                                                            04/13/2017 11:46:30 PAGE 3   
+
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

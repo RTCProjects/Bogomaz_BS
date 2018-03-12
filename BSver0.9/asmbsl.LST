@@ -1,0 +1,2159 @@
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE     1
+
+
+MACRO ASSEMBLER A166 V5.36.0.1
+OBJECT MODULE PLACED IN asmbsl.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C166\BIN\A166.EXE asmbsl.a66 SEGMENTED MOD167 SET(XLARGE) DEBUG EP
+
+LOC      OBJ             LINE     SOURCE
+
+                            1     $INCLUDE (REG167.INC) 
+                      +1    2     ; (c) Copyright KEIL ELEKTRONIK GmbH.  1993-1999, All rights reserved.
+                      +1    3     ; Register Declarations for C167 Processor
+                      +1    4     
+                      +1    5     ;* A/D Converter *
+ FF98                 +1    6     ADCIC    DEFR   0FF98H
+ FFA0                 +1    7     ADCON    DEFR   0FFA0H
+ FEA0                 +1    8     ADDAT    DEFR   0FEA0H
+ FF9A                 +1    9     ADEIC    DEFR   0FF9AH
+ F0A0                 +1   10     ADDAT2   DEFR   0F0A0H
+ FFA0.7               +1   11     ADST     BIT    ADCON.7
+ FFA0.8               +1   12     ADBSY    BIT    ADCON.8
+ FFA0.9               +1   13     ADWR     BIT    ADCON.9
+ FFA0.10              +1   14     ADCIN    BIT    ADCON.10
+ FFA0.11              +1   15     ADCRQ    BIT    ADCON.11
+ FF98.6               +1   16     ADCIE    BIT    ADCIC.6
+ FF98.7               +1   17     ADCIR    BIT    ADCIC.7
+ FF9A.6               +1   18     ADEIE    BIT    ADEIC.6
+ FF9A.7               +1   19     ADEIR    BIT    ADEIC.7
+                      +1   20     
+                      +1   21     ;* Timer 0, Timer 1, Timer 7, Timer 8 *
+ FE80                 +1   22     CC0      DEFR   0FE80H
+ FF78                 +1   23     CC0IC    DEFR   0FF78H
+ FE82                 +1   24     CC1      DEFR   0FE82H
+ FF7A                 +1   25     CC1IC    DEFR   0FF7AH
+ FE84                 +1   26     CC2      DEFR   0FE84H
+ FF7C                 +1   27     CC2IC    DEFR   0FF7CH
+ FE86                 +1   28     CC3      DEFR   0FE86H
+ FF7E                 +1   29     CC3IC    DEFR   0FF7EH
+ FE88                 +1   30     CC4      DEFR   0FE88H
+ FF80                 +1   31     CC4IC    DEFR   0FF80H
+ FE8A                 +1   32     CC5      DEFR   0FE8AH
+ FF82                 +1   33     CC5IC    DEFR   0FF82H
+ FE8C                 +1   34     CC6      DEFR   0FE8CH
+ FF84                 +1   35     CC6IC    DEFR   0FF84H
+ FE8E                 +1   36     CC7      DEFR   0FE8EH
+ FF86                 +1   37     CC7IC    DEFR   0FF86H
+ FE90                 +1   38     CC8      DEFR   0FE90H
+ FF88                 +1   39     CC8IC    DEFR   0FF88H
+ FE92                 +1   40     CC9      DEFR   0FE92H
+ FF8A                 +1   41     CC9IC    DEFR   0FF8AH
+ FE94                 +1   42     CC10     DEFR   0FE94H
+ FF8C                 +1   43     CC10IC   DEFR   0FF8CH
+ FE96                 +1   44     CC11     DEFR   0FE96H
+ FF8E                 +1   45     CC11IC   DEFR   0FF8EH
+ FE98                 +1   46     CC12     DEFR   0FE98H
+ FF90                 +1   47     CC12IC   DEFR   0FF90H
+ FE9A                 +1   48     CC13     DEFR   0FE9AH
+ FF92                 +1   49     CC13IC   DEFR   0FF92H
+ FE9C                 +1   50     CC14     DEFR   0FE9CH
+ FF94                 +1   51     CC14IC   DEFR   0FF94H
+ FE9E                 +1   52     CC15     DEFR   0FE9EH
+ FF96                 +1   53     CC15IC   DEFR   0FF96H
+ FE60                 +1   54     CC16     DEFR   0FE60H
+ F160                 +1   55     CC16IC   DEFR   0F160H
+ FE62                 +1   56     CC17     DEFR   0FE62H
+ F162                 +1   57     CC17IC   DEFR   0F162H
+ FE64                 +1   58     CC18     DEFR   0FE64H
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE     2
+
+ F164                 +1   59     CC18IC   DEFR   0F164H
+ FE66                 +1   60     CC19     DEFR   0FE66H
+ F166                 +1   61     CC19IC   DEFR   0F166H
+ FE68                 +1   62     CC20     DEFR   0FE68H
+ F168                 +1   63     CC20IC   DEFR   0F168H
+ FE6A                 +1   64     CC21     DEFR   0FE6AH
+ F16A                 +1   65     CC21IC   DEFR   0F16AH
+ FE6C                 +1   66     CC22     DEFR   0FE6CH
+ F16C                 +1   67     CC22IC   DEFR   0F16CH
+ FE6E                 +1   68     CC23     DEFR   0FE6EH
+ F16E                 +1   69     CC23IC   DEFR   0F16EH
+ FE70                 +1   70     CC24     DEFR   0FE70H
+ F170                 +1   71     CC24IC   DEFR   0F170H
+ FE72                 +1   72     CC25     DEFR   0FE72H
+ F172                 +1   73     CC25IC   DEFR   0F172H
+ FE74                 +1   74     CC26     DEFR   0FE74H
+ F174                 +1   75     CC26IC   DEFR   0F174H
+ FE76                 +1   76     CC27     DEFR   0FE76H
+ F176                 +1   77     CC27IC   DEFR   0F176H
+ FE78                 +1   78     CC28     DEFR   0FE78H
+ F178                 +1   79     CC28IC   DEFR   0F178H
+ FE7A                 +1   80     CC29     DEFR   0FE7AH
+ F184                 +1   81     CC29IC   DEFR   0F184H
+ FE7C                 +1   82     CC30     DEFR   0FE7CH
+ F18C                 +1   83     CC30IC   DEFR   0F18CH
+ FE7E                 +1   84     CC31     DEFR   0FE7EH
+ F194                 +1   85     CC31IC   DEFR   0F194H
+ FF52                 +1   86     CCM0     DEFR   0FF52H
+ FF54                 +1   87     CCM1     DEFR   0FF54H
+ FF56                 +1   88     CCM2     DEFR   0FF56H
+ FF58                 +1   89     CCM3     DEFR   0FF58H
+ FF22                 +1   90     CCM4     DEFR   0FF22H
+ FF24                 +1   91     CCM5     DEFR   0FF24H
+ FF26                 +1   92     CCM6     DEFR   0FF26H
+ FF28                 +1   93     CCM7     DEFR   0FF28H
+ FE50                 +1   94     T0       DEFR   0FE50H
+ FF50                 +1   95     T01CON   DEFR   0FF50H
+ FF9C                 +1   96     T0IC     DEFR   0FF9CH
+ FE54                 +1   97     T0REL    DEFR   0FE54H
+ FE52                 +1   98     T1       DEFR   0FE52H
+ FF9E                 +1   99     T1IC     DEFR   0FF9EH
+ FE56                 +1  100     T1REL    DEFR   0FE56H
+ F050                 +1  101     T7       DEFR   0F050H
+ FF20                 +1  102     T78CON   DEFR   0FF20H
+ F17A                 +1  103     T7IC     DEFR   0F17AH
+ F054                 +1  104     T7REL    DEFR   0F054H
+ F052                 +1  105     T8       DEFR   0F052H
+ F17C                 +1  106     T8IC     DEFR   0F17CH
+ F056                 +1  107     T8REL    DEFR   0F056H
+ FF78.7               +1  108     CC0IR    BIT    CC0IC.7
+ FF78.6               +1  109     CC0IE    BIT    CC0IC.6
+ FF7A.7               +1  110     CC1IR    BIT    CC1IC.7
+ FF7A.6               +1  111     CC1IE    BIT    CC1IC.6
+ FF7C.7               +1  112     CC2IR    BIT    CC2IC.7
+ FF7C.6               +1  113     CC2IE    BIT    CC2IC.6
+ FF7E.7               +1  114     CC3IR    BIT    CC3IC.7
+ FF7E.6               +1  115     CC3IE    BIT    CC3IC.6
+ FF80.7               +1  116     CC4IR    BIT    CC4IC.7
+ FF80.6               +1  117     CC4IE    BIT    CC4IC.6
+ FF82.7               +1  118     CC5IR    BIT    CC5IC.7
+ FF82.6               +1  119     CC5IE    BIT    CC5IC.6
+ FF84.7               +1  120     CC6IR    BIT    CC6IC.7
+ FF84.6               +1  121     CC6IE    BIT    CC6IC.6
+ FF86.7               +1  122     CC7IR    BIT    CC7IC.7
+ FF86.6               +1  123     CC7IE    BIT    CC7IC.6
+ FF88.7               +1  124     CC8IR    BIT    CC8IC.7
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE     3
+
+ FF88.6               +1  125     CC8IE    BIT    CC8IC.6
+ FF8A.7               +1  126     CC9IR    BIT    CC9IC.7
+ FF8A.6               +1  127     CC9IE    BIT    CC9IC.6
+ FF8C.7               +1  128     CC10IR   BIT    CC10IC.7
+ FF8C.6               +1  129     CC10IE   BIT    CC10IC.6
+ FF8E.7               +1  130     CC11IR   BIT    CC11IC.7
+ FF8E.6               +1  131     CC11IE   BIT    CC11IC.6
+ FF90.7               +1  132     CC12IR   BIT    CC12IC.7
+ FF90.6               +1  133     CC12IE   BIT    CC12IC.6
+ FF92.7               +1  134     CC13IR   BIT    CC13IC.7
+ FF92.6               +1  135     CC13IE   BIT    CC13IC.6
+ FF94.7               +1  136     CC14IR   BIT    CC14IC.7
+ FF94.6               +1  137     CC14IE   BIT    CC14IC.6
+ FF96.7               +1  138     CC15IR   BIT    CC15IC.7
+ FF96.6               +1  139     CC15IE   BIT    CC15IC.6
+ F160.7               +1  140     CC16IR   BIT    CC16IC.7
+ F160.6               +1  141     CC16IE   BIT    CC16IC.6
+ F162.7               +1  142     CC17IR   BIT    CC17IC.7
+ F162.6               +1  143     CC17IE   BIT    CC17IC.6
+ F164.7               +1  144     CC18IR   BIT    CC18IC.7
+ F164.6               +1  145     CC18IE   BIT    CC18IC.6
+ F166.7               +1  146     CC19IR   BIT    CC19IC.7
+ F166.6               +1  147     CC19IE   BIT    CC19IC.6
+ F168.7               +1  148     CC20IR   BIT    CC20IC.7
+ F168.6               +1  149     CC20IE   BIT    CC20IC.6
+ F16A.7               +1  150     CC21IR   BIT    CC21IC.7
+ F16A.6               +1  151     CC21IE   BIT    CC21IC.6
+ F16C.7               +1  152     CC22IR   BIT    CC22IC.7
+ F16C.6               +1  153     CC22IE   BIT    CC22IC.6
+ F16E.7               +1  154     CC23IR   BIT    CC23IC.7
+ F16E.6               +1  155     CC23IE   BIT    CC23IC.6
+ F170.7               +1  156     CC24IR   BIT    CC24IC.7
+ F170.6               +1  157     CC24IE   BIT    CC24IC.6
+ F172.7               +1  158     CC25IR   BIT    CC25IC.7
+ F172.6               +1  159     CC25IE   BIT    CC25IC.6
+ F174.7               +1  160     CC26IR   BIT    CC26IC.7
+ F174.6               +1  161     CC26IE   BIT    CC26IC.6
+ F176.7               +1  162     CC27IR   BIT    CC27IC.7
+ F176.6               +1  163     CC27IE   BIT    CC27IC.6
+ F178.7               +1  164     CC28IR   BIT    CC28IC.7
+ F178.6               +1  165     CC28IE   BIT    CC28IC.6
+ F184.7               +1  166     CC29IR   BIT    CC29IC.7
+ F184.6               +1  167     CC29IE   BIT    CC29IC.6
+ F18C.7               +1  168     CC30IR   BIT    CC30IC.7
+ F18C.6               +1  169     CC30IE   BIT    CC30IC.6
+ F194.7               +1  170     CC31IR   BIT    CC31IC.7
+ F194.6               +1  171     CC31IE   BIT    CC31IC.6
+ FF52.3               +1  172     ACC0     BIT    CCM0.3
+ FF52.7               +1  173     ACC1     BIT    CCM0.7
+ FF52.11              +1  174     ACC2     BIT    CCM0.11
+ FF52.15              +1  175     ACC3     BIT    CCM0.15
+ FF54.3               +1  176     ACC4     BIT    CCM1.3
+ FF54.7               +1  177     ACC5     BIT    CCM1.7
+ FF54.11              +1  178     ACC6     BIT    CCM1.11
+ FF54.15              +1  179     ACC7     BIT    CCM1.15
+ FF56.3               +1  180     ACC8     BIT    CCM2.3
+ FF56.7               +1  181     ACC9     BIT    CCM2.7
+ FF56.11              +1  182     ACC10    BIT    CCM2.11
+ FF56.15              +1  183     ACC11    BIT    CCM2.15
+ FF58.3               +1  184     ACC12    BIT    CCM3.3
+ FF58.7               +1  185     ACC13    BIT    CCM3.7
+ FF58.11              +1  186     ACC14    BIT    CCM3.11
+ FF58.15              +1  187     ACC15    BIT    CCM3.15
+ FF22.3               +1  188     ACC16    BIT    CCM4.3
+ FF22.7               +1  189     ACC17    BIT    CCM4.7
+ FF22.11              +1  190     ACC18    BIT    CCM4.11
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE     4
+
+ FF22.15              +1  191     ACC19    BIT    CCM4.15
+ FF24.3               +1  192     ACC20    BIT    CCM5.3
+ FF24.7               +1  193     ACC21    BIT    CCM5.7
+ FF24.11              +1  194     ACC22    BIT    CCM5.11
+ FF24.15              +1  195     ACC23    BIT    CCM5.15
+ FF26.3               +1  196     ACC24    BIT    CCM6.3
+ FF26.7               +1  197     ACC25    BIT    CCM6.7
+ FF26.11              +1  198     ACC26    BIT    CCM6.11
+ FF26.15              +1  199     ACC27    BIT    CCM6.15
+ FF28.3               +1  200     ACC28    BIT    CCM7.3
+ FF28.7               +1  201     ACC29    BIT    CCM7.7
+ FF28.11              +1  202     ACC30    BIT    CCM7.11
+ FF28.15              +1  203     ACC31    BIT    CCM7.15
+ FF9C.6               +1  204     T0IE     BIT    T0IC.6
+ FF9C.7               +1  205     T0IR     BIT    T0IC.7
+ FF50.3               +1  206     T0M      BIT    T01CON.3
+ FF50.6               +1  207     T0R      BIT    T01CON.6
+ FF9E.6               +1  208     T1IE     BIT    T1IC.6
+ FF9E.7               +1  209     T1IR     BIT    T1IC.7
+ FF50.11              +1  210     T1M      BIT    T01CON.11
+ FF50.14              +1  211     T1R      BIT    T01CON.14
+ F17A.6               +1  212     T7IE     BIT    T7IC.6
+ F17A.7               +1  213     T7IR     BIT    T7IC.7
+ FF20.3               +1  214     T7M      BIT    T78CON.3
+ FF20.6               +1  215     T7R      BIT    T78CON.6
+ F17C.6               +1  216     T8IE     BIT    T8IC.6
+ F17C.7               +1  217     T8IR     BIT    T8IC.7
+ FF20.11              +1  218     T8M      BIT    T78CON.11
+ FF20.14              +1  219     T8R      BIT    T78CON.14
+                      +1  220     
+                      +1  221     ;* CPU *
+ FE08                 +1  222     CSP      DEFR   0FE08H
+ FF0E                 +1  223     MDC      DEFR   0FF0EH
+ FF1E                 +1  224     ONES     DEFR   0FF1EH
+ FF10                 +1  225     PSW      DEFR   0FF10H
+ FE12                 +1  226     SP       DEFR   0FE12H
+ FE14                 +1  227     STKOV    DEFR   0FE14H
+ FE16                 +1  228     STKUN    DEFR   0FE16H
+ FF12                 +1  229     SYSCON   DEFR   0FF12H
+ FFAC                 +1  230     TFR      DEFR   0FFACH
+ FF1C                 +1  231     ZEROS    DEFR   0FF1CH
+ FF0C                 +1  232     BUSCON0  DEFR   0FF0CH
+ FF14                 +1  233     BUSCON1  DEFR   0FF14H
+ FF16                 +1  234     BUSCON2  DEFR   0FF16H
+ FF18                 +1  235     BUSCON3  DEFR   0FF18H
+ FF1A                 +1  236     BUSCON4  DEFR   0FF1AH
+ FE18                 +1  237     ADDRSEL1 DEFR   0FE18H
+ FE1A                 +1  238     ADDRSEL2 DEFR   0FE1AH
+ FE1C                 +1  239     ADDRSEL3 DEFR   0FE1CH
+ FE1E                 +1  240     ADDRSEL4 DEFR   0FE1EH
+ FF12.7               +1  241     WRCFG    BIT    SYSCON.7
+ FF12.8               +1  242     CLKEN    BIT    SYSCON.8
+ FF12.9               +1  243     BYTDIS   BIT    SYSCON.9
+ FF12.10              +1  244     ROMEN    BIT    SYSCON.10
+ FF12.11              +1  245     SGTEN    BIT    SYSCON.11
+ FF12.12              +1  246     ROMS1    BIT    SYSCON.12
+ FF0E.4               +1  247     MDRIU    BIT    MDC.4
+ FF10.0               +1  248     N        BIT    PSW.0
+ FF10.1               +1  249     C        BIT    PSW.1
+ FF10.2               +1  250     V        BIT    PSW.2
+ FF10.3               +1  251     Z        BIT    PSW.3
+ FF10.4               +1  252     E        BIT    PSW.4
+ FF10.5               +1  253     MULIP    BIT    PSW.5
+ FF10.6               +1  254     USR0     BIT    PSW.6
+ FF10.10              +1  255     HLDEN    BIT    PSW.10
+ FF10.11              +1  256     IEN      BIT    PSW.11
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE     5
+
+ FF0C.4               +1  257     RWDC0    BIT    BUSCON0.4
+ FF0C.5               +1  258     MTTC0    BIT    BUSCON0.5
+ FF0C.9               +1  259     ALECTL0  BIT    BUSCON0.9
+ FF0C.10              +1  260     BUSACT0  BIT    BUSCON0.10
+ FF0C.12              +1  261     RDYEN0   BIT    BUSCON0.12
+ FF14.4               +1  262     RWDC1    BIT    BUSCON1.4
+ FF14.5               +1  263     MTTC1    BIT    BUSCON1.5
+ FF14.9               +1  264     ALECTL1  BIT    BUSCON1.9
+ FF14.10              +1  265     BUSACT1  BIT    BUSCON1.10
+ FF14.12              +1  266     RDYEN1   BIT    BUSCON1.12
+ FF14.14              +1  267     CSREN1   BIT    BUSCON1.14
+ FF14.15              +1  268     CSWEN1   BIT    BUSCON1.15
+ FF16.4               +1  269     RWDC2    BIT    BUSCON2.4
+ FF16.5               +1  270     MTTC2    BIT    BUSCON2.5
+ FF16.9               +1  271     ALECTL2  BIT    BUSCON2.9
+ FF16.10              +1  272     BUSACT2  BIT    BUSCON2.10
+ FF16.12              +1  273     RDYEN2   BIT    BUSCON2.12
+ FF16.14              +1  274     CSREN2   BIT    BUSCON2.14
+ FF16.15              +1  275     CSWEN2   BIT    BUSCON2.15
+ FF18.4               +1  276     RWDC3    BIT    BUSCON3.4
+ FF18.5               +1  277     MTTC3    BIT    BUSCON3.5
+ FF18.9               +1  278     ALECTL3  BIT    BUSCON3.9
+ FF18.10              +1  279     BUSACT3  BIT    BUSCON3.10
+ FF18.12              +1  280     RDYEN3   BIT    BUSCON3.12
+ FF18.14              +1  281     CSREN3   BIT    BUSCON3.14
+ FF18.15              +1  282     CSWEN3   BIT    BUSCON3.15
+ FF1A.4               +1  283     RWDC4    BIT    BUSCON4.4
+ FF1A.5               +1  284     MTTC4    BIT    BUSCON4.5
+ FF1A.9               +1  285     ALECTL4  BIT    BUSCON4.9
+ FF1A.10              +1  286     BUSACT4  BIT    BUSCON4.10
+ FF1A.12              +1  287     RDYEN4   BIT    BUSCON4.12
+ FF1A.14              +1  288     CSREN4   BIT    BUSCON4.14
+ FF1A.15              +1  289     CSWEN4   BIT    BUSCON4.15
+ FFAC.0               +1  290     ILLBUS   BIT    TFR.0
+ FFAC.1               +1  291     ILLINA   BIT    TFR.1
+ FFAC.2               +1  292     ILLOPA   BIT    TFR.2
+ FFAC.3               +1  293     PRTFLT   BIT    TFR.3
+ FFAC.7               +1  294     UNDOPC   BIT    TFR.7
+ FFAC.13              +1  295     STKUF    BIT    TFR.13
+ FFAC.14              +1  296     STKOF    BIT    TFR.14
+ FFAC.15              +1  297     NMI      BIT    TFR.15
+                      +1  298     
+ F1C0                 +1  299     EXICON   DEFR   0F1C0H
+                      +1  300     
+ F1DE                 +1  301     ISNC     DEFR   0F1DEH
+ F1DE.0               +1  302     RTCIE    BIT    ISNC.0
+ F1DE.1               +1  303     RTCIR    BIT    ISNC.1
+ F1DE.2               +1  304     PLLIE    BIT    ISNC.2
+ F1DE.3               +1  305     PLLIR    BIT    ISNC.3
+                      +1  306     
+                      +1  307     
+                      +1  308     ;* PEC *
+ FEC0                 +1  309     PECC0    DEFR   0FEC0H
+ FEC2                 +1  310     PECC1    DEFR   0FEC2H
+ FEC4                 +1  311     PECC2    DEFR   0FEC4H
+ FEC6                 +1  312     PECC3    DEFR   0FEC6H
+ FEC8                 +1  313     PECC4    DEFR   0FEC8H
+ FECA                 +1  314     PECC5    DEFR   0FECAH
+ FECC                 +1  315     PECC6    DEFR   0FECCH
+ FECE                 +1  316     PECC7    DEFR   0FECEH
+                      +1  317     
+                      +1  318     ;* I/O Ports *
+ F100                 +1  319     DP0L     DEFR   0F100H
+ F102                 +1  320     DP0H     DEFR   0F102H
+ F104                 +1  321     DP1L     DEFR   0F104H
+ F106                 +1  322     DP1H     DEFR   0F106H
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE     6
+
+ FFC2                 +1  323     DP2      DEFR   0FFC2H
+ FFC6                 +1  324     DP3      DEFR   0FFC6H
+ FFCA                 +1  325     DP4      DEFR   0FFCAH
+ FFCE                 +1  326     DP6      DEFR   0FFCEH
+ FFD2                 +1  327     DP7      DEFR   0FFD2H
+ FFD6                 +1  328     DP8      DEFR   0FFD6H
+ FF00                 +1  329     P0L      DEFR   0FF00H
+ FF02                 +1  330     P0H      DEFR   0FF02H
+ FF04                 +1  331     P1L      DEFR   0FF04H
+ FF06                 +1  332     P1H      DEFR   0FF06H
+ FFC0                 +1  333     P2       DEFR   0FFC0H
+ FFC4                 +1  334     P3       DEFR   0FFC4H
+ FFC8                 +1  335     P4       DEFR   0FFC8H
+ FFA2                 +1  336     P5       DEFR   0FFA2H
+ FFCC                 +1  337     P6       DEFR   0FFCCH
+ FFD0                 +1  338     P7       DEFR   0FFD0H
+ FFD4                 +1  339     P8       DEFR   0FFD4H
+ F1C2                 +1  340     ODP2     DEFR   0F1C2H
+ F1C6                 +1  341     ODP3     DEFR   0F1C6H
+                      +1  342     
+ F1CE                 +1  343     ODP6     DEFR   0F1CEH
+ F1D2                 +1  344     ODP7     DEFR   0F1D2H
+ F1D6                 +1  345     ODP8     DEFR   0F1D6H
+ F108                 +1  346     RP0H     DEFR   0F108H
+                      +1  347     
+                      +1  348     ;* Serial Interface *
+ FEB4                 +1  349     S0BG     DEFR   0FEB4H
+ FFB0                 +1  350     S0CON    DEFR   0FFB0H
+ FF70                 +1  351     S0EIC    DEFR   0FF70H
+ FEB2                 +1  352     S0RBUF   DEFR   0FEB2H
+ FF6E                 +1  353     S0RIC    DEFR   0FF6EH
+ FEB0                 +1  354     S0TBUF   DEFR   0FEB0H
+ F19C                 +1  355     S0TBIC   DEFR   0F19CH
+ FF6C                 +1  356     S0TIC    DEFR   0FF6CH
+ FFB0.3               +1  357     S0STP    BIT    S0CON.3
+ FFB0.4               +1  358     S0REN    BIT    S0CON.4
+ FFB0.5               +1  359     S0PEN    BIT    S0CON.5
+ FFB0.6               +1  360     S0FEN    BIT    S0CON.6
+ FFB0.7               +1  361     S0OEN    BIT    S0CON.7
+ FFB0.8               +1  362     S0PE     BIT    S0CON.8
+ FFB0.9               +1  363     S0FE     BIT    S0CON.9
+ FFB0.10              +1  364     S0OE     BIT    S0CON.10
+ FFB0.12              +1  365     S0ODD    BIT    S0CON.12
+ FFB0.13              +1  366     S0BRS    BIT    S0CON.13
+ FFB0.14              +1  367     S0LB     BIT    S0CON.14
+ FFB0.15              +1  368     S0R      BIT    S0CON.15
+ FF6C.6               +1  369     S0TIE    BIT    S0TIC.6
+ FF6C.7               +1  370     S0TIR    BIT    S0TIC.7
+ F19C.6               +1  371     S0TBIE   BIT    S0TBIC.6
+ F19C.7               +1  372     S0TBIR   BIT    S0TBIC.7
+ FF6E.6               +1  373     S0RIE    BIT    S0RIC.6
+ FF6E.7               +1  374     S0RIR    BIT    S0RIC.7
+ FF70.6               +1  375     S0EIE    BIT    S0EIC.6
+ FF70.7               +1  376     S0EIR    BIT    S0EIC.7
+                      +1  377     
+ FF72                 +1  378     SSC0TIC   EQU   0FF72H
+ FF74                 +1  379     SSC0RIC   EQU   0FF74H
+ FF76                 +1  380     SSC0EIC   EQU   0FF76H
+ F0B0                 +1  381     SSC0TB    EQU   0F0B0H
+ F0B2                 +1  382     SSC0RB    EQU   0F0B2H
+ F0B4                 +1  383     SSC0BR    EQU   0F0B4H
+ FFB2                 +1  384     SSC0CON   EQU   0FFB2H
+ FFB2.4               +1  385     SSC0HB    BIT   SSC0CON.4
+ FFB2.5               +1  386     SSC0PH    BIT   SSC0CON.5
+ FFB2.6               +1  387     SSC0P0    BIT   SSC0CON.6
+ FFB2.8               +1  388     SSC0TE    BIT   SSC0CON.8
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE     7
+
+ FFB2.8               +1  389     SSC0TEN   BIT   SSC0CON.8
+ FFB2.9               +1  390     SSC0RE    BIT   SSC0CON.9
+ FFB2.9               +1  391     SSC0REN   BIT   SSC0CON.9
+ FFB2.10              +1  392     SSC0PE    BIT   SSC0CON.10
+ FFB2.10              +1  393     SSC0PEN   BIT   SSC0CON.10
+ FFB2.11              +1  394     SSC0BE    BIT   SSC0CON.11
+ FFB2.11              +1  395     SSC0BEN   BIT   SSC0CON.11
+ FFB2.12              +1  396     SSC0BSY   BIT   SSC0CON.12
+ FFB2.14              +1  397     SSC0MS    BIT   SSC0CON.14
+ FFB2.15              +1  398     SSC0EN    BIT   SSC0CON.15
+ FF72.7               +1  399     SSC0TIR   BIT   SSC0TIC.7
+ FF72.6               +1  400     SSC0TIE   BIT   SSC0TIC.6
+ FF74.7               +1  401     SSC0RIR   BIT   SSC0RIC.7
+ FF74.6               +1  402     SSC0RIE   BIT   SSC0RIC.6
+ FF76.7               +1  403     SSC0EIR   BIT   SSC0EIC.7
+ FF76.6               +1  404     SSC0EIE   BIT   SSC0EIC.6
+                      +1  405     
+                      +1  406     ;* GPT1, GPT2 *
+ FE4A                 +1  407     CAPREL   DEFR   0FE4AH
+ FF6A                 +1  408     CRIC     DEFR   0FF6AH
+ FE40                 +1  409     T2       DEFR   0FE40H
+ FF40                 +1  410     T2CON    DEFR   0FF40H
+ FF60                 +1  411     T2IC     DEFR   0FF60H
+ FE42                 +1  412     T3       DEFR   0FE42H
+ FF42                 +1  413     T3CON    DEFR   0FF42H
+ FF62                 +1  414     T3IC     DEFR   0FF62H
+ FE44                 +1  415     T4       DEFR   0FE44H
+ FF44                 +1  416     T4CON    DEFR   0FF44H
+ FF64                 +1  417     T4IC     DEFR   0FF64H
+ FE46                 +1  418     T5       DEFR   0FE46H
+ FF46                 +1  419     T5CON    DEFR   0FF46H
+ FF66                 +1  420     T5IC     DEFR   0FF66H
+ FE48                 +1  421     T6       DEFR   0FE48H
+ FF48                 +1  422     T6CON    DEFR   0FF48H
+ FF68                 +1  423     T6IC     DEFR   0FF68H
+ FEAE                 +1  424     WDT      DEFR   0FEAEH
+ FFAE                 +1  425     WDTCON   DEFR   0FFAEH
+ FF6A.6               +1  426     CRIE     BIT    CRIC.6
+ FF6A.7               +1  427     CRIR     BIT    CRIC.7
+ FF40.6               +1  428     T2R      BIT    T2CON.6
+ FF40.7               +1  429     T2UD     BIT    T2CON.7
+ FF40.8               +1  430     T2UDE    BIT    T2CON.8
+ FF60.6               +1  431     T2IE     BIT    T2IC.6
+ FF60.7               +1  432     T2IR     BIT    T2IC.7
+ FF42.6               +1  433     T3R      BIT    T3CON.6
+ FF42.7               +1  434     T3UD     BIT    T3CON.7
+ FF42.8               +1  435     T3UDE    BIT    T3CON.8
+ FF42.9               +1  436     T3OE     BIT    T3CON.9
+ FF42.10              +1  437     T3OTL    BIT    T3CON.10
+ FF62.6               +1  438     T3IE     BIT    T3IC.6
+ FF62.7               +1  439     T3IR     BIT    T3IC.7
+ FF44.6               +1  440     T4R      BIT    T4CON.6
+ FF44.7               +1  441     T4UD     BIT    T4CON.7
+ FF44.8               +1  442     T4UDE    BIT    T4CON.8
+ FF64.6               +1  443     T4IE     BIT    T4IC.6
+ FF64.7               +1  444     T4IR     BIT    T4IC.7
+ FF46.6               +1  445     T5R      BIT    T5CON.6
+ FF46.7               +1  446     T5UD     BIT    T5CON.7
+ FF46.8               +1  447     T5UDE    BIT    T5CON.8
+ FF46.14              +1  448     T5CLR    BIT    T5CON.14
+ FF46.15              +1  449     T5SC     BIT    T5CON.15
+ FF66.6               +1  450     T5IE     BIT    T5IC.6
+ FF66.7               +1  451     T5IR     BIT    T5IC.7
+ FF48.6               +1  452     T6R      BIT    T6CON.6
+ FF48.7               +1  453     T6UD     BIT    T6CON.7
+ FF48.8               +1  454     T6UDE    BIT    T6CON.8
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE     8
+
+ FF48.9               +1  455     T6OE     BIT    T6CON.9
+ FF48.10              +1  456     T6OTL    BIT    T6CON.10
+ FF48.15              +1  457     T6SR     BIT    T6CON.15
+ FF68.6               +1  458     T6IE     BIT    T6IC.6
+ FF68.7               +1  459     T6IR     BIT    T6IC.7
+ FFC4.0               +1  460     T0IN     BIT    P3.0
+ FFC4.7               +1  461     T2IN     BIT    P3.7
+ FFC4.6               +1  462     T3IN     BIT    P3.6
+ FFC4.5               +1  463     T4IN     BIT    P3.5
+ FFA2.13              +1  464     T5IN     BIT    P5.13;
+ FFA2.12              +1  465     T6IN     BIT    P5.12;
+ FFA2.15              +1  466     T2EUD    BIT    P5.15;
+ FFC4.4               +1  467     T3EUD    BIT    P3.4;
+ FFA2.14              +1  468     T4EUD    BIT    P5.14
+ FFA2.11              +1  469     T5EUD    BIT    P5.11
+ FFC4.4               +1  470     T3EUD    BIT    P3.4
+ FFC4.3               +1  471     T3OUT    BIT    P3.3
+ FFC4.2               +1  472     CAPIN    BIT    P3.2
+ FFC4.1               +1  473     T6OUT    BIT    P3.1
+ FFAE.0               +1  474     WDTIN    BIT    WDTCON.0
+ FFAE.1               +1  475     WDTR     BIT    WDTCON.1
+                      +1  476     
+                      +1  477     ;* PWM Module *
+ FF30                 +1  478     PWMCON0  DEFR   0FF30H
+ FF32                 +1  479     PWMCON1  DEFR   0FF32H
+ FE30                 +1  480     PW0      DEFR   0FE30H
+ FE32                 +1  481     PW1      DEFR   0FE32H
+ FE34                 +1  482     PW2      DEFR   0FE34H
+ FE36                 +1  483     PW3      DEFR   0FE36H
+ F17E                 +1  484     PWMIC    DEFR   0F17EH
+ F030                 +1  485     PT0      DEFR   0F030H
+ F032                 +1  486     PT1      DEFR   0F032H
+ F034                 +1  487     PT2      DEFR   0F034H
+ F036                 +1  488     PT3      DEFR   0F036H
+ F038                 +1  489     PP0      DEFR   0F038H
+ F03A                 +1  490     PP1      DEFR   0F03AH
+ F03C                 +1  491     PP2      DEFR   0F03CH
+ F03E                 +1  492     PP3      DEFR   0F03EH
+ FF30.0               +1  493     PTR0     BIT    PWMCON0.0
+ FF30.1               +1  494     PTR1     BIT    PWMCON0.1
+ FF30.2               +1  495     PTR2     BIT    PWMCON0.2
+ FF30.3               +1  496     PTR3     BIT    PWMCON0.3
+ FF30.4               +1  497     PTI0     BIT    PWMCON0.4
+ FF30.5               +1  498     PTI1     BIT    PWMCON0.5
+ FF30.6               +1  499     PTI2     BIT    PWMCON0.6
+ FF30.7               +1  500     PTI3     BIT    PWMCON0.7
+ FF30.8               +1  501     PIE0     BIT    PWMCON0.8
+ FF30.9               +1  502     PIE1     BIT    PWMCON0.9
+ FF30.10              +1  503     PIE2     BIT    PWMCON0.10
+ FF30.11              +1  504     PIE3     BIT    PWMCON0.11
+ FF30.12              +1  505     PIR0     BIT    PWMCON0.12
+ FF30.13              +1  506     PIR1     BIT    PWMCON0.13
+ FF30.14              +1  507     PIR2     BIT    PWMCON0.14
+ FF30.15              +1  508     PIR3     BIT    PWMCON0.15
+ FF32.0               +1  509     PEN0     BIT    PWMCON1.0
+ FF32.1               +1  510     PEN1     BIT    PWMCON1.1
+ FF32.2               +1  511     PEN2     BIT    PWMCON1.2
+ FF32.3               +1  512     PEN3     BIT    PWMCON1.3
+ FF32.4               +1  513     PM0      BIT    PWMCON1.4
+ FF32.5               +1  514     PM1      BIT    PWMCON1.5
+ FF32.6               +1  515     PM2      BIT    PWMCON1.6
+ FF32.7               +1  516     PM3      BIT    PWMCON1.7
+ FF32.12              +1  517     PB01     BIT    PWMCON1.12
+ FF32.14              +1  518     PS2      BIT    PWMCON1.14
+ FF32.15              +1  519     PS3      BIT    PWMCON1.15
+ F17E.7               +1  520     PWMIR    BIT    PWMIC.7
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE     9
+
+ F17E.6               +1  521     PWMIE    BIT    PWMIC.6
+                      +1  522     
+                      +1  523     ; SYSCON2 and SYSCON3 (only in some devices)
+ F1D0                 +1  524     SYSCON2  DEFR   0F1D0H
+ F1D0.6               +1  525     RCS      BIT    SYSCON2.6
+ F1D0.7               +1  526     SCS      BIT    SYSCON2.7
+ F1D0.15              +1  527     CLKLOCK  BIT    SYSCON2.15
+ F1D4                 +1  528     SYSCON3  DEFR   0F1D4H
+ F1D4.0               +1  529     ADCDIS   BIT    SYSCON3.0
+ F1D4.1               +1  530     ASC0DIS  BIT    SYSCON3.1
+ F1D4.2               +1  531     SSCDIS   BIT    SYSCON3.2
+ F1D4.3               +1  532     GPT1DIS  BIT    SYSCON3.3
+ F1D4.4               +1  533     GPT2DIS  BIT    SYSCON3.4
+ F1D4.5               +1  534     FMDIS    BIT    SYSCON3.5
+ F1D4.6               +1  535     CC1DIS   BIT    SYSCON3.6
+ F1D4.7               +1  536     CC2DIS   BIT    SYSCON3.7
+ F1D4.9               +1  537     PWMDIS   BIT    SYSCON3.9
+ F1D4.10              +1  538     ASC1DIS  BIT    SYSCON3.10
+ F1D4.11              +1  539     I2CDIS   BIT    SYSCON3.11
+ F1D4.13              +1  540     CAN1DIS  BIT    SYSCON3.13
+ F1D4.14              +1  541     CAN2DIS  BIT    SYSCON3.14
+ F1D4.15              +1  542     PCDDIS   BIT    SYSCON3.15
+                      +1  543     
+                      +1  544     ;* X-Peripherals *
+ F186                 +1  545     XP0IC    DEFR   0F186H
+ F18E                 +1  546     XP1IC    DEFR   0F18EH
+ F196                 +1  547     XP2IC    DEFR   0F196H
+ F19E                 +1  548     XP3IC    DEFR   0F19EH
+ F186.7               +1  549     XP0IR    BIT    XP0IC.7
+ F186.6               +1  550     XP0IE    BIT    XP0IC.6
+ F18E.7               +1  551     XP1IR    BIT    XP1IC.7
+ F18E.6               +1  552     XP1IE    BIT    XP1IC.6
+ F196.7               +1  553     XP2IR    BIT    XP2IC.7
+ F196.6               +1  554     XP2IE    BIT    XP2IC.6
+ F19E.7               +1  555     XP3IR    BIT    XP3IC.7
+ F19E.6               +1  556     XP3IE    BIT    XP3IC.6
+                      +1  557     ;**********************************
+                      +1  558     ;;;******----- Reserve Registr's----*******
+                      +1  559     ;**********************************
+                      +1  560     
+ F1CA                 +1  561     ODP4                DEFR             0F1CAH
+                      +1  562     
+ F1EA                 +1  563     ALTSEL0P1L     EQU           0F1EAH                  
+ F1EC                 +1  564     ALTSEL0P1H     EQU           0F1ECH
+ F1EE                 +1  565     ALTSEL0P2      EQU           0F1EEH
+ F1F0                 +1  566     ALTSEL0P3      EQU           0F1F0H
+ F1F2                 +1  567     ALTSEL1P3      EQU           0F1F2H
+ F1F4                 +1  568     ALTSEL0P4      EQU           0F1F4H
+ F1F6                 +1  569     ALTSEL0P6      EQU           0F1F6H
+ F1F8                 +1  570     ALTSEL0P7      EQU           0F1F8H
+ F1FA                 +1  571     ALTSEL1P7      EQU           0F1FAH
+ F1FC                 +1  572     ALTSEL0P8      EQU           0F1FCH
+ F1FE                 +1  573     ALTSEL1P8      EQU           0F1FEH
+                      +1  574     
+ F1DA                 +1  575     EXISEL0        EQU       0F1DAH
+ F1D8                 +1  576     EXISEL1        EQU       0F1D8H
+                      +1  577     
+                      +1  578     ;******---Port control reg---********
+                      +1  579     
+ F1C4                 +1  580     PICON             EQU                  0F1C4H
+ F080                 +1  581     POCON0L             EQU                  0F080H
+ F082                 +1  582     POCON0H             EQU                  0F082H
+ F084                 +1  583     POCON1L             EQU                  0F084H
+ F086                 +1  584     POCON1H             EQU                  0F086H
+ F088                 +1  585     POCON2             EQU                  0F088H
+ F08A                 +1  586     POCON3             EQU                  0F08AH
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    10
+
+ F08C                 +1  587     POCON4             EQU                  0F08CH
+ F08E                 +1  588     POCON6             EQU                  0F08EH
+ F090                 +1  589     POCON7             EQU                  0F090H
+ F092                 +1  590     POCON8            EQU                  0F092H
+                      +1  591     
+                      +1  592     ;***********---I2C Reg---*********
+                      +1  593     
+ F0DA                 +1  594     I2C_SMBSDA        EQU               0F0DAH
+ F0DC                 +1  595     I2C_SMBST           EQU               0F0DCH
+ F0DE                 +1  596     I2C_SMBCST        EQU               0F0DEH
+ F0E0                 +1  597     I2C_SMBCTL1     EQU               0F0E0H
+ F0E2                 +1  598     I2C_SMBADDR     EQU               0F0E2H
+ F0E4                 +1  599     I2C_SMBCTL2       EQU               0F0E4H
+ F0E6                 +1  600     I2C_SMBTOPR      EQU               0F0E6H
+ F0E8                 +1  601     I2C_SMBCTL3       EQU               0F0E8H
+ F0EA                 +1  602     I2C_CFG            EQU               0F0EAH
+                      +1  603     
+                      +1  604     ;*************ASC0 & ASC1 & SSC1**********
+                      +1  605     
+ FEAA                 +1  606     S1BG     EQU    0FEAAH
+ F1B8                 +1  607     S1CON    EQU    0F1B8H
+ F192                 +1  608     S1EIC    EQU    0F192H
+ FEA8                 +1  609     S1RBUF   EQU    0FEA8H
+ F18A                 +1  610     S1RIC    EQU    0F18AH
+ FEA6                 +1  611     S1TBUF   EQU    0FEA6H
+ F13C                 +1  612     S1TBIC   EQU    0F13CH
+ F182                 +1  613     S1TIC    EQU    0F182H
+ FEB6                 +1  614     S0FDV    EQU    0FEB6H 
+ FEAC                 +1  615     S1FDV    EQU    0FEACH
+ F1B8.3               +1  616     S1STP    BIT    S1CON.3
+ F1B8.4               +1  617     S1REN    BIT    S1CON.4
+ F1B8.5               +1  618     S1PEN    BIT    S1CON.5
+ F1B8.6               +1  619     S1FEN    BIT    S1CON.6
+ F1B8.7               +1  620     S1OEN    BIT    S1CON.7
+ F1B8.8               +1  621     S1PE     BIT    S1CON.8
+ F1B8.9               +1  622     S1FE     BIT    S1CON.9
+ F1B8.10              +1  623     S1OE     BIT    S1CON.10
+ F1B8.12              +1  624     S1ODD    BIT    S1CON.12
+ F1B8.13              +1  625     S1BRS    BIT    S1CON.13
+ F1B8.14              +1  626     S1LB     BIT    S1CON.14
+ F1B8.15              +1  627     S1R      BIT    S1CON.15
+ F182.6               +1  628     S1TIE    BIT    S1TIC.6
+ F182.7               +1  629     S1TIR    BIT    S1TIC.7
+ F13C.6               +1  630     S1TBIE   BIT    S1TBIC.6
+ F13C.7               +1  631     S1TBIR   BIT    S1TBIC.7
+ F18A.6               +1  632     S1RIE    BIT    S1RIC.6
+ F18A.7               +1  633     S1RIR    BIT    S1RIC.7
+ F192.6               +1  634     S1EIE    BIT    S1EIC.6
+ F192.7               +1  635     S1EIR    BIT    S1EIC.7
+                      +1  636     
+ F122                 +1  637     SSC1TIC   EQU   0F122H
+ F124                 +1  638     SSC1RIC   EQU   0F124H
+ F126                 +1  639     SSC1EIC   EQU   0F126H
+ F05A                 +1  640     SSC1TB    EQU   0F05AH
+ F05C                 +1  641     SSC1RB    EQU   0F05CH
+ F05E                 +1  642     SSC1BR    EQU   0F05EH
+ FF5E                 +1  643     SSC1CON   EQU   0FF5EH
+ FF5E.4               +1  644     SSC1HB    BIT   SSC1CON.4
+ FF5E.5               +1  645     SSC1PH    BIT   SSC1CON.5
+ FF5E.6               +1  646     SSC1P0    BIT   SSC1CON.6
+ FF5E.8               +1  647     SSC1TE    BIT   SSC1CON.8
+ FF5E.8               +1  648     SSC1TEN   BIT   SSC1CON.8
+ FF5E.9               +1  649     SSC1RE    BIT   SSC1CON.9
+ FF5E.9               +1  650     SSC1REN   BIT   SSC1CON.9
+ FF5E.10              +1  651     SSC1PE    BIT   SSC1CON.10
+ FF5E.10              +1  652     SSC1PEN   BIT   SSC1CON.10
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    11
+
+ FF5E.11              +1  653     SSC1BE    BIT   SSC1CON.11
+ FF5E.11              +1  654     SSC1BEN   BIT   SSC1CON.11
+ FF5E.12              +1  655     SSC1BSY   BIT   SSC1CON.12
+ FF5E.14              +1  656     SSC1MS    BIT   SSC1CON.14
+ FF5E.15              +1  657     SSC1EN    BIT   SSC1CON.15
+ F122.7               +1  658     SSC1TIR   BIT   SSC1TIC.7
+ F122.6               +1  659     SSC1TIE   BIT   SSC1TIC.6
+ F124.7               +1  660     SSC1RIR   BIT   SSC1RIC.7
+ F124.6               +1  661     SSC1RIE   BIT   SSC1RIC.6
+ F126.7               +1  662     SSC1EIR   BIT   SSC1EIC.7
+ F126.6               +1  663     SSC1EIE   BIT   SSC1EIC.6
+                      +1  664     
+                      +1  665     ;*******--- CAPCOM12  Registr's----*********
+                      +1  666       
+ FE2E                 +1  667     CC1_SEE         DEFR      0FE2EH   
+ FE2A                 +1  668     CC2_SEE         DEFR      0FE2AH  
+                      +1  669     
+ FE2C                 +1  670     CC1_SEM         DEFR      0FE2CH            
+ FE28                 +1  671     CC2_SEM         DEFR      0FE28H                    
+                      +1  672     
+ FF5A                 +1  673     CC1_DRM         DEFR      0FF5AH                    
+ FF2A                 +1  674     CC2_DRM         DEFR      0FF2AH            
+                      +1  675     
+ FF5C                 +1  676     CC1_OUT         DEFR      0FF5CH                    
+ FF2C                 +1  677     CC2_OUT         DEFR      0FF2CH                    
+                      +1  678     
+                      +1  679     
+ F062                 +1  680     CC1_IOC         DEFR      0F062H      ;ESFR                 
+ F066                 +1  681     CC2_IOC         DEFR      0F066H      ;ESFR
+                      +1  682     
+                      +1  683     ;*******--- CAPCOM6  Registr's----*********
+                      +1  684     
+ E890                 +1  685     CCU6_T12      EQU      0E890H
+ E892                 +1  686     CCU6_T12PR        EQU      0E892H
+ E894                 +1  687     CCU6_T12DTC       EQU      0E894H
+ E898                 +1  688     CCU6_CC60R    EQU      0E898H
+ E8A0                 +1  689     CCU6_CC60SR   EQU      0E8A0H
+ E89A                 +1  690     CCU6_CC61R        EQU      0E89AH
+ E8A2                 +1  691     CCU6_CC61SR   EQU      0E8A2H
+ E89C                 +1  692     CCU6_CC62R        EQU      0E89CH
+ E8A4                 +1  693     CCU6_CC62SR       EQU      0E8A4H
+ E8B0                 +1  694     CCU6_T13          EQU      0E8B0H
+ E8B2                 +1  695     CCU6_T13PR        EQU      0E8B2H
+ E8B4                 +1  696     CCU6_CC63R    EQU      0E8B4H
+ E8B6                 +1  697     CCU6_CC63SR   EQU      0E8B6H
+ E8A8                 +1  698     CCU6_CMPSTAT  EQU      0E8A8H
+ E8AA                 +1  699     CCU6_CMPMODIF EQU      0E8AAH
+ E8AC                 +1  700     CCU6_TCTR0        EQU      0E8ACH
+ E8AE                 +1  701     CCU6_TCTR2        EQU      0E8AEH
+ E8A6                 +1  702     CCU6_TCTR4        EQU      0E8A6H
+ E8C0                 +1  703     CCU6_MODCTR       EQU      0E8C0H
+ E8C2                 +1  704     CCU6_TRPCTR       EQU      0E8C2H
+ E8C4                 +1  705     CCU6_PSLR         EQU      0E8C4H
+ E8CA                 +1  706     CCU6_MCMOUTS  EQU      0E8CAH
+ E8CC                 +1  707     CCU6_MCMOUT       EQU      0E8CCH
+ E8CE                 +1  708     CCU6_MCMCTR       EQU      0E8CEH
+ E8C6                 +1  709     CCU6_T12MSEL  EQU      0E8C6H
+                      +1  710     
+ E8D0                 +1  711     CCU6_IS           EQU      0E8D0H
+ E8D2                 +1  712     CCU6_ISS          EQU      0E8D2H
+ E8D4                 +1  713     CCU6_ISR          EQU      0E8D4H
+ E8D6                 +1  714     CCU6_INP          EQU      0E8D6H
+ E8D8                 +1  715     CCU6_IEN          EQU      0E8D8H
+                      +1  716     
+ F190                 +1  717     CCU6_T12IC        EQU      0F190H
+ F198                 +1  718     CCU6_T13IC        EQU      0F198H
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    12
+
+ F188                 +1  719     CCU6_EIC          EQU      0F188H
+ F140                 +1  720     CCU6_IC           EQU      0F140H
+                      +1  721     
+ F024                 +1  722     XPERCON        EQU         0F024H
+                      +1  723     
+ F014                 +1  724     XADRS1            EQU      0F014H
+ F016                 +1  725     XADRS2            EQU      0F016H
+ F018                 +1  726     XADRS3            EQU      0F018H
+ F01A                 +1  727     XADRS4            EQU      0F01AH
+ F01C                 +1  728     XADRS5            EQU      0F01CH
+ F01E                 +1  729     XADRS6            EQU      0F01EH
+                      +1  730     
+ F114                 +1  731     XBCON1            EQU      0F114H
+ F116                 +1  732     XBCON2            EQU      0F116H
+ F118                 +1  733     XBCON3            EQU      0F118H
+ F11A                 +1  734     XBCON4            EQU      0F11AH
+ F11C                 +1  735     XBCON5            EQU      0F11CH
+ F11E                 +1  736     XBCON6            EQU      0F11EH
+                      +1  737                   
+ FFAA                 +1  738     FOCON          EQU       0FFAAH
+                      +1  739     
+ FF88                 +1  740     IRQ24IC        EQU       0FF88H
+ FF8A                 +1  741     IRQ25IC        EQU       0FF8aH
+ FF8C                 +1  742     IRQ26IC        EQU       0FF8cH
+ FF8E                 +1  743     IRQ27IC        EQU       0FF8eH
+ FF90                 +1  744     IRQ28IC        EQU       0FF90H
+ FF92                 +1  745     IRQ29IC        EQU       0FF92H
+ FF94                 +1  746     IRQ30IC        EQU       0FF94H
+ FF96                 +1  747     IRQ31IC        EQU       0FF96H
+                      +1  748     
+ F0FC                 +1  749     DBGSR        EQU       0F0FCH
+ F0FA                 +1  750     DIPX         EQU       0F0FAH
+ F0F8                 +1  751     DIP          EQU       0F0F8H
+ F0F4                 +1  752     DSWEVT       EQU       0F0F4H
+ F0F2                 +1  753     DEXEVT       EQU       0F0F2H
+ F0F0                 +1  754     DTREVT       EQU       0F0F0H
+ F0EE                 +1  755     DCMPDP       EQU       0F0EEH
+ F0EC                 +1  756     DCMPSP       EQU       0F0ECH
+ F0D8                 +1  757     DTIDR        EQU       0F0D8H
+                      +1  758     
+                      +1  759     
+                      +1  760     ;***********---RTC Reg---*********
+ F030                 +1  761     RTCCST          EQU             0F030H
+ F032                 +1  762     RTUDST          EQU             0F032H
+ F034                 +1  763     RTCEIST         EQU             0F034H
+ F036                 +1  764     RTCIEN          EQU             0F036H
+ F038                 +1  765     RTPRD                   EQU             0F038H          
+ F03A                 +1  766     RTCRD_hi                EQU             0F03AH
+ F03C                 +1  767     RTCRD_lo                EQU             0F03CH
+ F03E                 +1  768     RTCLD_hi                EQU             0F03EH          
+ F040                 +1  769     RTCLD_lo                EQU             0F040H
+ F042                 +1  770     RTCCMP1_hi              EQU             0F042H
+ F044                 +1  771     RTCCMP1_lo              EQU             0F044H
+ F046                 +1  772     RTCCMP2_hi              EQU             0F046H
+ F048                 +1  773     RTCCMP2_lo              EQU             0F048H
+ F04A                 +1  774     RTCCMP3_hi              EQU             0F04AH
+ F04C                 +1  775     RTCCMP3_lo              EQU             0F04CH
+                      +1  776     
+                      +1  777     
+                      +1  778     
+                      +1  779     
+                          780     
+                          781     ASSUME  DPP1 : NCONST         ; DPP1 addresses the NCONST group
+                          782     ASSUME  DPP2 : NDATA          ; DPP2 addresses the NDATA  group
+                          783     ASSUME  DPP3 : SYSTEM         ; DPP3 addresses the SYSTEM page
+                          784     
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    13
+
+                          785     ;MO14 - передача
+                          786     ;       LL - EDD0
+                          787     ;       LH - EDD2
+                          788     ;       HL - EDD4
+                          789     ;       HH - EDD6
+                          790     ;MO15 - приём
+                          791     ;       LL - EDF0
+                          792     ;       LH - EDF2
+                          793     ;       HL - EDF4
+                          794     ;       HH - EDF6
+ 0101                     795     BSLVER  EQU             #0101H
+                          796     
+ F14C                     797     CAN15IC         EQU             0F14CH
+ F14E                     798     CAN14IC         EQU             0F14EH
+                          799     
+                          800     ;----SERIAL NUMBERS----
+                          801     
+--------                  802     BSLInterrupt SECTION CODE AT 04F000h
+                          803     
+                          804             CANInterrupt PROC  INTERRUPT = 0x67
+                          805                     ;приём сообщений от программы прошива�
+                                  �ьщика
+                          806                     
+                          807                     ;PUSH     R4
+                          808                     ;MOV      R4,#0x0100
+                          809                     ;MOV      0EDDEH,R4
+                          810                     ;POP      R4
+                          811      
+                          812                     ;CALL Start
+                          813             
+                          814                     
+0004F000 F2F4F0ED         815                             MOV R4  0EDF0H
+0004F004 47F81000         816                             CMP RL4 #10H    ;приём команды проверки с
+                                  вязи с загрузчиком 0x10
+0004F008 3D0B             817                             JMPR cc_NZ Cmd1
+                          818                                     
+0004F00A E6F41001         819                                     MOV R4 #0110H
+0004F00E F2F50CF0         820                                     MOV R5 0F00CH
+0004F012 E6F60101         821                                     MOV R6 #BSLVER
+0004F016 F2F71CFF         822                                     MOV R7 ZEROS
+                          823                                     
+0004F01A DA04C6E1         824                                     CALL SendMesssage
+0004F01E 0D54             825                                     JMP Exit
+                          826                             
+                          827                             Cmd1:
+0004F020 47F81100         828                             CMP RL4 #11H    ;приём команды запуска за
+                                  грузчика
+0004F024 3D03             829                             JMPR cc_NZ Cmd2
+0004F026 DA047AE1         830                                     CALL Start
+                          831                                     
+0004F02A 0D4E             832                                     JMP Exit
+                          833                             Cmd2:
+0004F02C 47F81200         834                             CMP RL4 #12H    ;команда стирания флеш
+0004F030 3D16             835                             JMPR cc_NZ Cmd3
+0004F032 F2F4F0ED         836                                     MOV R4 0EDF0H   ;код команды + номер б
+                                  лока
+0004F036 F2F5F2ED         837                                     MOV R5 0EDF2H   ;смещение блока
+                          838                                     
+0004F03A 7C84             839                                     SHR R4 #8
+                          840                                     
+0004F03C F094             841                                     MOV R9 R4
+0004F03E F085             842                                     MOV R8 R5
+0004F040 DA04E6E1         843                                             CALL EraseBlock ;вызываем стиран
+                                  ие
+0004F044 DA04B4E2         844                                             CALL FSRControl ;вызываем ожидан
+                                  ие
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    14
+
+                          845                                     ;отправили успех
+0004F048 E6F41201         846                                     MOV R4 #0x0112
+0004F04C F2F51CFF         847                                     MOV R5 ZEROS
+0004F050 F2F61CFF         848                                     MOV R6 ZEROS
+0004F054 F2F71CFF         849                                     MOV R7 ZEROS
+0004F058 DA04C6E1         850                                     CALL SendMesssage
+0004F05C 0D35             851                                     JMP Exit
+                          852                             Cmd3:
+0004F05E 47F81500         853                             CMP RL4 #15H    ;команда записи во FLASH
+0004F062 3D1F             854                             JMPR cc_NZ Cmd4
+0004F064 F2FAF4ED         855                                     MOV R10 0EDF4H  ;DATA
+0004F068 F2F9F0ED         856                                     MOV R9  0EDF0H  ;
+0004F06C 7C89             857                                     SHR     R9      #8              ;HI
+0004F06E F2F8F2ED         858                                     MOV R8  0EDF2H  ;LO
+                          859                                     ;тут запись
+                          860                                     ;тут ожидание
+0004F072 DA04DAE2         861                                     CALL WriteWord
+0004F076 DA04B4E2         862                                     CALL FSRControl
+                          863                                     
+                          864                                     ;читаем то, что записали
+0004F07A F2F9F0ED         865                                     MOV R9 0EDF0H
+0004F07E 7C89             866                                     SHR     R9 #8
+0004F080 F2F8F2ED         867                                     MOV R8 0EDF2H
+                          868                                     
+0004F084 DC09             869                                     EXTS R9 #1
+0004F086 A8A8             870                                     MOV R10 [R8]
+0004F088 04FA7CFE         871                                     ADD CC30 R10
+                          872                                     
+                          873                                     
+                          874                                     
+                          875                                     ;отправили успех
+0004F08C E6F41501         876                                     MOV R4 #0x0115
+0004F090 F2F51CFF         877                                     MOV R5 ZEROS
+0004F094 F2F61CFF         878                                     MOV R6 ZEROS
+0004F098 F2F71CFF         879                                     MOV R7 ZEROS
+0004F09C DA04C6E1         880                                     CALL SendMesssage
+0004F0A0 0D13             881                                     JMP Exit
+                          882                             Cmd4:
+0004F0A2 47F81600         883                             CMP RL4 #16H    ;отправим контрольную су�
+                                  �му
+0004F0A6 3D0A             884                             JMPR cc_NZ Cmd5
+0004F0A8 E6F41601         885                                     MOV R4 #0x0116
+0004F0AC F2F57CFE         886                                     MOV R5 CC30
+0004F0B0 F2F61CFF         887                                     MOV R6 ZEROS
+0004F0B4 F2F71CFF         888                                     MOV R7 ZEROS
+0004F0B8 DA04C6E1         889                                     CALL SendMesssage
+                          890                             Cmd5:   
+0004F0BC 47F81700         891                             CMP RL4 #17H
+0004F0C0 3D03             892                             JMPR cc_NZ Exit
+0004F0C2 B748B7B7         893                                     SRST    ; перезагружаемся
+                          894                                     
+                          895                                     
+0004F0C6 0D00             896                                     JMP Exit 
+                          897                     Exit:
+                          898     
+0004F0C8 FB88             899                     RETI
+                          900             CANInterrupt ENDP
+--------                  901     BSLInterrupt ENDS
+                          902     
+                          903     
+                          904     
+--------                  905     BSLSection SECTION CODE AT 04E000h
+                          906             Loader PROC FAR
+0004E000 E6F46800         907                     MOV      R4 #0x0068
+0004E004 F6F44EF1         908                 MOV      0F14EH, R4
+                          909                     ;отключаем прерывания по CAN
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    15
+
+0004E008 E004             910                     MOV      R4,#0x0000
+0004E00A F6F428F1         911                     MOV              0F128H R4
+0004E00E F6F42AF1         912                     MOV              0F12AH R4
+0004E012 F6F42CF1         913                     MOV              0F12CH R4
+0004E016 F6F42EF1         914                     MOV              0F12EH R4
+0004E01A F6F432F1         915                     MOV              0F132H R4
+0004E01E F6F434F1         916                     MOV              0F134H R4
+0004E022 F6F436F1         917                     MOV              0F136H R4
+0004E026 F6F438F1         918                     MOV              0F138H R4
+0004E02A F6F440F1         919                     MOV              0F140H R4
+0004E02E F6F442F1         920                     MOV              0F142H R4
+0004E032 F6F444F1         921                     MOV              0F144H R4
+0004E036 F6F446F1         922                     MOV              0F146H R4
+0004E03A F6F448F1         923                     MOV              0F148H R4
+0004E03E F6F44AF1         924                     MOV              0F14AH R4
+0004E042 F6F44CF1         925                     MOV              0F14CH R4
+                          926                     ;отключаем прерывания таймеров
+0004E046 F6F49CFF         927                     MOV              0FF9CH R4
+0004E04A F6F49EFF         928                     MOV              0FF9EH R4
+0004E04E F6F47AF1         929                     MOV              0F17AH R4
+0004E052 F6F47CF1         930                     MOV              0F17CH R4
+0004E056 F6F460FF         931                     MOV              0FF60H R4
+0004E05A F6F462FF         932                     MOV              0FF62H R4
+0004E05E F6F464FF         933                     MOV              0FF64H R4
+0004E062 F6F466FF         934                     MOV              0FF66H R4
+0004E066 F6F468FF         935                     MOV              0FF68H R4
+                          936     
+                          937     
+0004E06A E6F4080E         938                     MOV      R4,#0x0E08
+0004E06E F6F4DEED         939                     MOV      0EDDEH,R4
+0004E072 E004             940                     MOV      R4,#0x00
+0004E074 F6F4DCED         941                     MOV      0EDDCH,R4
+0004E078 E6F40008         942                     MOV      R4,#0x0800
+0004E07C F6F4C2ED         943                     MOV      0EDC2H,R4
+0004E080 CC00             944                     NOP      
+0004E082 CC00             945                     NOP      
+0004E084 CC00             946                     NOP      
+0004E086 CC00             947                     NOP      
+0004E088 CC00             948                     NOP      
+0004E08A CC00             949                     NOP      
+0004E08C E6F48000         950                     MOV      R4,#0x0080
+0004E090 F6F4FEED         951                     MOV      0EDFEH,R4
+0004E094 E004             952                     MOV      R4,#0x00
+0004E096 F6F4FCED         953                     MOV      0EDFCH,R4
+0004E09A E0F4             954                     MOV      R4,#0x0F
+0004E09C F6F4E8ED         955                     MOV      0EDE8H,R4
+0004E0A0 E6F40108         956                     MOV      R4,#0x0801
+0004E0A4 F6F4E2ED         957                     MOV      0EDE2H,R4
+0004E0A8 CC00             958                     NOP      
+0004E0AA CC00             959                     NOP      
+0004E0AC CC00             960                     NOP      
+0004E0AE CC00             961                     NOP      
+0004E0B0 CC00             962                     NOP      
+0004E0B2 CC00             963                     NOP      
+0004E0B4 E6F45895         964                     MOV      R4,#0x9558
+0004E0B8 F6F4DAED         965                     MOV      0EDDAH,R4
+0004E0BC E6F4FF3F         966                     MOV      R4,#0x3FFF
+0004E0C0 F6F4CEED         967                     MOV      0EDCEH,R4
+0004E0C4 E6F45495         968                     MOV      R4,#0x9554
+0004E0C8 F6F4FAED         969                     MOV      0EDFAH,R4
+0004E0CC E6F4FF3F         970                     MOV      R4,#0x3FFF
+0004E0D0 F6F4EEED         971                     MOV      0EDEEH,R4
+                          972     
+                          973                     
+                          974                     
+0004E0D4 CC00             975                     NOP      
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    16
+
+0004E0D6 CC00             976                     NOP      
+0004E0D8 CC00             977                     NOP      
+0004E0DA CC00             978                     NOP      
+0004E0DC CC00             979                     NOP      
+0004E0DE CC00             980                     NOP      
+0004E0E0 CC00             981                     NOP      
+0004E0E2 CC00             982                     NOP      
+0004E0E4 CC00             983                     NOP      
+0004E0E6 CC00             984                     NOP      
+0004E0E8 CC00             985                     NOP      
+0004E0EA CC00             986                     NOP      
+0004E0EC CC00             987                     NOP      
+0004E0EE CC00             988                     NOP      
+0004E0F0 CC00             989                     NOP      
+0004E0F2 CC00             990                     NOP      
+0004E0F4 CC00             991                     NOP      
+0004E0F6 CC00             992                     NOP      
+0004E0F8 CC00             993                     NOP      
+0004E0FA CC00             994                     NOP      
+0004E0FC CC00             995                     NOP      
+0004E0FE CC00             996                     NOP      
+0004E100 CC00             997                     NOP      
+0004E102 CC00             998                     NOP      
+0004E104 E6F40E01         999                     MOV      R4,#0x010E
+0004E108 F6F4C6E9        1000                     MOV      0E9C6H,R4
+0004E10C E024            1001                     MOV      R4,#0x02
+0004E10E E005            1002                     MOV      R5,#0x00
+0004E110 F6F4C4E9        1003                     MOV      0E9C4H,R4
+0004E114 F6F5C6E9        1004                     MOV      0E9C6H,R5
+0004E118 CC00            1005                     NOP      
+0004E11A CC00            1006                     NOP      
+0004E11C CC00            1007                     NOP      
+0004E11E CC00            1008                     NOP      
+0004E120 CC00            1009                     NOP      
+0004E122 CC00            1010                     NOP      
+0004E124 E6F40F01        1011                     MOV      R4,#0x010F
+0004E128 F6F4C6E9        1012                     MOV      0E9C6H,R4
+0004E12C E024            1013                     MOV      R4,#0x02
+0004E12E E005            1014                     MOV      R5,#0x00
+0004E130 F6F4C4E9        1015                     MOV      0E9C4H,R4
+0004E134 F6F5C6E9        1016                     MOV      0E9C6H,R5
+0004E138 CC00            1017                     NOP      
+0004E13A CC00            1018                     NOP      
+0004E13C CC00            1019                     NOP      
+0004E13E CC00            1020                     NOP      
+0004E140 CC00            1021                     NOP      
+0004E142 CC00            1022                     NOP      
+0004E144 E6F42000        1023                     MOV      R4,#0x0020
+0004E148 F6F4DEED        1024                     MOV      0EDDEH,R4
+0004E14C E004            1025                     MOV      R4,#0x00
+0004E14E F6F4DCED        1026                     MOV      0EDDCH,R4
+0004E152 E6F42000        1027                     MOV      R4,#0x0020
+0004E156 F6F4FEED        1028                     MOV      0EDFEH,R4
+0004E15A E004            1029                     MOV      R4,#0x00
+0004E15C F6F4FCED        1030                     MOV      0EDFCH,R4
+                         1031     
+                         1032                     ;MOV     R4 #0x3FFF
+                         1033                     ;MOV     0EC2EH,R4
+0004E160 BF88            1034                     BSET IEN
+                         1035                                     ;успешно загрузились
+0004E162 E6F40901        1036                                     MOV R4 #0x0109
+0004E166 F2F51CFF        1037                                     MOV R5 ZEROS
+0004E16A F2F61CFF        1038                                     MOV R6 ZEROS
+0004E16E F2F71CFF        1039                                     MOV R7 ZEROS
+0004E172 DA04C6E1        1040                                     CALL SendMesssage
+                         1041                     
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    17
+
+                         1042                                             
+                         1043                     L1:
+0004E176 0DFF            1044                     JMP L1
+                         1045                     
+0004E178 DB00            1046                     RETS
+                         1047             Loader ENDP
+                         1048                     
+                         1049     
+                         1050                     
+                         1051             Start PROC FAR
+                         1052                     ;0 обнуляем счётчик СRC
+0004E17A F23E1CFF        1053                     MOV CC30 ZEROS
+0004E17E F23F1CFF        1054                     MOV CC31 ZEROS
+                         1055                             
+                         1056                     ;1 стираем первый блок 8КБ
+0004E182 E008            1057                     MOV R8 #0000H
+0004E184 E009            1058                     MOV R9 #0H
+                         1059                     
+0004E186 DA04E6E1        1060                     CALL EraseBlock
+0004E18A DA04B4E2        1061                     CALL FSRControl
+                         1062                     
+                         1063                     ;04F000H - адрес прерывания CAN15IC
+                         1064                     
+                         1065                     ;2 записываем 4 байта новый вектор прер�
+                                  �вания на приём CAN сообщений
+0004E18E E6F89C01        1066                     MOV R8 #019CH           ;адрес СAN15IC первые 2 байта
+0004E192 E009            1067                     MOV R9 #0H                      ;номер сегмента = 0 т.к
+                                  . таблица прерываний в 0 сегменте
+0004E194 E6FAFA04        1068                     MOV R10 #004FAH         ;первые два байта данных �
+                                  �ектора прерываний
+                         1069                     
+0004E198 DA04DAE2        1070                     CALL WriteWord
+0004E19C DA04B4E2        1071                     CALL FSRControl
+                         1072                     
+0004E1A0 E6F89E01        1073                     MOV R8 #019EH           ;адрес СAN15IC вторые 2 байта
+0004E1A4 E6FA00F0        1074                     MOV R10 #0F000H         ;адрес внутри сегмента, н�
+                                  � CAN15IC
+                         1075                     
+0004E1A8 DA04DAE2        1076                     CALL WriteWord
+0004E1AC DA04B4E2        1077                     CALL FSRControl
+                         1078                     ;3 отсылаем готовность к приёму данных 
+                                  прошивки
+0004E1B0 E6F41101        1079                             MOV R4 #0111H
+0004E1B4 F2F51CFF        1080                             MOV R5 ZEROS
+0004E1B8 F2F61CFF        1081                             MOV R6 ZEROS
+0004E1BC F2F71CFF        1082                             MOV R7 ZEROS
+                         1083                                     
+0004E1C0 DA04C6E1        1084                             CALL SendMesssage
+                         1085                                     
+0004E1C4 DB00            1086                     RETS
+                         1087             Start ENDP
+                         1088             
+                         1089             ;R4
+                         1090             ;R5
+                         1091             ;R6
+                         1092             ;R7
+                         1093             SendMesssage PROC FAR
+                         1094     
+0004E1C6 F6F4D0ED        1095                     MOV             0EDD0H R4
+0004E1CA CC00            1096                     NOP
+0004E1CC F6F5D2ED        1097                     MOV             0EDD2H R5
+0004E1D0 CC00            1098                     NOP
+0004E1D2 F6F6D4ED        1099                     MOV             0EDD4H R6
+0004E1D6 CC00            1100                     NOP
+0004E1D8 F6F7D6ED        1101                     MOV             0EDD6H R7
+                         1102                     
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    18
+
+                         1103                     
+0004E1DC E6F40001        1104                     MOV      R4,#0x0100
+0004E1E0 F6F4DEED        1105                     MOV      0EDDEH,R4
+                         1106                     
+                         1107     
+                         1108                     
+0004E1E4 DB00            1109                     RETS
+                         1110             SendMesssage ENDP
+                         1111             
+                         1112             ;R8 - low 16bit
+                         1113             ;R9 - hi 8 bit
+                         1114             EraseBlock PROC FAR
+0004E1E6 E6F45405        1115                MOV      R4,#0x0554
+0004E1EA E6F52000        1116                MOV      R5,#0x0020
+0004E1EE F0A4            1117            MOV      R10,R4
+0004E1F0 F0B5            1118            MOV      R11,R5
+                         1119            
+0004E1F2 E6F4AA0A        1120                MOV      R4,#0x0AAA
+0004E1F6 F024            1121            MOV      R2,R4
+0004E1F8 F035            1122            MOV      R3,R5
+                         1123     
+0004E1FA F048            1124            MOV      R4,R8
+0004E1FC F059            1125            MOV      R5,R9
+0004E1FE 0044            1126            ADD      R4,R4
+0004E200 1055            1127            ADDC     R5,R5
+0004E202 0044            1128            ADD      R4,R4
+0004E204 1055            1129            ADDC     R5,R5
+0004E206 7C24            1130            SHR      R4,#0x02
+                         1131     
+0004E208 E6F600AA        1132            MOV      R6,#0xAA00
+0004E20C D7402000        1133            EXTP     #0x0020,#1
+0004E210 B86A            1134            MOV      [R10],R6
+                         1135     
+0004E212 CC00            1136            NOP      
+0004E214 CC00            1137            NOP      
+0004E216 CC00            1138            NOP      
+0004E218 CC00            1139            NOP      
+                         1140     
+                         1141             
+0004E21A CC00            1142            NOP      
+0004E21C CC00            1143            NOP      
+0004E21E CC00            1144            NOP      
+0004E220 CC00            1145            NOP      
+                         1146     
+0004E222 E6F65500        1147            MOV      R6,#0x0055
+0004E226 DC43            1148            EXTP     R3,#1
+0004E228 B862            1149            MOV      [R2],R6
+                         1150     
+0004E22A CC00            1151            NOP      
+0004E22C CC00            1152            NOP      
+0004E22E CC00            1153            NOP      
+0004E230 CC00            1154            NOP      
+                         1155     
+                         1156                      
+0004E232 CC00            1157            NOP      
+0004E234 CC00            1158            NOP      
+0004E236 CC00            1159            NOP      
+0004E238 CC00            1160            NOP      
+                         1161     
+0004E23A E6F60080        1162                MOV      R6,#0x8000
+0004E23E DC4B            1163            EXTP     R11,#1
+0004E240 B86A            1164            MOV      [R10],R6
+                         1165     
+0004E242 CC00            1166            NOP      
+0004E244 CC00            1167            NOP      
+0004E246 CC00            1168            NOP      
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    19
+
+0004E248 CC00            1169            NOP      
+                         1170     
+                         1171                  
+0004E24A CC00            1172            NOP      
+0004E24C CC00            1173            NOP      
+0004E24E CC00            1174            NOP      
+0004E250 CC00            1175            NOP      
+                         1176        
+0004E252 E6F600AA        1177                MOV      R6,#0xAA00
+0004E256 DC4B            1178            EXTP     R11,#1
+0004E258 B86A            1179            MOV      [R10],R6
+                         1180          
+0004E25A CC00            1181            NOP      
+0004E25C CC00            1182            NOP      
+0004E25E CC00            1183            NOP      
+0004E260 CC00            1184            NOP      
+                         1185             
+0004E262 CC00            1186            NOP      
+0004E264 CC00            1187            NOP      
+0004E266 CC00            1188            NOP      
+0004E268 CC00            1189            NOP      
+                         1190        
+0004E26A E6F65500        1191                MOV      R6,#0x0055
+0004E26E DC43            1192            EXTP     R3,#1
+0004E270 B862            1193            MOV      [R2],R6
+                         1194         
+0004E272 CC00            1195            NOP      
+0004E274 CC00            1196            NOP      
+0004E276 CC00            1197            NOP      
+0004E278 CC00            1198            NOP      
+                         1199              
+0004E27A CC00            1200            NOP      
+0004E27C CC00            1201            NOP      
+0004E27E CC00            1202            NOP      
+0004E280 CC00            1203            NOP      
+                         1204        
+0004E282 E6F65000        1205                MOV      R6,#0x0050
+0004E286 DC45            1206            EXTP     R5,#1
+0004E288 B864            1207            MOV      [R4],R6
+                         1208     
+0004E28A CC00            1209            NOP      
+0004E28C CC00            1210            NOP      
+0004E28E CC00            1211            NOP      
+0004E290 CC00            1212            NOP      
+                         1213         
+0004E292 CC00            1214            NOP      
+0004E294 CC00            1215            NOP      
+0004E296 CC00            1216            NOP      
+0004E298 CC00            1217            NOP      
+                         1218         
+0004E29A CC00            1219            NOP      
+0004E29C CC00            1220            NOP      
+0004E29E CC00            1221            NOP      
+0004E2A0 CC00            1222            NOP      
+                         1223         
+0004E2A2 CC00            1224            NOP      
+0004E2A4 CC00            1225            NOP      
+0004E2A6 CC00            1226            NOP      
+0004E2A8 CC00            1227            NOP      
+                         1228         
+0004E2AA CC00            1229            NOP      
+0004E2AC CC00            1230            NOP      
+0004E2AE CC00            1231            NOP      
+0004E2B0 CC00            1232            NOP      
+                         1233         
+0004E2B2 DB00            1234            RETS    
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    20
+
+                         1235             EraseBlock ENDP
+                         1236             
+                         1237             FSRControl PROC FAR
+0004E2B4 2802            1238                     SUB      R0,#2
+0004E2B6 E6F40030        1239                     MOV      R4,#0x3000
+0004E2BA E6F52300        1240                     MOV      R5,#0x0023
+0004E2BE F064            1241                     MOV      R6,R4
+0004E2C0 F075            1242                     MOV      R7,R5
+0004E2C2 DC45            1243                     EXTP     R5,#1
+0004E2C4 A844            1244                     MOV      R4,[R4]
+0004E2C6 B840            1245                     MOV      [R0],R4
+0004E2C8 0D03            1246                     JMPR     CC_UC,FSRL1
+                         1247                             FSRL2:
+0004E2CA DC47            1248                     EXTP     R7,#1
+0004E2CC A846            1249                     MOV      R4,[R6]
+0004E2CE B840            1250                     MOV      [R0],R4
+                         1251                             FSRL1:
+0004E2D0 A840            1252                     MOV      R4,[R0]
+0004E2D2 8AF4FA00        1253                     JB       R4.0,FSRL2
+0004E2D6 0802            1254                     ADD      R0,#2
+0004E2D8 DB00            1255                     RETS  
+                         1256             FSRControl ENDP
+                         1257             
+                         1258             ;R10 - word
+                         1259             ;R8 - 16 bit low
+                         1260             ;R9 - 8 bit hi
+                         1261             WriteWord PROC FAR
+0004E2DA ECFD            1262                     PUSH     R13
+0004E2DC E6F45405        1263                     MOV      R4,#0x0554
+0004E2E0 E6F52000        1264                     MOV      R5,#0x0020
+0004E2E4 F024            1265                     MOV      R2,R4
+0004E2E6 F035            1266                     MOV      R3,R5
+0004E2E8 E6F4AA0A        1267                     MOV      R4,#0x0AAA
+0004E2EC F0C4            1268                     MOV      R12,R4
+0004E2EE F0D5            1269                     MOV      R13,R5
+0004E2F0 F048            1270                     MOV      R4,R8
+0004E2F2 F059            1271                     MOV      R5,R9
+0004E2F4 0044            1272                     ADD      R4,R4
+0004E2F6 1055            1273                     ADDC     R5,R5
+0004E2F8 0044            1274                     ADD      R4,R4
+0004E2FA 1055            1275                     ADDC     R5,R5
+0004E2FC 7C24            1276                     SHR      R4,#0x02
+0004E2FE F084            1277                     MOV      R8,R4
+0004E300 F095            1278                     MOV      R9,R5
+0004E302 E6F600AA        1279                     MOV      R6,#0xAA00
+0004E306 D7402000        1280                     EXTP     #0x0020,#1
+0004E30A B862            1281                     MOV      [R2],R6
+0004E30C CC00            1282                     NOP      
+0004E30E CC00            1283                     NOP      
+0004E310 CC00            1284                     NOP      
+0004E312 CC00            1285                     NOP      
+0004E314 E6F65500        1286                     MOV      R6,#0x0055
+0004E318 DC4D            1287                     EXTP     R13,#1
+0004E31A B86C            1288                     MOV      [R12],R6
+0004E31C CC00            1289                     NOP      
+0004E31E CC00            1290                     NOP      
+0004E320 CC00            1291                     NOP      
+0004E322 CC00            1292                     NOP      
+0004E324 E6F600A0        1293                     MOV      R6,#0xA000
+0004E328 DC43            1294                     EXTP     R3,#1
+0004E32A B862            1295                     MOV      [R2],R6
+0004E32C CC00            1296                     NOP      
+0004E32E CC00            1297                     NOP      
+0004E330 CC00            1298                     NOP      
+0004E332 CC00            1299                     NOP      
+0004E334 DC49            1300                     EXTP     R9,#1
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    21
+
+0004E336 B8A8            1301                     MOV      [R8],R10
+0004E338 CC00            1302                     NOP      
+0004E33A CC00            1303                     NOP      
+0004E33C CC00            1304                     NOP      
+0004E33E CC00            1305                     NOP      
+0004E340 CC00            1306                     NOP      
+0004E342 CC00            1307                     NOP      
+0004E344 CC00            1308                     NOP      
+0004E346 CC00            1309                     NOP      
+0004E348 CC00            1310                     NOP      
+0004E34A CC00            1311                     NOP      
+0004E34C CC00            1312                     NOP      
+0004E34E CC00            1313                     NOP      
+0004E350 CC00            1314                     NOP      
+0004E352 CC00            1315                     NOP      
+0004E354 CC00            1316                     NOP      
+0004E356 CC00            1317                     NOP      
+0004E358 CC00            1318                     NOP      
+0004E35A CC00            1319                     NOP      
+0004E35C CC00            1320                     NOP      
+0004E35E CC00            1321                     NOP      
+0004E360 FCFD            1322                     POP      R13     
+0004E362 DB00            1323                     RETS
+                         1324             WriteWord ENDP
+                         1325     
+                         1326     
+--------                 1327     BSLSection ENDS 
+                         1328     
+                         1329     
+                         1330     END
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    22
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             TYPE   VALUE             I  ATTRIBUTES
+
+ACC0 . . . . . . .  BIT    FF52H.3           A  
+ACC1 . . . . . . .  BIT    FF52H.7           A  
+ACC10. . . . . . .  BIT    FF56H.11          A  
+ACC11. . . . . . .  BIT    FF56H.15          A  
+ACC12. . . . . . .  BIT    FF58H.3           A  
+ACC13. . . . . . .  BIT    FF58H.7           A  
+ACC14. . . . . . .  BIT    FF58H.11          A  
+ACC15. . . . . . .  BIT    FF58H.15          A  
+ACC16. . . . . . .  BIT    FF22H.3           A  
+ACC17. . . . . . .  BIT    FF22H.7           A  
+ACC18. . . . . . .  BIT    FF22H.11          A  
+ACC19. . . . . . .  BIT    FF22H.15          A  
+ACC2 . . . . . . .  BIT    FF52H.11          A  
+ACC20. . . . . . .  BIT    FF24H.3           A  
+ACC21. . . . . . .  BIT    FF24H.7           A  
+ACC22. . . . . . .  BIT    FF24H.11          A  
+ACC23. . . . . . .  BIT    FF24H.15          A  
+ACC24. . . . . . .  BIT    FF26H.3           A  
+ACC25. . . . . . .  BIT    FF26H.7           A  
+ACC26. . . . . . .  BIT    FF26H.11          A  
+ACC27. . . . . . .  BIT    FF26H.15          A  
+ACC28. . . . . . .  BIT    FF28H.3           A  
+ACC29. . . . . . .  BIT    FF28H.7           A  
+ACC3 . . . . . . .  BIT    FF52H.15          A  
+ACC30. . . . . . .  BIT    FF28H.11          A  
+ACC31. . . . . . .  BIT    FF28H.15          A  
+ACC4 . . . . . . .  BIT    FF54H.3           A  
+ACC5 . . . . . . .  BIT    FF54H.7           A  
+ACC6 . . . . . . .  BIT    FF54H.11          A  
+ACC7 . . . . . . .  BIT    FF54H.15          A  
+ACC8 . . . . . . .  BIT    FF56H.3           A  
+ACC9 . . . . . . .  BIT    FF56H.7           A  
+ADBSY. . . . . . .  BIT    FFA0H.8           A  
+ADCDIS . . . . . .  BIT    F1D4H.0           A  
+ADCIC. . . . . . .  WORD   FF98H             A  SFR
+ADCIE. . . . . . .  BIT    FF98H.6           A  
+ADCIN. . . . . . .  BIT    FFA0H.10          A  
+ADCIR. . . . . . .  BIT    FF98H.7           A  
+ADCON. . . . . . .  WORD   FFA0H             A  SFR
+ADCRQ. . . . . . .  BIT    FFA0H.11          A  
+ADDAT. . . . . . .  WORD   FEA0H             A  SFR
+ADDAT2 . . . . . .  WORD   F0A0H             A  ESFR
+ADDRSEL1 . . . . .  WORD   FE18H             A  SFR
+ADDRSEL2 . . . . .  WORD   FE1AH             A  SFR
+ADDRSEL3 . . . . .  WORD   FE1CH             A  SFR
+ADDRSEL4 . . . . .  WORD   FE1EH             A  SFR
+ADEIC. . . . . . .  WORD   FF9AH             A  SFR
+ADEIE. . . . . . .  BIT    FF9AH.6           A  
+ADEIR. . . . . . .  BIT    FF9AH.7           A  
+ADST . . . . . . .  BIT    FFA0H.7           A  
+ADWR . . . . . . .  BIT    FFA0H.9           A  
+ALECTL0. . . . . .  BIT    FF0CH.9           A  
+ALECTL1. . . . . .  BIT    FF14H.9           A  
+ALECTL2. . . . . .  BIT    FF16H.9           A  
+ALECTL3. . . . . .  BIT    FF18H.9           A  
+ALECTL4. . . . . .  BIT    FF1AH.9           A  
+ALTSEL0P1H . . . .  DATA16 F1ECH             A  
+ALTSEL0P1L . . . .  DATA16 F1EAH             A  
+ALTSEL0P2. . . . .  DATA16 F1EEH             A  
+ALTSEL0P3. . . . .  DATA16 F1F0H             A  
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    23
+
+ALTSEL0P4. . . . .  DATA16 F1F4H             A  
+ALTSEL0P6. . . . .  DATA16 F1F6H             A  
+ALTSEL0P7. . . . .  DATA16 F1F8H             A  
+ALTSEL0P8. . . . .  DATA16 F1FCH             A  
+ALTSEL1P3. . . . .  DATA16 F1F2H             A  
+ALTSEL1P7. . . . .  DATA16 F1FAH             A  
+ALTSEL1P8. . . . .  DATA16 F1FEH             A  
+ASC0DIS. . . . . .  BIT    F1D4H.1           A  
+ASC1DIS. . . . . .  BIT    F1D4H.10          A  
+BSLINTERRUPT . . .  ----   4F000H            A  SECTION
+BSLSECTION . . . .  ----   4E000H            A  SECTION
+BSLVER . . . . . .  DATA16 101H              A  
+BUSACT0. . . . . .  BIT    FF0CH.10          A  
+BUSACT1. . . . . .  BIT    FF14H.10          A  
+BUSACT2. . . . . .  BIT    FF16H.10          A  
+BUSACT3. . . . . .  BIT    FF18H.10          A  
+BUSACT4. . . . . .  BIT    FF1AH.10          A  
+BUSCON0. . . . . .  WORD   FF0CH             A  SFR
+BUSCON1. . . . . .  WORD   FF14H             A  SFR
+BUSCON2. . . . . .  WORD   FF16H             A  SFR
+BUSCON3. . . . . .  WORD   FF18H             A  SFR
+BUSCON4. . . . . .  WORD   FF1AH             A  SFR
+BYTDIS . . . . . .  BIT    FF12H.9           A  
+C. . . . . . . . .  BIT    FF10H.1           A  
+CAN14IC. . . . . .  DATA16 F14EH             A  
+CAN15IC. . . . . .  DATA16 F14CH             A  
+CAN1DIS. . . . . .  BIT    F1D4H.13          A  
+CAN2DIS. . . . . .  BIT    F1D4H.14          A  
+CANINTERRUPT . . .  I-FAR  4F000H            A  SEC=BSLINTERRUPT
+CAPIN. . . . . . .  BIT    FFC4H.2           A  
+CAPREL . . . . . .  WORD   FE4AH             A  SFR
+CC0. . . . . . . .  WORD   FE80H             A  SFR
+CC0IC. . . . . . .  WORD   FF78H             A  SFR
+CC0IE. . . . . . .  BIT    FF78H.6           A  
+CC0IR. . . . . . .  BIT    FF78H.7           A  
+CC1. . . . . . . .  WORD   FE82H             A  SFR
+CC10 . . . . . . .  WORD   FE94H             A  SFR
+CC10IC . . . . . .  WORD   FF8CH             A  SFR
+CC10IE . . . . . .  BIT    FF8CH.6           A  
+CC10IR . . . . . .  BIT    FF8CH.7           A  
+CC11 . . . . . . .  WORD   FE96H             A  SFR
+CC11IC . . . . . .  WORD   FF8EH             A  SFR
+CC11IE . . . . . .  BIT    FF8EH.6           A  
+CC11IR . . . . . .  BIT    FF8EH.7           A  
+CC12 . . . . . . .  WORD   FE98H             A  SFR
+CC12IC . . . . . .  WORD   FF90H             A  SFR
+CC12IE . . . . . .  BIT    FF90H.6           A  
+CC12IR . . . . . .  BIT    FF90H.7           A  
+CC13 . . . . . . .  WORD   FE9AH             A  SFR
+CC13IC . . . . . .  WORD   FF92H             A  SFR
+CC13IE . . . . . .  BIT    FF92H.6           A  
+CC13IR . . . . . .  BIT    FF92H.7           A  
+CC14 . . . . . . .  WORD   FE9CH             A  SFR
+CC14IC . . . . . .  WORD   FF94H             A  SFR
+CC14IE . . . . . .  BIT    FF94H.6           A  
+CC14IR . . . . . .  BIT    FF94H.7           A  
+CC15 . . . . . . .  WORD   FE9EH             A  SFR
+CC15IC . . . . . .  WORD   FF96H             A  SFR
+CC15IE . . . . . .  BIT    FF96H.6           A  
+CC15IR . . . . . .  BIT    FF96H.7           A  
+CC16 . . . . . . .  WORD   FE60H             A  SFR
+CC16IC . . . . . .  WORD   F160H             A  ESFR
+CC16IE . . . . . .  BIT    F160H.6           A  
+CC16IR . . . . . .  BIT    F160H.7           A  
+CC17 . . . . . . .  WORD   FE62H             A  SFR
+CC17IC . . . . . .  WORD   F162H             A  ESFR
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    24
+
+CC17IE . . . . . .  BIT    F162H.6           A  
+CC17IR . . . . . .  BIT    F162H.7           A  
+CC18 . . . . . . .  WORD   FE64H             A  SFR
+CC18IC . . . . . .  WORD   F164H             A  ESFR
+CC18IE . . . . . .  BIT    F164H.6           A  
+CC18IR . . . . . .  BIT    F164H.7           A  
+CC19 . . . . . . .  WORD   FE66H             A  SFR
+CC19IC . . . . . .  WORD   F166H             A  ESFR
+CC19IE . . . . . .  BIT    F166H.6           A  
+CC19IR . . . . . .  BIT    F166H.7           A  
+CC1DIS . . . . . .  BIT    F1D4H.6           A  
+CC1IC. . . . . . .  WORD   FF7AH             A  SFR
+CC1IE. . . . . . .  BIT    FF7AH.6           A  
+CC1IR. . . . . . .  BIT    FF7AH.7           A  
+CC1_DRM. . . . . .  WORD   FF5AH             A  SFR
+CC1_IOC. . . . . .  WORD   F062H             A  ESFR
+CC1_OUT. . . . . .  WORD   FF5CH             A  SFR
+CC1_SEE. . . . . .  WORD   FE2EH             A  SFR
+CC1_SEM. . . . . .  WORD   FE2CH             A  SFR
+CC2. . . . . . . .  WORD   FE84H             A  SFR
+CC20 . . . . . . .  WORD   FE68H             A  SFR
+CC20IC . . . . . .  WORD   F168H             A  ESFR
+CC20IE . . . . . .  BIT    F168H.6           A  
+CC20IR . . . . . .  BIT    F168H.7           A  
+CC21 . . . . . . .  WORD   FE6AH             A  SFR
+CC21IC . . . . . .  WORD   F16AH             A  ESFR
+CC21IE . . . . . .  BIT    F16AH.6           A  
+CC21IR . . . . . .  BIT    F16AH.7           A  
+CC22 . . . . . . .  WORD   FE6CH             A  SFR
+CC22IC . . . . . .  WORD   F16CH             A  ESFR
+CC22IE . . . . . .  BIT    F16CH.6           A  
+CC22IR . . . . . .  BIT    F16CH.7           A  
+CC23 . . . . . . .  WORD   FE6EH             A  SFR
+CC23IC . . . . . .  WORD   F16EH             A  ESFR
+CC23IE . . . . . .  BIT    F16EH.6           A  
+CC23IR . . . . . .  BIT    F16EH.7           A  
+CC24 . . . . . . .  WORD   FE70H             A  SFR
+CC24IC . . . . . .  WORD   F170H             A  ESFR
+CC24IE . . . . . .  BIT    F170H.6           A  
+CC24IR . . . . . .  BIT    F170H.7           A  
+CC25 . . . . . . .  WORD   FE72H             A  SFR
+CC25IC . . . . . .  WORD   F172H             A  ESFR
+CC25IE . . . . . .  BIT    F172H.6           A  
+CC25IR . . . . . .  BIT    F172H.7           A  
+CC26 . . . . . . .  WORD   FE74H             A  SFR
+CC26IC . . . . . .  WORD   F174H             A  ESFR
+CC26IE . . . . . .  BIT    F174H.6           A  
+CC26IR . . . . . .  BIT    F174H.7           A  
+CC27 . . . . . . .  WORD   FE76H             A  SFR
+CC27IC . . . . . .  WORD   F176H             A  ESFR
+CC27IE . . . . . .  BIT    F176H.6           A  
+CC27IR . . . . . .  BIT    F176H.7           A  
+CC28 . . . . . . .  WORD   FE78H             A  SFR
+CC28IC . . . . . .  WORD   F178H             A  ESFR
+CC28IE . . . . . .  BIT    F178H.6           A  
+CC28IR . . . . . .  BIT    F178H.7           A  
+CC29 . . . . . . .  WORD   FE7AH             A  SFR
+CC29IC . . . . . .  WORD   F184H             A  ESFR
+CC29IE . . . . . .  BIT    F184H.6           A  
+CC29IR . . . . . .  BIT    F184H.7           A  
+CC2DIS . . . . . .  BIT    F1D4H.7           A  
+CC2IC. . . . . . .  WORD   FF7CH             A  SFR
+CC2IE. . . . . . .  BIT    FF7CH.6           A  
+CC2IR. . . . . . .  BIT    FF7CH.7           A  
+CC2_DRM. . . . . .  WORD   FF2AH             A  SFR
+CC2_IOC. . . . . .  WORD   F066H             A  ESFR
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    25
+
+CC2_OUT. . . . . .  WORD   FF2CH             A  SFR
+CC2_SEE. . . . . .  WORD   FE2AH             A  SFR
+CC2_SEM. . . . . .  WORD   FE28H             A  SFR
+CC3. . . . . . . .  WORD   FE86H             A  SFR
+CC30 . . . . . . .  WORD   FE7CH             A  SFR
+CC30IC . . . . . .  WORD   F18CH             A  ESFR
+CC30IE . . . . . .  BIT    F18CH.6           A  
+CC30IR . . . . . .  BIT    F18CH.7           A  
+CC31 . . . . . . .  WORD   FE7EH             A  SFR
+CC31IC . . . . . .  WORD   F194H             A  ESFR
+CC31IE . . . . . .  BIT    F194H.6           A  
+CC31IR . . . . . .  BIT    F194H.7           A  
+CC3IC. . . . . . .  WORD   FF7EH             A  SFR
+CC3IE. . . . . . .  BIT    FF7EH.6           A  
+CC3IR. . . . . . .  BIT    FF7EH.7           A  
+CC4. . . . . . . .  WORD   FE88H             A  SFR
+CC4IC. . . . . . .  WORD   FF80H             A  SFR
+CC4IE. . . . . . .  BIT    FF80H.6           A  
+CC4IR. . . . . . .  BIT    FF80H.7           A  
+CC5. . . . . . . .  WORD   FE8AH             A  SFR
+CC5IC. . . . . . .  WORD   FF82H             A  SFR
+CC5IE. . . . . . .  BIT    FF82H.6           A  
+CC5IR. . . . . . .  BIT    FF82H.7           A  
+CC6. . . . . . . .  WORD   FE8CH             A  SFR
+CC6IC. . . . . . .  WORD   FF84H             A  SFR
+CC6IE. . . . . . .  BIT    FF84H.6           A  
+CC6IR. . . . . . .  BIT    FF84H.7           A  
+CC7. . . . . . . .  WORD   FE8EH             A  SFR
+CC7IC. . . . . . .  WORD   FF86H             A  SFR
+CC7IE. . . . . . .  BIT    FF86H.6           A  
+CC7IR. . . . . . .  BIT    FF86H.7           A  
+CC8. . . . . . . .  WORD   FE90H             A  SFR
+CC8IC. . . . . . .  WORD   FF88H             A  SFR
+CC8IE. . . . . . .  BIT    FF88H.6           A  
+CC8IR. . . . . . .  BIT    FF88H.7           A  
+CC9. . . . . . . .  WORD   FE92H             A  SFR
+CC9IC. . . . . . .  WORD   FF8AH             A  SFR
+CC9IE. . . . . . .  BIT    FF8AH.6           A  
+CC9IR. . . . . . .  BIT    FF8AH.7           A  
+CCM0 . . . . . . .  WORD   FF52H             A  SFR
+CCM1 . . . . . . .  WORD   FF54H             A  SFR
+CCM2 . . . . . . .  WORD   FF56H             A  SFR
+CCM3 . . . . . . .  WORD   FF58H             A  SFR
+CCM4 . . . . . . .  WORD   FF22H             A  SFR
+CCM5 . . . . . . .  WORD   FF24H             A  SFR
+CCM6 . . . . . . .  WORD   FF26H             A  SFR
+CCM7 . . . . . . .  WORD   FF28H             A  SFR
+CCU6_CC60R . . . .  DATA16 E898H             A  
+CCU6_CC60SR. . . .  DATA16 E8A0H             A  
+CCU6_CC61R . . . .  DATA16 E89AH             A  
+CCU6_CC61SR. . . .  DATA16 E8A2H             A  
+CCU6_CC62R . . . .  DATA16 E89CH             A  
+CCU6_CC62SR. . . .  DATA16 E8A4H             A  
+CCU6_CC63R . . . .  DATA16 E8B4H             A  
+CCU6_CC63SR. . . .  DATA16 E8B6H             A  
+CCU6_CMPMODIF. . .  DATA16 E8AAH             A  
+CCU6_CMPSTAT . . .  DATA16 E8A8H             A  
+CCU6_EIC . . . . .  DATA16 F188H             A  
+CCU6_IC. . . . . .  DATA16 F140H             A  
+CCU6_IEN . . . . .  DATA16 E8D8H             A  
+CCU6_INP . . . . .  DATA16 E8D6H             A  
+CCU6_IS. . . . . .  DATA16 E8D0H             A  
+CCU6_ISR . . . . .  DATA16 E8D4H             A  
+CCU6_ISS . . . . .  DATA16 E8D2H             A  
+CCU6_MCMCTR. . . .  DATA16 E8CEH             A  
+CCU6_MCMOUT. . . .  DATA16 E8CCH             A  
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    26
+
+CCU6_MCMOUTS . . .  DATA16 E8CAH             A  
+CCU6_MODCTR. . . .  DATA16 E8C0H             A  
+CCU6_PSLR. . . . .  DATA16 E8C4H             A  
+CCU6_T12 . . . . .  DATA16 E890H             A  
+CCU6_T12DTC. . . .  DATA16 E894H             A  
+CCU6_T12IC . . . .  DATA16 F190H             A  
+CCU6_T12MSEL . . .  DATA16 E8C6H             A  
+CCU6_T12PR . . . .  DATA16 E892H             A  
+CCU6_T13 . . . . .  DATA16 E8B0H             A  
+CCU6_T13IC . . . .  DATA16 F198H             A  
+CCU6_T13PR . . . .  DATA16 E8B2H             A  
+CCU6_TCTR0 . . . .  DATA16 E8ACH             A  
+CCU6_TCTR2 . . . .  DATA16 E8AEH             A  
+CCU6_TCTR4 . . . .  DATA16 E8A6H             A  
+CCU6_TRPCTR. . . .  DATA16 E8C2H             A  
+CLKEN. . . . . . .  BIT    FF12H.8           A  
+CLKLOCK. . . . . .  BIT    F1D0H.15          A  
+CMD1 . . . . . . .  NEAR   4F020H            A  SEC=BSLINTERRUPT
+CMD2 . . . . . . .  NEAR   4F02CH            A  SEC=BSLINTERRUPT
+CMD3 . . . . . . .  NEAR   4F05EH            A  SEC=BSLINTERRUPT
+CMD4 . . . . . . .  NEAR   4F0A2H            A  SEC=BSLINTERRUPT
+CMD5 . . . . . . .  NEAR   4F0BCH            A  SEC=BSLINTERRUPT
+CRIC . . . . . . .  WORD   FF6AH             A  SFR
+CRIE . . . . . . .  BIT    FF6AH.6           A  
+CRIR . . . . . . .  BIT    FF6AH.7           A  
+CSP. . . . . . . .  WORD   FE08H             A  SFR
+CSREN1 . . . . . .  BIT    FF14H.14          A  
+CSREN2 . . . . . .  BIT    FF16H.14          A  
+CSREN3 . . . . . .  BIT    FF18H.14          A  
+CSREN4 . . . . . .  BIT    FF1AH.14          A  
+CSWEN1 . . . . . .  BIT    FF14H.15          A  
+CSWEN2 . . . . . .  BIT    FF16H.15          A  
+CSWEN3 . . . . . .  BIT    FF18H.15          A  
+CSWEN4 . . . . . .  BIT    FF1AH.15          A  
+DBGSR. . . . . . .  DATA16 F0FCH             A  
+DCMPDP . . . . . .  DATA16 F0EEH             A  
+DCMPSP . . . . . .  DATA16 F0ECH             A  
+DEXEVT . . . . . .  DATA16 F0F2H             A  
+DIP. . . . . . . .  DATA16 F0F8H             A  
+DIPX . . . . . . .  DATA16 F0FAH             A  
+DP0H . . . . . . .  WORD   F102H             A  ESFR
+DP0L . . . . . . .  WORD   F100H             A  ESFR
+DP1H . . . . . . .  WORD   F106H             A  ESFR
+DP1L . . . . . . .  WORD   F104H             A  ESFR
+DP2. . . . . . . .  WORD   FFC2H             A  SFR
+DP3. . . . . . . .  WORD   FFC6H             A  SFR
+DP4. . . . . . . .  WORD   FFCAH             A  SFR
+DP6. . . . . . . .  WORD   FFCEH             A  SFR
+DP7. . . . . . . .  WORD   FFD2H             A  SFR
+DP8. . . . . . . .  WORD   FFD6H             A  SFR
+DPP1 . . . . . . .  WORD   1FC0H             A  SFR
+DPP2 . . . . . . .  WORD   1FC0H             A  SFR
+DPP3 . . . . . . .  WORD   1FC0H             A  SFR
+DSWEVT . . . . . .  DATA16 F0F4H             A  
+DTIDR. . . . . . .  DATA16 F0D8H             A  
+DTREVT . . . . . .  DATA16 F0F0H             A  
+E. . . . . . . . .  BIT    FF10H.4           A  
+ERASEBLOCK . . . .  FAR    4E1E6H            A  SEC=BSLSECTION
+EXICON . . . . . .  WORD   F1C0H             A  ESFR
+EXISEL0. . . . . .  DATA16 F1DAH             A  
+EXISEL1. . . . . .  DATA16 F1D8H             A  
+EXIT . . . . . . .  NEAR   4F0C8H            A  SEC=BSLINTERRUPT
+FMDIS. . . . . . .  BIT    F1D4H.5           A  
+FOCON. . . . . . .  DATA16 FFAAH             A  
+FSRCONTROL . . . .  FAR    4E2B4H            A  SEC=BSLSECTION
+FSRL1. . . . . . .  NEAR   4E2D0H            A  SEC=BSLSECTION
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    27
+
+FSRL2. . . . . . .  NEAR   4E2CAH            A  SEC=BSLSECTION
+GPT1DIS. . . . . .  BIT    F1D4H.3           A  
+GPT2DIS. . . . . .  BIT    F1D4H.4           A  
+HLDEN. . . . . . .  BIT    FF10H.10          A  
+I2CDIS . . . . . .  BIT    F1D4H.11          A  
+I2C_CFG. . . . . .  DATA16 F0EAH             A  
+I2C_SMBADDR. . . .  DATA16 F0E2H             A  
+I2C_SMBCST . . . .  DATA16 F0DEH             A  
+I2C_SMBCTL1. . . .  DATA16 F0E0H             A  
+I2C_SMBCTL2. . . .  DATA16 F0E4H             A  
+I2C_SMBCTL3. . . .  DATA16 F0E8H             A  
+I2C_SMBSDA . . . .  DATA16 F0DAH             A  
+I2C_SMBST. . . . .  DATA16 F0DCH             A  
+I2C_SMBTOPR. . . .  DATA16 F0E6H             A  
+IEN. . . . . . . .  BIT    FF10H.11          A  
+ILLBUS . . . . . .  BIT    FFACH.0           A  
+ILLINA . . . . . .  BIT    FFACH.1           A  
+ILLOPA . . . . . .  BIT    FFACH.2           A  
+IRQ24IC. . . . . .  DATA16 FF88H             A  
+IRQ25IC. . . . . .  DATA16 FF8AH             A  
+IRQ26IC. . . . . .  DATA16 FF8CH             A  
+IRQ27IC. . . . . .  DATA16 FF8EH             A  
+IRQ28IC. . . . . .  DATA16 FF90H             A  
+IRQ29IC. . . . . .  DATA16 FF92H             A  
+IRQ30IC. . . . . .  DATA16 FF94H             A  
+IRQ31IC. . . . . .  DATA16 FF96H             A  
+ISNC . . . . . . .  WORD   F1DEH             A  ESFR
+L1 . . . . . . . .  NEAR   4E176H            A  SEC=BSLSECTION
+LOADER . . . . . .  FAR    4E000H            A  SEC=BSLSECTION
+MDC. . . . . . . .  WORD   FF0EH             A  SFR
+MDRIU. . . . . . .  BIT    FF0EH.4           A  
+MTTC0. . . . . . .  BIT    FF0CH.5           A  
+MTTC1. . . . . . .  BIT    FF14H.5           A  
+MTTC2. . . . . . .  BIT    FF16H.5           A  
+MTTC3. . . . . . .  BIT    FF18H.5           A  
+MTTC4. . . . . . .  BIT    FF1AH.5           A  
+MULIP. . . . . . .  BIT    FF10H.5           A  
+N. . . . . . . . .  BIT    FF10H.0           A  
+NCONST . . . . . .  ----   ----                 
+NDATA. . . . . . .  ----   ----                 
+NMI. . . . . . . .  BIT    FFACH.15          A  
+ODP2 . . . . . . .  WORD   F1C2H             A  ESFR
+ODP3 . . . . . . .  WORD   F1C6H             A  ESFR
+ODP4 . . . . . . .  WORD   F1CAH             A  ESFR
+ODP6 . . . . . . .  WORD   F1CEH             A  ESFR
+ODP7 . . . . . . .  WORD   F1D2H             A  ESFR
+ODP8 . . . . . . .  WORD   F1D6H             A  ESFR
+ONES . . . . . . .  WORD   FF1EH             A  SFR
+P0H. . . . . . . .  WORD   FF02H             A  SFR
+P0L. . . . . . . .  WORD   FF00H             A  SFR
+P1H. . . . . . . .  WORD   FF06H             A  SFR
+P1L. . . . . . . .  WORD   FF04H             A  SFR
+P2 . . . . . . . .  WORD   FFC0H             A  SFR
+P3 . . . . . . . .  WORD   FFC4H             A  SFR
+P4 . . . . . . . .  WORD   FFC8H             A  SFR
+P5 . . . . . . . .  WORD   FFA2H             A  SFR
+P6 . . . . . . . .  WORD   FFCCH             A  SFR
+P7 . . . . . . . .  WORD   FFD0H             A  SFR
+P8 . . . . . . . .  WORD   FFD4H             A  SFR
+PB01 . . . . . . .  BIT    FF32H.12          A  
+PCDDIS . . . . . .  BIT    F1D4H.15          A  
+PECC0. . . . . . .  WORD   FEC0H             A  SFR
+PECC1. . . . . . .  WORD   FEC2H             A  SFR
+PECC2. . . . . . .  WORD   FEC4H             A  SFR
+PECC3. . . . . . .  WORD   FEC6H             A  SFR
+PECC4. . . . . . .  WORD   FEC8H             A  SFR
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    28
+
+PECC5. . . . . . .  WORD   FECAH             A  SFR
+PECC6. . . . . . .  WORD   FECCH             A  SFR
+PECC7. . . . . . .  WORD   FECEH             A  SFR
+PEN0 . . . . . . .  BIT    FF32H.0           A  
+PEN1 . . . . . . .  BIT    FF32H.1           A  
+PEN2 . . . . . . .  BIT    FF32H.2           A  
+PEN3 . . . . . . .  BIT    FF32H.3           A  
+PICON. . . . . . .  DATA16 F1C4H             A  
+PIE0 . . . . . . .  BIT    FF30H.8           A  
+PIE1 . . . . . . .  BIT    FF30H.9           A  
+PIE2 . . . . . . .  BIT    FF30H.10          A  
+PIE3 . . . . . . .  BIT    FF30H.11          A  
+PIR0 . . . . . . .  BIT    FF30H.12          A  
+PIR1 . . . . . . .  BIT    FF30H.13          A  
+PIR2 . . . . . . .  BIT    FF30H.14          A  
+PIR3 . . . . . . .  BIT    FF30H.15          A  
+PLLIE. . . . . . .  BIT    F1DEH.2           A  
+PLLIR. . . . . . .  BIT    F1DEH.3           A  
+PM0. . . . . . . .  BIT    FF32H.4           A  
+PM1. . . . . . . .  BIT    FF32H.5           A  
+PM2. . . . . . . .  BIT    FF32H.6           A  
+PM3. . . . . . . .  BIT    FF32H.7           A  
+POCON0H. . . . . .  DATA16 F082H             A  
+POCON0L. . . . . .  DATA16 F080H             A  
+POCON1H. . . . . .  DATA16 F086H             A  
+POCON1L. . . . . .  DATA16 F084H             A  
+POCON2 . . . . . .  DATA16 F088H             A  
+POCON3 . . . . . .  DATA16 F08AH             A  
+POCON4 . . . . . .  DATA16 F08CH             A  
+POCON6 . . . . . .  DATA16 F08EH             A  
+POCON7 . . . . . .  DATA16 F090H             A  
+POCON8 . . . . . .  DATA16 F092H             A  
+PP0. . . . . . . .  WORD   F038H             A  ESFR
+PP1. . . . . . . .  WORD   F03AH             A  ESFR
+PP2. . . . . . . .  WORD   F03CH             A  ESFR
+PP3. . . . . . . .  WORD   F03EH             A  ESFR
+PRTFLT . . . . . .  BIT    FFACH.3           A  
+PS2. . . . . . . .  BIT    FF32H.14          A  
+PS3. . . . . . . .  BIT    FF32H.15          A  
+PSW. . . . . . . .  WORD   FF10H             A  SFR
+PT0. . . . . . . .  WORD   F030H             A  ESFR
+PT1. . . . . . . .  WORD   F032H             A  ESFR
+PT2. . . . . . . .  WORD   F034H             A  ESFR
+PT3. . . . . . . .  WORD   F036H             A  ESFR
+PTI0 . . . . . . .  BIT    FF30H.4           A  
+PTI1 . . . . . . .  BIT    FF30H.5           A  
+PTI2 . . . . . . .  BIT    FF30H.6           A  
+PTI3 . . . . . . .  BIT    FF30H.7           A  
+PTR0 . . . . . . .  BIT    FF30H.0           A  
+PTR1 . . . . . . .  BIT    FF30H.1           A  
+PTR2 . . . . . . .  BIT    FF30H.2           A  
+PTR3 . . . . . . .  BIT    FF30H.3           A  
+PW0. . . . . . . .  WORD   FE30H             A  SFR
+PW1. . . . . . . .  WORD   FE32H             A  SFR
+PW2. . . . . . . .  WORD   FE34H             A  SFR
+PW3. . . . . . . .  WORD   FE36H             A  SFR
+PWMCON0. . . . . .  WORD   FF30H             A  SFR
+PWMCON1. . . . . .  WORD   FF32H             A  SFR
+PWMDIS . . . . . .  BIT    F1D4H.9           A  
+PWMIC. . . . . . .  WORD   F17EH             A  ESFR
+PWMIE. . . . . . .  BIT    F17EH.6           A  
+PWMIR. . . . . . .  BIT    F17EH.7           A  
+RCS. . . . . . . .  BIT    F1D0H.6           A  
+RDYEN0 . . . . . .  BIT    FF0CH.12          A  
+RDYEN1 . . . . . .  BIT    FF14H.12          A  
+RDYEN2 . . . . . .  BIT    FF16H.12          A  
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    29
+
+RDYEN3 . . . . . .  BIT    FF18H.12          A  
+RDYEN4 . . . . . .  BIT    FF1AH.12          A  
+ROMEN. . . . . . .  BIT    FF12H.10          A  
+ROMS1. . . . . . .  BIT    FF12H.12          A  
+RP0H . . . . . . .  WORD   F108H             A  ESFR
+RTCCMP1_HI . . . .  DATA16 F042H             A  
+RTCCMP1_LO . . . .  DATA16 F044H             A  
+RTCCMP2_HI . . . .  DATA16 F046H             A  
+RTCCMP2_LO . . . .  DATA16 F048H             A  
+RTCCMP3_HI . . . .  DATA16 F04AH             A  
+RTCCMP3_LO . . . .  DATA16 F04CH             A  
+RTCCST . . . . . .  DATA16 F030H             A  
+RTCEIST. . . . . .  DATA16 F034H             A  
+RTCIE. . . . . . .  BIT    F1DEH.0           A  
+RTCIEN . . . . . .  DATA16 F036H             A  
+RTCIR. . . . . . .  BIT    F1DEH.1           A  
+RTCLD_HI . . . . .  DATA16 F03EH             A  
+RTCLD_LO . . . . .  DATA16 F040H             A  
+RTCRD_HI . . . . .  DATA16 F03AH             A  
+RTCRD_LO . . . . .  DATA16 F03CH             A  
+RTPRD. . . . . . .  DATA16 F038H             A  
+RTUDST . . . . . .  DATA16 F032H             A  
+RWDC0. . . . . . .  BIT    FF0CH.4           A  
+RWDC1. . . . . . .  BIT    FF14H.4           A  
+RWDC2. . . . . . .  BIT    FF16H.4           A  
+RWDC3. . . . . . .  BIT    FF18H.4           A  
+RWDC4. . . . . . .  BIT    FF1AH.4           A  
+S0BG . . . . . . .  WORD   FEB4H             A  SFR
+S0BRS. . . . . . .  BIT    FFB0H.13          A  
+S0CON. . . . . . .  WORD   FFB0H             A  SFR
+S0EIC. . . . . . .  WORD   FF70H             A  SFR
+S0EIE. . . . . . .  BIT    FF70H.6           A  
+S0EIR. . . . . . .  BIT    FF70H.7           A  
+S0FDV. . . . . . .  DATA16 FEB6H             A  
+S0FE . . . . . . .  BIT    FFB0H.9           A  
+S0FEN. . . . . . .  BIT    FFB0H.6           A  
+S0LB . . . . . . .  BIT    FFB0H.14          A  
+S0ODD. . . . . . .  BIT    FFB0H.12          A  
+S0OE . . . . . . .  BIT    FFB0H.10          A  
+S0OEN. . . . . . .  BIT    FFB0H.7           A  
+S0PE . . . . . . .  BIT    FFB0H.8           A  
+S0PEN. . . . . . .  BIT    FFB0H.5           A  
+S0R. . . . . . . .  BIT    FFB0H.15          A  
+S0RBUF . . . . . .  WORD   FEB2H             A  SFR
+S0REN. . . . . . .  BIT    FFB0H.4           A  
+S0RIC. . . . . . .  WORD   FF6EH             A  SFR
+S0RIE. . . . . . .  BIT    FF6EH.6           A  
+S0RIR. . . . . . .  BIT    FF6EH.7           A  
+S0STP. . . . . . .  BIT    FFB0H.3           A  
+S0TBIC . . . . . .  WORD   F19CH             A  ESFR
+S0TBIE . . . . . .  BIT    F19CH.6           A  
+S0TBIR . . . . . .  BIT    F19CH.7           A  
+S0TBUF . . . . . .  WORD   FEB0H             A  SFR
+S0TIC. . . . . . .  WORD   FF6CH             A  SFR
+S0TIE. . . . . . .  BIT    FF6CH.6           A  
+S0TIR. . . . . . .  BIT    FF6CH.7           A  
+S1BG . . . . . . .  DATA16 FEAAH             A  
+S1BRS. . . . . . .  BIT    F1B8H.13          A  
+S1CON. . . . . . .  DATA16 F1B8H             A  
+S1EIC. . . . . . .  DATA16 F192H             A  
+S1EIE. . . . . . .  BIT    F192H.6           A  
+S1EIR. . . . . . .  BIT    F192H.7           A  
+S1FDV. . . . . . .  DATA16 FEACH             A  
+S1FE . . . . . . .  BIT    F1B8H.9           A  
+S1FEN. . . . . . .  BIT    F1B8H.6           A  
+S1LB . . . . . . .  BIT    F1B8H.14          A  
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    30
+
+S1ODD. . . . . . .  BIT    F1B8H.12          A  
+S1OE . . . . . . .  BIT    F1B8H.10          A  
+S1OEN. . . . . . .  BIT    F1B8H.7           A  
+S1PE . . . . . . .  BIT    F1B8H.8           A  
+S1PEN. . . . . . .  BIT    F1B8H.5           A  
+S1R. . . . . . . .  BIT    F1B8H.15          A  
+S1RBUF . . . . . .  DATA16 FEA8H             A  
+S1REN. . . . . . .  BIT    F1B8H.4           A  
+S1RIC. . . . . . .  DATA16 F18AH             A  
+S1RIE. . . . . . .  BIT    F18AH.6           A  
+S1RIR. . . . . . .  BIT    F18AH.7           A  
+S1STP. . . . . . .  BIT    F1B8H.3           A  
+S1TBIC . . . . . .  DATA16 F13CH             A  
+S1TBIE . . . . . .  BIT    F13CH.6           A  
+S1TBIR . . . . . .  BIT    F13CH.7           A  
+S1TBUF . . . . . .  DATA16 FEA6H             A  
+S1TIC. . . . . . .  DATA16 F182H             A  
+S1TIE. . . . . . .  BIT    F182H.6           A  
+S1TIR. . . . . . .  BIT    F182H.7           A  
+SCS. . . . . . . .  BIT    F1D0H.7           A  
+SENDMESSSAGE . . .  FAR    4E1C6H            A  SEC=BSLSECTION
+SGTEN. . . . . . .  BIT    FF12H.11          A  
+SP . . . . . . . .  WORD   FE12H             A  SFR
+SSC0BE . . . . . .  BIT    FFB2H.11          A  
+SSC0BEN. . . . . .  BIT    FFB2H.11          A  
+SSC0BR . . . . . .  DATA16 F0B4H             A  
+SSC0BSY. . . . . .  BIT    FFB2H.12          A  
+SSC0CON. . . . . .  DATA16 FFB2H             A  
+SSC0EIC. . . . . .  DATA16 FF76H             A  
+SSC0EIE. . . . . .  BIT    FF76H.6           A  
+SSC0EIR. . . . . .  BIT    FF76H.7           A  
+SSC0EN . . . . . .  BIT    FFB2H.15          A  
+SSC0HB . . . . . .  BIT    FFB2H.4           A  
+SSC0MS . . . . . .  BIT    FFB2H.14          A  
+SSC0P0 . . . . . .  BIT    FFB2H.6           A  
+SSC0PE . . . . . .  BIT    FFB2H.10          A  
+SSC0PEN. . . . . .  BIT    FFB2H.10          A  
+SSC0PH . . . . . .  BIT    FFB2H.5           A  
+SSC0RB . . . . . .  DATA16 F0B2H             A  
+SSC0RE . . . . . .  BIT    FFB2H.9           A  
+SSC0REN. . . . . .  BIT    FFB2H.9           A  
+SSC0RIC. . . . . .  DATA16 FF74H             A  
+SSC0RIE. . . . . .  BIT    FF74H.6           A  
+SSC0RIR. . . . . .  BIT    FF74H.7           A  
+SSC0TB . . . . . .  DATA16 F0B0H             A  
+SSC0TE . . . . . .  BIT    FFB2H.8           A  
+SSC0TEN. . . . . .  BIT    FFB2H.8           A  
+SSC0TIC. . . . . .  DATA16 FF72H             A  
+SSC0TIE. . . . . .  BIT    FF72H.6           A  
+SSC0TIR. . . . . .  BIT    FF72H.7           A  
+SSC1BE . . . . . .  BIT    FF5EH.11          A  
+SSC1BEN. . . . . .  BIT    FF5EH.11          A  
+SSC1BR . . . . . .  DATA16 F05EH             A  
+SSC1BSY. . . . . .  BIT    FF5EH.12          A  
+SSC1CON. . . . . .  DATA16 FF5EH             A  
+SSC1EIC. . . . . .  DATA16 F126H             A  
+SSC1EIE. . . . . .  BIT    F126H.6           A  
+SSC1EIR. . . . . .  BIT    F126H.7           A  
+SSC1EN . . . . . .  BIT    FF5EH.15          A  
+SSC1HB . . . . . .  BIT    FF5EH.4           A  
+SSC1MS . . . . . .  BIT    FF5EH.14          A  
+SSC1P0 . . . . . .  BIT    FF5EH.6           A  
+SSC1PE . . . . . .  BIT    FF5EH.10          A  
+SSC1PEN. . . . . .  BIT    FF5EH.10          A  
+SSC1PH . . . . . .  BIT    FF5EH.5           A  
+SSC1RB . . . . . .  DATA16 F05CH             A  
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    31
+
+SSC1RE . . . . . .  BIT    FF5EH.9           A  
+SSC1REN. . . . . .  BIT    FF5EH.9           A  
+SSC1RIC. . . . . .  DATA16 F124H             A  
+SSC1RIE. . . . . .  BIT    F124H.6           A  
+SSC1RIR. . . . . .  BIT    F124H.7           A  
+SSC1TB . . . . . .  DATA16 F05AH             A  
+SSC1TE . . . . . .  BIT    FF5EH.8           A  
+SSC1TEN. . . . . .  BIT    FF5EH.8           A  
+SSC1TIC. . . . . .  DATA16 F122H             A  
+SSC1TIE. . . . . .  BIT    F122H.6           A  
+SSC1TIR. . . . . .  BIT    F122H.7           A  
+SSCDIS . . . . . .  BIT    F1D4H.2           A  
+START. . . . . . .  FAR    4E17AH            A  SEC=BSLSECTION
+STKOF. . . . . . .  BIT    FFACH.14          A  
+STKOV. . . . . . .  WORD   FE14H             A  SFR
+STKUF. . . . . . .  BIT    FFACH.13          A  
+STKUN. . . . . . .  WORD   FE16H             A  SFR
+SYSCON . . . . . .  WORD   FF12H             A  SFR
+SYSCON2. . . . . .  WORD   F1D0H             A  ESFR
+SYSCON3. . . . . .  WORD   F1D4H             A  ESFR
+T0 . . . . . . . .  WORD   FE50H             A  SFR
+T01CON . . . . . .  WORD   FF50H             A  SFR
+T0IC . . . . . . .  WORD   FF9CH             A  SFR
+T0IE . . . . . . .  BIT    FF9CH.6           A  
+T0IN . . . . . . .  BIT    FFC4H.0           A  
+T0IR . . . . . . .  BIT    FF9CH.7           A  
+T0M. . . . . . . .  BIT    FF50H.3           A  
+T0R. . . . . . . .  BIT    FF50H.6           A  
+T0REL. . . . . . .  WORD   FE54H             A  SFR
+T1 . . . . . . . .  WORD   FE52H             A  SFR
+T1IC . . . . . . .  WORD   FF9EH             A  SFR
+T1IE . . . . . . .  BIT    FF9EH.6           A  
+T1IR . . . . . . .  BIT    FF9EH.7           A  
+T1M. . . . . . . .  BIT    FF50H.11          A  
+T1R. . . . . . . .  BIT    FF50H.14          A  
+T1REL. . . . . . .  WORD   FE56H             A  SFR
+T2 . . . . . . . .  WORD   FE40H             A  SFR
+T2CON. . . . . . .  WORD   FF40H             A  SFR
+T2EUD. . . . . . .  BIT    FFA2H.15          A  
+T2IC . . . . . . .  WORD   FF60H             A  SFR
+T2IE . . . . . . .  BIT    FF60H.6           A  
+T2IN . . . . . . .  BIT    FFC4H.7           A  
+T2IR . . . . . . .  BIT    FF60H.7           A  
+T2R. . . . . . . .  BIT    FF40H.6           A  
+T2UD . . . . . . .  BIT    FF40H.7           A  
+T2UDE. . . . . . .  BIT    FF40H.8           A  
+T3 . . . . . . . .  WORD   FE42H             A  SFR
+T3CON. . . . . . .  WORD   FF42H             A  SFR
+T3EUD. . . . . . .  BIT    FFC4H.4           A  
+T3IC . . . . . . .  WORD   FF62H             A  SFR
+T3IE . . . . . . .  BIT    FF62H.6           A  
+T3IN . . . . . . .  BIT    FFC4H.6           A  
+T3IR . . . . . . .  BIT    FF62H.7           A  
+T3OE . . . . . . .  BIT    FF42H.9           A  
+T3OTL. . . . . . .  BIT    FF42H.10          A  
+T3OUT. . . . . . .  BIT    FFC4H.3           A  
+T3R. . . . . . . .  BIT    FF42H.6           A  
+T3UD . . . . . . .  BIT    FF42H.7           A  
+T3UDE. . . . . . .  BIT    FF42H.8           A  
+T4 . . . . . . . .  WORD   FE44H             A  SFR
+T4CON. . . . . . .  WORD   FF44H             A  SFR
+T4EUD. . . . . . .  BIT    FFA2H.14          A  
+T4IC . . . . . . .  WORD   FF64H             A  SFR
+T4IE . . . . . . .  BIT    FF64H.6           A  
+T4IN . . . . . . .  BIT    FFC4H.5           A  
+T4IR . . . . . . .  BIT    FF64H.7           A  
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    32
+
+T4R. . . . . . . .  BIT    FF44H.6           A  
+T4UD . . . . . . .  BIT    FF44H.7           A  
+T4UDE. . . . . . .  BIT    FF44H.8           A  
+T5 . . . . . . . .  WORD   FE46H             A  SFR
+T5CLR. . . . . . .  BIT    FF46H.14          A  
+T5CON. . . . . . .  WORD   FF46H             A  SFR
+T5EUD. . . . . . .  BIT    FFA2H.11          A  
+T5IC . . . . . . .  WORD   FF66H             A  SFR
+T5IE . . . . . . .  BIT    FF66H.6           A  
+T5IN . . . . . . .  BIT    FFA2H.13          A  
+T5IR . . . . . . .  BIT    FF66H.7           A  
+T5R. . . . . . . .  BIT    FF46H.6           A  
+T5SC . . . . . . .  BIT    FF46H.15          A  
+T5UD . . . . . . .  BIT    FF46H.7           A  
+T5UDE. . . . . . .  BIT    FF46H.8           A  
+T6 . . . . . . . .  WORD   FE48H             A  SFR
+T6CON. . . . . . .  WORD   FF48H             A  SFR
+T6IC . . . . . . .  WORD   FF68H             A  SFR
+T6IE . . . . . . .  BIT    FF68H.6           A  
+T6IN . . . . . . .  BIT    FFA2H.12          A  
+T6IR . . . . . . .  BIT    FF68H.7           A  
+T6OE . . . . . . .  BIT    FF48H.9           A  
+T6OTL. . . . . . .  BIT    FF48H.10          A  
+T6OUT. . . . . . .  BIT    FFC4H.1           A  
+T6R. . . . . . . .  BIT    FF48H.6           A  
+T6SR . . . . . . .  BIT    FF48H.15          A  
+T6UD . . . . . . .  BIT    FF48H.7           A  
+T6UDE. . . . . . .  BIT    FF48H.8           A  
+T7 . . . . . . . .  WORD   F050H             A  ESFR
+T78CON . . . . . .  WORD   FF20H             A  SFR
+T7IC . . . . . . .  WORD   F17AH             A  ESFR
+T7IE . . . . . . .  BIT    F17AH.6           A  
+T7IR . . . . . . .  BIT    F17AH.7           A  
+T7M. . . . . . . .  BIT    FF20H.3           A  
+T7R. . . . . . . .  BIT    FF20H.6           A  
+T7REL. . . . . . .  WORD   F054H             A  ESFR
+T8 . . . . . . . .  WORD   F052H             A  ESFR
+T8IC . . . . . . .  WORD   F17CH             A  ESFR
+T8IE . . . . . . .  BIT    F17CH.6           A  
+T8IR . . . . . . .  BIT    F17CH.7           A  
+T8M. . . . . . . .  BIT    FF20H.11          A  
+T8R. . . . . . . .  BIT    FF20H.14          A  
+T8REL. . . . . . .  WORD   F056H             A  ESFR
+TFR. . . . . . . .  WORD   FFACH             A  SFR
+UNDOPC . . . . . .  BIT    FFACH.7           A  
+USR0 . . . . . . .  BIT    FF10H.6           A  
+V. . . . . . . . .  BIT    FF10H.2           A  
+WDT. . . . . . . .  WORD   FEAEH             A  SFR
+WDTCON . . . . . .  WORD   FFAEH             A  SFR
+WDTIN. . . . . . .  BIT    FFAEH.0           A  
+WDTR . . . . . . .  BIT    FFAEH.1           A  
+WRCFG. . . . . . .  BIT    FF12H.7           A  
+WRITEWORD. . . . .  FAR    4E2DAH            A  SEC=BSLSECTION
+XADRS1 . . . . . .  DATA16 F014H             A  
+XADRS2 . . . . . .  DATA16 F016H             A  
+XADRS3 . . . . . .  DATA16 F018H             A  
+XADRS4 . . . . . .  DATA16 F01AH             A  
+XADRS5 . . . . . .  DATA16 F01CH             A  
+XADRS6 . . . . . .  DATA16 F01EH             A  
+XBCON1 . . . . . .  DATA16 F114H             A  
+XBCON2 . . . . . .  DATA16 F116H             A  
+XBCON3 . . . . . .  DATA16 F118H             A  
+XBCON4 . . . . . .  DATA16 F11AH             A  
+XBCON5 . . . . . .  DATA16 F11CH             A  
+XBCON6 . . . . . .  DATA16 F11EH             A  
+XP0IC. . . . . . .  WORD   F186H             A  ESFR
+A166 MACRO ASSEMBLER  ASMBSL                                                              04/13/2017 11:46:28 PAGE    33
+
+XP0IE. . . . . . .  BIT    F186H.6           A  
+XP0IR. . . . . . .  BIT    F186H.7           A  
+XP1IC. . . . . . .  WORD   F18EH             A  ESFR
+XP1IE. . . . . . .  BIT    F18EH.6           A  
+XP1IR. . . . . . .  BIT    F18EH.7           A  
+XP2IC. . . . . . .  WORD   F196H             A  ESFR
+XP2IE. . . . . . .  BIT    F196H.6           A  
+XP2IR. . . . . . .  BIT    F196H.7           A  
+XP3IC. . . . . . .  WORD   F19EH             A  ESFR
+XP3IE. . . . . . .  BIT    F19EH.6           A  
+XP3IR. . . . . . .  BIT    F19EH.7           A  
+XPERCON. . . . . .  DATA16 F024H             A  
+Z. . . . . . . . .  BIT    FF10H.3           A  
+ZEROS. . . . . . .  WORD   FF1CH             A  SFR
+
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

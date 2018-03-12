@@ -1,0 +1,293 @@
+C166 COMPILER V7.53.0.0, BDMG                                                              04/13/2017 11:46:31 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE BDMG
+OBJECT MODULE PLACED IN bdmg.OBJ
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE bdmg.c XLARGE BROWSE MOD167 DEBUG TABS(2) 
+
+ stmt lvl     source
+
+    1         #include "bdmg.h"
+    2         #include "can.h"
+    3         #include "process.h"
+    4         #include "protocol.h"
+    5         
+    6         
+    7         static uint8  msgCounter = 0;
+    8         __IO static float oldCurrentDose = 0;
+    9         
+   10         const uint8   startBDMGMsg[] = {0x40};
+   11         const uint8   stopBDMGMsg[] = {0x41};
+   12         
+   13         const uint8   resetBDMGMsg[] = {0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00};
+   14         const uint8   autoModeBDMGMsg[] = {0x05,0x90,0x00,0x00,0x00,0x00,0x00,0x00};
+   15         //константы запросов параметров
+   16         const uint8   getDeadTime1Msg[] = {0x04,0x94,0x00,0x00,0x00,0x00,0x00,0x00};
+   17         const uint8   getDeadTime2Msg[] = {0x04,0x95,0x00,0x00,0x00,0x00,0x00,0x00};
+   18         const uint8   getDeadTime3Msg[] = {0x04,0x96,0x00,0x00,0x00,0x00,0x00,0x00};
+   19         
+   20         
+   21         static tBDMGData  BDMGData;
+   22         static tBDMGParametrs BDMGParamets;
+   23         
+   24         void  BDMG_Reset()
+   25         {
+   26  1        msgCounter = 0;
+   27  1        
+   28  1        memset((uint8*)&BDMGData,0,sizeof(tBDMGData));
+   29  1        memset((uint8*)&BDMGParamets,0,sizeof(tBDMGParametrs));
+   30  1        
+   31  1        CAN_SendMessage(CAN_BDMG_ALL_TX,resetBDMGMsg,8);  //команла перезапуска БДМГ-Б
+   32  1      
+   33  1      }
+   34         
+   35         void  BDMG_Start()
+   36         {
+   37  1        CAN_SendMessage(CAN_BDMG_CMD_TX,autoModeBDMGMsg,8);
+   38  1        CAN_SendMessage(CAN_BDMG_CMD_TX,startBDMGMsg,1);
+   39  1        
+   40  1      }
+   41         void BDMG_ForcedStart(uint8 rangeIndex)
+   42         {
+   43  1        uint8 pData[8];
+   44  1        
+   45  1          memcpy(pData,autoModeBDMGMsg,sizeof(uint8) * 8);
+   46  1        
+   47  1          pData[4] = rangeIndex;
+   48  1        
+   49  1        CAN_SendMessage(CAN_BDMG_CMD_TX,pData,8);
+   50  1        CAN_SendMessage(CAN_BDMG_CMD_TX,startBDMGMsg,1);
+   51  1      }
+   52         
+   53         void  BDMG_Stop()
+   54         {
+   55  1        CAN_SendMessage(CAN_BDMG_CMD_TX,stopBDMGMsg,1);
+C166 COMPILER V7.53.0.0, BDMG                                                              04/13/2017 11:46:31 PAGE 2   
+
+   56  1      }
+   57         //запрос параметра
+   58         void  BDMG_ParametrRequest(uint8  paramIndex,uint16 paramSubIndex)
+   59         {
+   60  1        uint8 Data[8];
+   61  1          
+   62  1          memset((uint8*)Data,0,sizeof(uint8) * 8);
+   63  1        
+   64  1          Data[0] = 0x04;
+   65  1          Data[1] = paramIndex;
+   66  1          Data[2] = (uint8)paramSubIndex & 0xF;
+   67  1          Data[3] = (uint8) (paramSubIndex >> 8);
+   68  1      
+   69  1        CAN_SendMessage(CAN_BDMG_CMD_TX,Data,8);
+   70  1      }
+   71         void BDMG_WriteParametr(uint8 paramIndex,uint16 paramSubIndex, uint8  *pParam,int dataSize)
+   72         {
+   73  1        uint8 Data[8];
+   74  1        
+   75  1          memset((uint8*)Data,0,sizeof(uint8) * 8);
+   76  1        
+   77  1          Data[0] = 0x05;
+   78  1          Data[1] = paramIndex;
+   79  1          Data[2] = (uint8)paramSubIndex & 0xF;
+   80  1          Data[3] = (uint8) (paramSubIndex >> 8);
+   81  1        
+   82  1          memcpy(Data + 4,(uint32*)(pParam),dataSize);
+   83  1        
+   84  1        CAN_SendMessageIT(CAN_BDMG_CMD_TX,Data,8);
+   85  1          
+   86  1      }
+   87         //запуск записи параметров в БД
+   88         void  BDMG_StartWritingParametrs()
+   89         {
+   90  1        BDMG_WriteParametr(0x94,0,(uint8*)&BDMGParamets.mDeadTime[0],sizeof(float));
+   91  1      }
+   92         //приём данных
+   93         void  BDMG_InsertData(uint8 *pData)
+   94         {
+   95  1        if(pData[4] == 0xFF && pData[5] == 0xFF && pData[6] == 0xFF && pData[7] == 0xFF)//приняли посл
+             -еднее сообщение данных с МД
+   96  1        {
+   97  2          BDMGData.oldCurrentDose = BDMGData.currentDose;
+   98  2          
+   99  2          memcpy((uint8*)&BDMGData.currentDose,(uint8*)pData,sizeof(float));
+  100  2          
+  101  2          BDMGData.Dose += BDMGData.currentDose;
+  102  2        }
+  103  1      
+  104  1      }
+  105         //приём команд и параметров
+  106         void  BDMG_InsertCmd(uint8  *pData)
+  107         {
+  108  1        //команда перезапуска принята
+  109  1        if(pData[0] == 0x01 && pData[1] == 0x01)
+  110  1        {
+  111  2          Process_BDMGStatus(DEVICE_READY);
+  112  2      
+  113  2          BDMG_ParametrRequest(0x94,0); //запрос первого параметра
+  114  2        }
+  115  1        
+  116  1        switch(pData[0])
+C166 COMPILER V7.53.0.0, BDMG                                                              04/13/2017 11:46:31 PAGE 3   
+
+  117  1        {
+  118  2          //выдать параметр
+  119  2          case 0x04:
+  120  2          {
+  121  3            if(pData[2] == 0x94){
+  122  4              memcpy((uint8*)&BDMGParamets.mDeadTime[0],(pData + 4),sizeof(float));
+  123  4              BDMG_ParametrRequest(0x95,0);
+  124  4            }
+  125  3            if(pData[2] == 0x95){
+  126  4              memcpy((uint8*)&BDMGParamets.mDeadTime[1],(pData + 4),sizeof(float));
+  127  4              BDMG_ParametrRequest(0x96,0);
+  128  4            }
+  129  3            if(pData[2] == 0x96){
+  130  4              memcpy((uint8*)&BDMGParamets.mDeadTime[2],(pData + 4),sizeof(float));
+  131  4              BDMG_ParametrRequest(0x97,0);
+  132  4            }
+  133  3            
+  134  3            if(pData[2] == 0x97){
+  135  4              memcpy((uint8*)&BDMGParamets.range1to2Value,(pData + 4),sizeof(uint16));
+  136  4              BDMG_ParametrRequest(0x98,0);
+  137  4            }
+  138  3            if(pData[2] == 0x98){
+  139  4              memcpy((uint8*)&BDMGParamets.range2to3Value,(pData + 4),sizeof(uint16));
+  140  4              BDMG_ParametrRequest(0x99,0);
+  141  4            }
+  142  3            if(pData[2] == 0x99){
+  143  4              memcpy((uint8*)&BDMGParamets.range3maxValue,(pData + 4),sizeof(uint16));
+  144  4              BDMG_ParametrRequest(0x9A,0);
+  145  4            }
+  146  3            if(pData[2] == 0x9A){
+  147  4              memcpy((uint8*)&BDMGParamets.range3to2Value,(pData + 4),sizeof(uint16));
+  148  4              BDMG_ParametrRequest(0x9B,0);
+  149  4            }
+  150  3            if(pData[2] == 0x9B){
+  151  4              memcpy((uint8*)&BDMGParamets.range2to1Value,(pData + 4),sizeof(uint16));
+  152  4              BDMG_ParametrRequest(0x9C,0);
+  153  4            }
+  154  3            if(pData[2] == 0x9C){
+  155  4              memcpy((uint8*)&BDMGParamets.fSensCounters[0],(pData + 4),sizeof(float));
+  156  4              BDMG_ParametrRequest(0x9D,0);
+  157  4            }
+  158  3            if(pData[2] == 0x9D){
+  159  4              memcpy((uint8*)&BDMGParamets.fSensCounters[1],(pData + 4),sizeof(float));
+  160  4              BDMG_ParametrRequest(0x9E,0);
+  161  4            }
+  162  3            if(pData[2] == 0x9E){
+  163  4              memcpy((uint8*)&BDMGParamets.fSensCounters[2],(pData + 4),sizeof(float));
+  164  4              BDMG_ParametrRequest(0xA1,0);
+  165  4            }
+  166  3            
+  167  3            
+  168  3            if(pData[2] == 0xA1){
+  169  4              memcpy((uint8*)&BDMGParamets.correctionFactors[0],(pData + 4),sizeof(float));
+  170  4              BDMG_ParametrRequest(0xA2,0);
+  171  4            }
+  172  3            if(pData[2] == 0xA2){
+  173  4              memcpy((uint8*)&BDMGParamets.correctionFactors[1],(pData + 4),sizeof(float));
+  174  4              BDMG_ParametrRequest(0xA3,0);
+  175  4            }
+  176  3            if(pData[2] == 0xA3){
+  177  4              memcpy((uint8*)&BDMGParamets.correctionFactors[2],(pData + 4),sizeof(float));
+  178  4              BDMG_ParametrRequest(0xA4,0);
+C166 COMPILER V7.53.0.0, BDMG                                                              04/13/2017 11:46:31 PAGE 4   
+
+  179  4            }
+  180  3            if(pData[2] == 0xA4){
+  181  4              memcpy((uint8*)&BDMGParamets.correctionFactors[3],(pData + 4),sizeof(float));
+  182  4              BDMG_ParametrRequest(0xB1,0);
+  183  4            }
+  184  3            if(pData[2] == 0xB1){
+  185  4              memcpy((uint8*)&BDMGParamets.correctionFactors[4],(pData + 4),sizeof(float));
+  186  4              BDMG_ParametrRequest(0xB2,0);
+  187  4            }
+  188  3            if(pData[2] == 0xB2){
+  189  4              memcpy((uint8*)&BDMGParamets.correctionFactors[5],(pData + 4),sizeof(float));
+  190  4              BDMG_ParametrRequest(0xC1,0);
+  191  4            }
+  192  3            if(pData[2] == 0xC1){
+  193  4              memcpy((uint8*)&BDMGParamets.correctionFactors[6],(pData + 4),sizeof(float));
+  194  4              BDMG_ParametrRequest(0xC2,0);
+  195  4            }
+  196  3            //последний параметр
+  197  3            if(pData[2] == 0xC2){
+  198  4              memcpy((uint8*)&BDMGParamets.correctionFactors[7],(pData + 4),sizeof(float));
+  199  4            }
+  200  3               
+  201  3          }break;
+  202  2          //задать параметрf
+  203  2          case 0x05:
+  204  2          {
+  205  3            switch(pData[2])
+  206  3            {
+  207  4              case 0x94: BDMG_WriteParametr(0x95,0,(uint8*)&BDMGParamets.mDeadTime[1],sizeof(float)); break;
+  208  4              case 0x95: BDMG_WriteParametr(0x96,0,(uint8*)&BDMGParamets.mDeadTime[2],sizeof(float)); break;
+  209  4              case 0x96: BDMG_WriteParametr(0x97,0,(uint8*)&BDMGParamets.range1to2Value,sizeof(uint16)); break;
+  210  4              case 0x97: BDMG_WriteParametr(0x98,0,(uint8*)&BDMGParamets.range2to3Value,sizeof(uint16)); break;
+  211  4              case 0x98: BDMG_WriteParametr(0x99,0,(uint8*)&BDMGParamets.range3maxValue,sizeof(uint16)); break;
+  212  4              case 0x99: BDMG_WriteParametr(0x9A,0,(uint8*)&BDMGParamets.range3to2Value,sizeof(uint16)); break;
+  213  4              case 0x9A: BDMG_WriteParametr(0x9B,0,(uint8*)&BDMGParamets.range2to1Value,sizeof(uint16)); break;
+  214  4              case 0x9B: BDMG_WriteParametr(0x9C,0,(uint8*)&BDMGParamets.fSensCounters[0],sizeof(float)); break;
+  215  4              case 0x9C: BDMG_WriteParametr(0x9D,0,(uint8*)&BDMGParamets.fSensCounters[1],sizeof(float)); break;
+  216  4              case 0x9D: BDMG_WriteParametr(0x9E,0,(uint8*)&BDMGParamets.fSensCounters[2],sizeof(float)); break;
+  217  4              case 0x9E: BDMG_WriteParametr(0xA1,0,(uint8*)&BDMGParamets.correctionFactors[0],sizeof(float)); break;
+  218  4              
+  219  4              case 0xA1: BDMG_WriteParametr(0xA2,0,(uint8*)&BDMGParamets.correctionFactors[1],sizeof(float)); break;
+  220  4              case 0xA2: BDMG_WriteParametr(0xA3,0,(uint8*)&BDMGParamets.correctionFactors[2],sizeof(float)); break;
+  221  4              case 0xA3: BDMG_WriteParametr(0xA4,0,(uint8*)&BDMGParamets.correctionFactors[3],sizeof(float)); break;
+  222  4              case 0xA4: BDMG_WriteParametr(0xB1,0,(uint8*)&BDMGParamets.correctionFactors[4],sizeof(float)); break;
+  223  4              
+  224  4              case 0xB1: BDMG_WriteParametr(0xB2,0,(uint8*)&BDMGParamets.correctionFactors[5],sizeof(float)); break;
+  225  4              case 0xB2: BDMG_WriteParametr(0xC1,0,(uint8*)&BDMGParamets.correctionFactors[6],sizeof(float)); break;
+  226  4                
+  227  4              case 0xC1: BDMG_WriteParametr(0xC2,0,(uint8*)&BDMGParamets.correctionFactors[7],sizeof(float)); break;
+  228  4              case 0xC2: {}break;
+  229  4            }
+  230  3          }break;
+  231  2        }
+  232  1      }
+  233         float BDMG_GetCurrentDose()
+  234         {
+  235  1        return BDMGData.currentDose;
+  236  1      }
+  237         float BDMG_GetDose()
+  238         {
+  239  1        return BDMGData.Dose;
+  240  1      }
+C166 COMPILER V7.53.0.0, BDMG                                                              04/13/2017 11:46:31 PAGE 5   
+
+  241         uint8 BDMG_GetInsideFeature()
+  242         {
+  243  1      
+  244  1          if(BDMGData.currentDose >= 1.3f * BDMGData.oldCurrentDose)
+  245  1            return 1; //МД увеличилась
+  246  1          else if(BDMGData.currentDose <= 0.7f * BDMGData.oldCurrentDose)
+  247  1            return 2; //МД уменьшилась
+  248  1          else
+  249  1            return 0; //МД неизменилась
+  250  1      }
+  251         uint8 *BDMG_GetParametrs()
+  252         {
+  253  1        return (uint8*)&BDMGParamets;
+  254  1      }
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =        2284     --------
+  NEAR-CONST SIZE  =           2     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =          40     --------
+  NEAR-DATA SIZE   =           5     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =          86     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          14     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

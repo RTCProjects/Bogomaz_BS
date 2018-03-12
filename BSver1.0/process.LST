@@ -1,0 +1,475 @@
+C166 COMPILER V7.53.0.0, PROCESS                                                           10/31/2017 16:48:56 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE PROCESS
+OBJECT MODULE PLACED IN .\output\process.obj
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE process.c XLARGE BROWSE MOD167 DEBUG TABS(2) OBJECT(.\output\process.obj)
+                    - 
+
+ stmt lvl     source
+
+    1         #include "process.h"
+    2         #include "protocol.h"
+    3         #include "devices.h"
+    4         #include "settings.h"
+    5         
+    6         //блоки
+    7         #include "bdmg.h"
+    8         #include "bdgp.h"
+    9         #include "bdsp.h"
+   10         //
+   11         #include "can.h"
+   12         #include "system.h"
+   13         
+   14         uint8 processByte;  //байт статуса ИМД_Б
+   15         
+   16         __IO float  counter = 0;
+   17         __IO static uint32  mainCounter = 0;
+   18         static uint16 waitCounter = 0;
+   19         
+   20         static tProcessDoseExceeded     ProcessDoseExceeded;
+   21         static tProcessDoseRateExceeded ProcessDoseRateExceeded;
+   22         void  Process_Initializetion(void)
+   23         {
+   24  1          processByte = 0;
+   25  1          mainCounter = 0;
+   26  1          waitCounter = 0;
+   27  1        
+   28  1        memset((uint8*)&ProcessDoseExceeded,0,sizeof(tProcessDoseExceeded));
+   29  1        memset((uint8*)&ProcessDoseRateExceeded,0,sizeof(tProcessDoseRateExceeded));
+   30  1        
+   31  1      
+   32  1      }
+   33         void  Process_ResetWaitCounter()
+   34         {
+   35  1        waitCounter = 0;
+   36  1      }
+   37         uint16  Process_GetWaitCounter()
+   38         {
+   39  1        return waitCounter;
+   40  1      }
+   41         
+   42         void  Process_SetStatus(IMDB_Status Status) //ставим статус ИМДБ
+   43         { 
+   44  1        
+   45  1        processByte = processByte & 0xF0;
+   46  1        processByte = processByte | Status;
+   47  1        
+   48  1      }
+   49         void  Process_BDGPStatus(Device_Status Status)  //ставим статус БДГП
+   50         {
+   51  1        if(Status)
+   52  1          SET_BIT(processByte,4);
+   53  1        else
+   54  1          CLEAR_BIT(processByte,4);
+C166 COMPILER V7.53.0.0, PROCESS                                                           10/31/2017 16:48:56 PAGE 2   
+
+   55  1        
+   56  1        
+   57  1      }
+   58         void  Process_BDMGStatus(Device_Status Status)  //ставим статус БДМГ
+   59         {
+   60  1        if(Status)
+   61  1          SET_BIT(processByte,5);
+   62  1        else
+   63  1          CLEAR_BIT(processByte,5);
+   64  1      }
+   65         void  Process_BDPSStatus(Device_Status Status)  //статус для БДГП-С
+   66         {
+   67  1        CLEAR_BIT(processByte,6);
+   68  1        CLEAR_BIT(processByte,7);
+   69  1        
+   70  1        
+   71  1        if(Status == DEVICE_WAITING)
+   72  1          SET_BIT(processByte,7);
+   73  1        if(Status == DEVICE_READY)
+   74  1          SET_BIT(processByte,6);
+   75  1      
+   76  1      }
+   77         uint8 Process_GetBDMGState()
+   78         {
+   79  1        if( ((processByte >> 5) & 0x1))return 1;
+   80  1        else return 0;
+   81  1      }
+   82         uint8 Process_GetBDGPState()
+   83         {
+   84  1        if( ((processByte >> 4) & 0x1))return 1;
+   85  1        else return 0;
+   86  1      }
+   87         uint8 Process_GetBDPSStatus()
+   88         {
+   89  1        if( ((processByte >> 6) & 0x1))return 1;      //ready
+   90  1        else if( ((processByte >> 7) & 0x1))return 2; //waiting
+   91  1        else return 0;
+   92  1      }
+   93           
+   94         
+   95         uint8 Process_GetInfo() //получаем байт состояния ИМДБ
+   96         {
+   97  1        return processByte;
+   98  1      }
+   99         
+  100         
+  101         IMDB_Status Process_GetOperationMode()
+  102         {
+  103  1        return (processByte & 0x0F);
+  104  1      }
+  105         
+  106         void  Process_MainProc()  interrupt 0x20
+  107         {
+  108  1        float insideDoseRate = 0;
+  109  1        float outsideDoseRate = 0;
+  110  1        float insideDose = 0;
+  111  1        
+  112  1        float fBackgroundQuantile = 0;
+  113  1        uint8 identificationValue = 0;
+  114  1        
+  115  1        //IMDB_SendPacket(IMDB_PING,0,0);
+  116  1        /*pCanInfo = (uint8*)malloc(sizeof(uint8) * 64);
+C166 COMPILER V7.53.0.0, PROCESS                                                           10/31/2017 16:48:56 PAGE 3   
+
+  117  1        
+  118  1        if(pCanInfo)
+  119  1        {
+  120  1          for(i = 0;i<8;i++)
+  121  1          {
+  122  1            
+  123  1            
+  124  1            *((uint16*)&msgData[0]) = CAN_Message_16[i].MODATALL;
+  125  1            *((uint16*)&msgData[2]) = CAN_Message_16[i].MODATALH;
+  126  1            *((uint16*)&msgData[4]) = CAN_Message_16[i].MODATAHL;
+  127  1            *((uint16*)&msgData[6]) = CAN_Message_16[i].MODATAHH;
+  128  1            
+  129  1            memcpy(pCanInfo + ( i * 8),(uint8*)msgData,sizeof(uint8) * 8);
+  130  1          
+  131  1            
+  132  1          }
+  133  1          IMDB_SendPacket(IMDB_PING,(uint8*)pCanInfo,sizeof(uint8) * 64);
+  134  1          free(pCanInfo);
+  135  1        }*/
+  136  1        
+  137  1        switch(Process_GetOperationMode())
+  138  1        {
+  139  2            case IMDB_INITIALIZATION:
+  140  2            {
+  141  3              //3 сек для инициализации
+  142  3              if(mainCounter == 3)
+  143  3              {
+  144  4                
+  145  4                
+  146  4                /*
+  147  4                1. Если есть БДГП, то проверяем МД снаружи.
+  148  4                2. Если МД меньше 0.1мГр/ч, то включаем HV для ФЭУ
+  149  4                3. Если БДГП нет, то меряем МД БДГМом и выполняем п2 с учё�
+             -�ом КЭ.
+  150  4                */
+  151  4                //ищем спектрометр
+  152  4                if(Process_GetBDPSStatus())
+  153  4                {
+  154  5                  if(BDSP_ChannelInitCheck() != CHK_OK)
+  155  5                  {
+  156  6                    Process_BDPSStatus(DEVICE_NOTREADY);
+  157  6                  }
+  158  5                  else
+  159  5                  {
+  160  6                  
+  161  6                  
+  162  6                    if(Process_GetBDGPState() ){//БДГП обнаружен
+  163  7                      BDGP_Start(); //запускаем БДГП
+  164  7                    }
+  165  6                    else if(Process_GetBDMGState() ){//если его нет, то меряем БДМГом
+  166  7                      BDMG_Start();
+  167  7                      
+  168  7                    }
+  169  6                    //если нет обоих дозиметров то переходим в режим контр�
+             -�ля функционирования
+  170  6                    else {
+  171  7                      Process_SetStatus(IMDB_OPERATION_CONTROL);
+  172  7                    }
+  173  6                  }
+  174  5                }
+  175  4                else{
+  176  5                  //если спектрометра нет
+C166 COMPILER V7.53.0.0, PROCESS                                                           10/31/2017 16:48:56 PAGE 4   
+
+  177  5                  if(!Process_GetBDGPState() && !Process_GetBDMGState())//И БД тоже нет, то выдаём �
+             -�татус готовности неготовности
+  178  5                    IMDB_SendReady();
+  179  5                }
+  180  4                
+  181  4                Process_SetStatus(IMDB_OPERATION_CONTROL);
+  182  4            
+  183  4              }
+  184  3            }break;
+  185  2            
+  186  2            case IMDB_OPERATION_CONTROL:
+  187  2            {       
+  188  3              //ещё 10 сек для измерения внешней МД
+  189  3              
+  190  3              //если есть спектрометр, то ждём замера МД, анализируем е
+             -ё и даём команду на работу с ним
+  191  3              /*
+  192  3              */
+  193  3              if(Process_GetBDPSStatus())
+  194  3              {       
+  195  4                if(mainCounter == 10){
+  196  5                  BDGP_Stop();
+  197  5                  BDMG_Stop();
+  198  5                  
+  199  5                  //закончили измерения, теперь получаем внешнюю МД.
+  200  5                  if(Process_GetBDGPState()){
+  201  6                    outsideDoseRate = BDGP_GetAverageDoseRate();
+  202  6                  }
+  203  5                  else if(Process_GetBDMGState()){
+  204  6                    outsideDoseRate = BDMG_GetCurrentDose() * MainSettings.shieldingFactor; //если нет БДГП,
+             - то считаем МД внеш, как МД внутри * КЭ
+  205  6                  }
+  206  5                  else{
+  207  6                    outsideDoseRate = 0;  //TODO получить МД со спектрометра
+  208  6                  }
+  209  5                }
+  210  4                //ожидаем стабилижации
+  211  4                if(mainCounter > 10 && mainCounter < 70)
+  212  4                {
+  213  5                  if(Process_GetBDPSStatus() == DEVICE_READY)//дождались стабилизации БДГП-С
+  214  5                  {
+  215  6                    Process_SetStatus(IMDB_BACKGROUND_ACCUMULATION);
+  216  6                    BDSP_Start(); //запускаем только спектрометр
+  217  6                    
+  218  6                    IMDB_SendReady();
+  219  6                  }
+  220  5                }
+  221  4              }
+  222  3              //в противном случае сразу переходим в режим штатной раб
+             -оты без спектрометра
+  223  3              else
+  224  3              {
+  225  4                //если есть БДГП-Б, то копим фон
+  226  4                if(Process_GetBDGPState()/* || Process_GetBDMGState()*/)
+  227  4                { 
+  228  5                  Process_SetStatus(IMDB_BACKGROUND_ACCUMULATION);
+  229  5                  Process_IMDBStart();
+  230  5                  
+  231  5                  IMDB_SendReady();
+  232  5                }
+  233  4                //если нет БДГП-Б но есть БДМГ-Б то сразу переходим в шта�
+             -�ный режим работы
+C166 COMPILER V7.53.0.0, PROCESS                                                           10/31/2017 16:48:56 PAGE 5   
+
+  234  4                else if(Process_GetBDMGState())
+  235  4                {
+  236  5                    Process_SetStatus(IMDB_FULLTIME_WORK);
+  237  5                    Process_IMDBStart();
+  238  5                  
+  239  5                    IMDB_SendReady();
+  240  5                }
+  241  4              
+  242  4                else
+  243  4                {
+  244  5                  
+  245  5                }
+  246  4              }
+  247  3              
+  248  3            }break;
+  249  2            
+  250  2            case IMDB_BACKGROUND_ACCUMULATION:
+  251  2            {
+  252  3              
+  253  3            }break;
+  254  2            
+  255  2            case IMDB_FULLTIME_WORK:
+  256  2            {
+  257  3              /*
+  258  3                Режим штатной работы
+  259  3              
+  260  3                - контролируем мощности дозы снаружи и внутри
+  261  3                - в зависимости от МД включаем или выключаем спектромет
+             -р
+  262  3                - вызываем функции рассчёта превышения порога по фону
+  263  3              */
+  264  3              //выссчитываем МД
+  265  3              
+  266  3                //если есть спектрометр и у него накоплен фон
+  267  3      
+  268  3                
+  269  3                //если есть БДГП-Б
+  270  3                if(Process_GetBDGPState() == DEVICE_READY){         
+  271  4                    outsideDoseRate = BDGP_GetAverageDoseRate();//получаем текущую МД
+  272  4                
+  273  4                      
+  274  4                }
+  275  3                else
+  276  3                    outsideDoseRate = BDMG_GetCurrentDose() * MainSettings.shieldingFactor;
+  277  3                
+  278  3                if(Process_GetBDMGState() == DEVICE_READY)
+  279  3                    insideDoseRate = BDMG_GetCurrentDose();
+  280  3                else
+  281  3                  insideDoseRate = BDGP_GetAverageDoseRate() / MainSettings.shieldingFactor;
+  282  3                
+  283  3                  insideDose = BDMG_GetDose();
+  284  3                  
+  285  3                    //события порогов по МД
+  286  3                    //порог 1
+  287  3                    if(outsideDoseRate > MainSettings.limitDetect[1]){
+  288  4                      
+  289  4                      if(!ProcessDoseRateExceeded.rRangeFlag[0]){
+  290  5                        IMDB_SendDoseRateExceeded(1);
+  291  5                        ProcessDoseRateExceeded.rRangeFlag[0] = 1;
+  292  5                        }
+  293  4                    }
+  294  3                    else{
+C166 COMPILER V7.53.0.0, PROCESS                                                           10/31/2017 16:48:56 PAGE 6   
+
+  295  4                      if(ProcessDoseRateExceeded.rRangeFlag[0] == 1){
+  296  5                        ProcessDoseRateExceeded.rRangeFlag[0] = 0;
+  297  5                        IMDB_SendDoseRateExceeded(0);
+  298  5                      }
+  299  4                    }
+  300  3                    //порог 2
+  301  3                    if(outsideDoseRate > MainSettings.limitDetect[2]){
+  302  4                      
+  303  4                      if(!ProcessDoseRateExceeded.rRangeFlag[1]){
+  304  5                        IMDB_SendDoseRateExceeded(2);
+  305  5                        ProcessDoseRateExceeded.rRangeFlag[1] = 1;
+  306  5                      }
+  307  4                    }
+  308  3                    else{
+  309  4                      if(ProcessDoseRateExceeded.rRangeFlag[1] == 1){
+  310  5                        ProcessDoseRateExceeded.rRangeFlag[1] = 0;
+  311  5                        IMDB_SendDoseRateExceeded(0);
+  312  5                      }
+  313  4                    }
+  314  3                    //порог 3
+  315  3                    if(outsideDoseRate > MainSettings.limitDetect[3]){
+  316  4                      
+  317  4                      if(!ProcessDoseRateExceeded.rRangeFlag[2]){
+  318  5                      IMDB_SendDoseRateExceeded(3);
+  319  5                      ProcessDoseRateExceeded.rRangeFlag[2] = 1;
+  320  5                      }
+  321  4                    }
+  322  3                    else{
+  323  4                      if(ProcessDoseRateExceeded.rRangeFlag[2] == 1){
+  324  5                        ProcessDoseRateExceeded.rRangeFlag[2] = 0;
+  325  5                        IMDB_SendDoseRateExceeded(0);
+  326  5                      }
+  327  4                    }
+  328  3                    //порог 4
+  329  3                    if(outsideDoseRate > MainSettings.limitDetect[4]){
+  330  4                      
+  331  4                      if(!ProcessDoseRateExceeded.rRangeFlag[3]){
+  332  5                        IMDB_SendDoseRateExceeded(4);
+  333  5                        ProcessDoseRateExceeded.rRangeFlag[3] = 1;
+  334  5                      }
+  335  4                    }
+  336  3                    else{
+  337  4                      if(ProcessDoseRateExceeded.rRangeFlag[3] == 1){
+  338  5                        ProcessDoseRateExceeded.rRangeFlag[3] = 0;
+  339  5                        IMDB_SendDoseRateExceeded(0);
+  340  5                      }
+  341  4                    }
+  342  3                    /*
+  343  3                    //порог 5
+  344  3                    if(outsideDoseRate > MainSettings.limitDetect[5]){
+  345  3                      if(!ProcessDoseRateExceeded.rRangeFlag[4]){
+  346  3                        IMDB_SendDoseRateExceeded(6);
+  347  3                        ProcessDoseRateExceeded.rRangeFlag[4] = 1;
+  348  3                      }
+  349  3                    }
+  350  3                    else{
+  351  3                      if(ProcessDoseRateExceeded.rRangeFlag[4] == 1){
+  352  3                        ProcessDoseRateExceeded.rRangeFlag[4] = 0;
+  353  3                        IMDB_SendDoseRateExceeded(0);
+  354  3                      }
+  355  3                    }
+  356  3                    */
+C166 COMPILER V7.53.0.0, PROCESS                                                           10/31/2017 16:48:56 PAGE 7   
+
+  357  3      
+  358  3                    
+  359  3                    //высылаем события порога по Дозе
+  360  3                    if(insideDose > MainSettings.limitDetect[6])
+  361  3                      if(ProcessDoseExceeded.rRangeFlag[0] == 0){
+  362  4                        ProcessDoseExceeded.rRangeFlag[0] = 1;
+  363  4                          IMDB_SendDoseExceeded(1);
+  364  4                      }
+  365  3                      
+  366  3                    if(insideDose > MainSettings.limitDetect[7])
+  367  3                      if(ProcessDoseExceeded.rRangeFlag[1] == 0){
+  368  4                        ProcessDoseExceeded.rRangeFlag[1] = 1;
+  369  4                          IMDB_SendDoseExceeded(2);
+  370  4                      }
+  371  3                  
+  372  3                    if(insideDose > MainSettings.limitDetect[8])
+  373  3                      if(ProcessDoseExceeded.rRangeFlag[2] == 0){
+  374  4                        ProcessDoseExceeded.rRangeFlag[2] = 1;
+  375  4                          IMDB_SendDoseExceeded(3);
+  376  4                      }
+  377  3                    
+  378  3                    if(insideDose > MainSettings.limitDetect[9])
+  379  3                      if(ProcessDoseExceeded.rRangeFlag[3] == 0){
+  380  4                        ProcessDoseExceeded.rRangeFlag[3] = 1;
+  381  4                          IMDB_SendDoseExceeded(4);
+  382  4                      }
+  383  3                      
+  384  3      
+  385  3                
+  386  3                
+  387  3            }break;
+  388  2            
+  389  2            case IMDB_SPECTR_ACCUMULATION:
+  390  2            {
+  391  3      
+  392  3                
+  393  3            }break;
+  394  2        }
+  395  1        mainCounter++;
+  396  1        waitCounter++;
+  397  1        
+  398  1        
+  399  1        if(waitCounter >= WAIT_TIMEOUT){
+  400  2          /*Process_IMDBStop();
+  401  2          T0R = 0;
+  402  2          System_LEDState(LED_BLINKY_LOW);
+  403  2          */
+  404  2        }
+  405  1        
+  406  1      }
+  407         
+  408         void  Process_IMDBStart()
+  409         {
+  410  1        if(Process_GetBDGPState() == DEVICE_READY)
+  411  1          BDGP_Start();
+  412  1        if(Process_GetBDMGState() == DEVICE_READY)
+  413  1          BDMG_Start();
+  414  1        if(Process_GetBDPSStatus() == DEVICE_READY)
+  415  1          BDSP_Start();
+  416  1      }
+  417         void  Process_IMDBStop()
+  418         {
+C166 COMPILER V7.53.0.0, PROCESS                                                           10/31/2017 16:48:56 PAGE 8   
+
+  419  1        BDGP_Stop();
+  420  1        BDMG_Stop();  
+  421  1        BDSP_Stop();
+  422  1      }
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =        1250     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =          21     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =          22     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

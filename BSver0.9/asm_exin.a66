@@ -1,0 +1,22 @@
+$SEGMENTED
+$INCLUDE (REG167.INC)
+
+ASSUME  DPP1 : NCODE          ; DPP1 addresses the NCODE group
+ASSUME  DPP2 : NDATA          ; DPP2 addresses the NDATA  group
+ASSUME  DPP3 : SYSTEM         ; DPP3 addresses the SYSTEM page
+
+OPS	SECTION  CODE 'NCODE'
+	
+	;GROUP1_1 PROC INTERRUPT EXIN1 = 0x18
+	;	SCXT	CP,#0FD20H
+	;	NOP
+	;		
+	;	
+	;		
+	;	POP	CP	
+	;	RETI
+	;GROUP1_1 ENDP
+	
+OPS	ENDS
+ 
+END

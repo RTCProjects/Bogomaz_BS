@@ -1,0 +1,39 @@
+C166 COMPILER V7.53.0.0, GPIO                                                              07/08/2016 11:50:00 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE GPIO
+OBJECT MODULE PLACED IN gpio.OBJ
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE gpio.c BROWSE MOD167 DEBUG TABS(2) 
+
+ stmt lvl     source
+
+    1         #include "gpio.h"
+    2         
+    3         void GPIO_SetPin(uint16 pin,uint8 _bit)
+    4         {
+    5  1          uint16 mask = 1;
+    6  1                 mask = mask << _bit;
+    7  1        
+    8  1          pin |= mask;
+    9  1      }
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =          10     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =    --------     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

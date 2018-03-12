@@ -1,0 +1,183 @@
+C166 COMPILER V7.53.0.0, SYSTEM                                                            10/31/2017 15:46:31 PAGE 1   
+
+
+C166 COMPILER V7.53.0.0, COMPILATION OF MODULE SYSTEM
+OBJECT MODULE PLACED IN .\output\system.obj
+COMPILER INVOKED BY: C:\Keil\C166\BIN\C166.EXE system.c XLARGE BROWSE MOD167 DEBUG TABS(2) OBJECT(.\output\system.obj) 
+
+ stmt lvl     source
+
+    1         #include "system.h"
+    2         
+    3         static eLEDState  currentState;
+    4         
+    5         uint8 System_RAMTest(void)
+    6         {
+    7  1        /*
+    8  1          __IO uint32 cnt = 0;
+    9  1          __IO uint32 temp = 0;
+   10  1          uint32  index = 0;
+   11  1          uint16    *ramStart = 0x600000;
+   12  1      
+   13  1          uint16  ramData = 0;
+   14  1          uint16  loopData = 0;
+   15  1        
+   16  1          xmemset(ramStart,0,0x80000);
+   17  1        
+   18  1          for(index = 0;index<0x40000;index++){
+   19  1            (*(ramStart+index)) = (uint16)index;
+   20  1          }
+   21  1        
+   22  1          for(index = 0;index<0x40000;index++){
+   23  1            ramData = (*((uint16*)ramStart+index));
+   24  1            
+   25  1            if(ramData != (uint16)index){
+   26  1              return 0;
+   27  1            } 
+   28  1          }
+   29  1          xmemset(ramStart,0,0x80000);
+   30  1          
+   31  1          return 1;*/
+   32  1          
+   33  1        unsigned int xhuge *pRamStart = (unsigned int xhuge *) 0x600000;
+   34  1        uint32  index = 0;
+   35  1        uint16  ramData = 0;  
+   36  1        uint16  errBytes = 0;
+   37  1        
+   38  1          currentState = LED_OFF;
+   39  1        
+   40  1          errBytes = 0;
+   41  1          
+   42  1          xmemset(pRamStart,0,0x80000);
+   43  1          
+   44  1          for(index = 0;index < 0x40000;index++){
+   45  2            (*(pRamStart + index)) = (uint16)0xA55A;
+   46  2          }
+   47  1          
+   48  1          for(index = 0;index < 0x40000;index++){
+   49  2            ramData = (*(pRamStart + index));
+   50  2            
+   51  2            if(ramData != 0xA55A){
+   52  3              errBytes++;
+   53  3            }
+   54  2              //return 0;
+   55  2          }
+C166 COMPILER V7.53.0.0, SYSTEM                                                            10/31/2017 15:46:31 PAGE 2   
+
+   56  1          xmemset(pRamStart,0,0x80000);
+   57  1          
+   58  1        return 1;
+   59  1      }
+   60         
+   61         void  System_Delay(unsigned long z){
+   62  1        __IO unsigned long x;
+   63  1        __IO int foo = 0;
+   64  1        for (x = 0; x < z; x++){
+   65  2          _nop_();
+   66  2          _nop_();
+   67  2          /*foo++;
+   68  2          foo++;
+   69  2          
+   70  2          foo-=2;*/
+   71  2          
+   72  2        }
+   73  1      }
+   74         void  System_Reset()
+   75         {
+   76  1        __asm 
+   77  1        { 
+   78  1          SRST 
+   79  1        }
+   80  1      }
+   81         
+   82         void  System_WDT_Reset()
+   83         {
+   84  1        //__asm { MOV 1111H R1 }
+   85  1        return;
+   86  1      }
+   87         
+   88         void  System_LEDPulse()
+   89         {
+   90  1      
+   91  1      }
+   92         
+   93         void  System_LEDState(eLEDState State)
+   94         {
+   95  1        if(currentState == State)
+   96  1          return;
+   97  1        
+   98  1        switch(State)
+   99  1        {
+  100  2          case LED_ON:
+  101  2          {
+  102  3            if(T3R)
+  103  3              T3R = 0;
+  104  3              CC8 = 0xC500;
+  105  3            
+  106  3            
+  107  3          }break;
+  108  2          
+  109  2          case LED_OFF:
+  110  2          {
+  111  3            if(T3R)
+  112  3              T3R = 0;
+  113  3            CC8 = 0xC001;
+  114  3          }break;
+  115  2          
+  116  2          case LED_BLINKY_FAST:
+  117  2          {
+C166 COMPILER V7.53.0.0, SYSTEM                                                            10/31/2017 15:46:31 PAGE 3   
+
+  118  3            T3CON = 0x0003;
+  119  3            T3R = 1;
+  120  3            
+  121  3          }break;
+  122  2          
+  123  2          case LED_BLINKY_LOW:
+  124  2          {
+  125  3            T3CON = 0x0005;
+  126  3            T3R = 1;
+  127  3          }break;
+  128  2        }
+  129  1        currentState = State;
+  130  1      }
+  131         
+  132         void _timer1(void) interrupt T1IC_VEC
+  133         {
+  134  1        
+  135  1        T1 = 0xC000;
+  136  1      
+  137  1        
+  138  1      }
+  139         void _timer3(void) interrupt T3IC_VEC
+  140         {
+  141  1      //CC8 = 0xC500; 
+  142  1        
+  143  1        if(CC8 == 0xC500){
+  144  2          CC8 = 0xC001;
+  145  2          return;}
+  146  1        if(CC8 == 0xC001){
+  147  2          CC8 = 0xC500; 
+  148  2          return;}
+  149  1      }
+
+
+MODULE INFORMATION:   INITIALIZED  UNINITIALIZED
+  CODE SIZE        =         344     --------
+  NEAR-CONST SIZE  =    --------     --------
+  FAR-CONST SIZE   =    --------     --------
+  HUGE-CONST SIZE  =    --------     --------
+  XHUGE-CONST SIZE =    --------     --------
+  NEAR-DATA SIZE   =           2     --------
+  FAR-DATA SIZE    =    --------     --------
+  XHUGE-DATA SIZE  =    --------     --------
+  IDATA-DATA SIZE  =    --------     --------
+  SDATA-DATA SIZE  =    --------     --------
+  BDATA-DATA SIZE  =    --------     --------
+  HUGE-DATA SIZE   =    --------     --------
+  BIT SIZE         =    --------     --------
+  INIT'L SIZE      =    --------     --------
+END OF MODULE INFORMATION.
+
+
+C166 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
